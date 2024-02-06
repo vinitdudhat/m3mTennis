@@ -7,11 +7,14 @@ import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:m3m_tennis/comman/snackbar.dart';
 import 'package:m3m_tennis/repository/common_function.dart';
+import 'package:m3m_tennis/repository/const_pref_key.dart';
 import 'package:m3m_tennis/screens/authentication/otp_Screen.dart';
 import 'package:m3m_tennis/screens/authentication/sucess_Screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
   TextEditingController mobileNumberController = TextEditingController();
+  TextEditingController mobileNumberController1 = TextEditingController();
   TextEditingController otpController = TextEditingController();
   RxBool isLoading = false.obs;
   RxString userName = ''.obs;
@@ -67,16 +70,19 @@ class LoginController extends GetxController {
     }
   }
 
-  sendOtp() async {
+  sendOtp(String mobileNumber) async {
     isLoading.value = true;
 
     try {
         await FirebaseAuth.instance.verifyPhoneNumber(
-          phoneNumber: '+91' + mobileNumberController.text,
+          phoneNumber: '+91' + mobileNumber,
           verificationCompleted:
               (PhoneAuthCredential credential) {},
           verificationFailed: (FirebaseAuthException e) {
             isLoading.value = false;
+
+            Utils().snackBar("", e.toString());
+
             // reusable().showMessage(context,"OTP not send. Please try again");
           },
           codeSent:
@@ -86,8 +92,10 @@ class LoginController extends GetxController {
             String verification = verificationId;
             print(verification);
 
-                Get.to(() => OtpScreen(mobileNo: mobileNumberController.text, verificationID: verification,));
-            // Get.to(() =>  Otpscreen(verification: verification, mobileNumber: phoneNumber.text.toString(), dialCode: dialCode,));
+                Get.to(() => OtpScreen(mobileNo: mobileNumber, verificationID: verification,));
+                mobileNumberController.clear();
+
+                // Get.to(() =>  Otpscreen(verification: verification, mobileNumber: phoneNumber.text.toString(), dialCode: dialCode,));
           },
           codeAutoRetrievalTimeout:
               (String verificationId) {
@@ -118,6 +126,7 @@ class LoginController extends GetxController {
       id = userCredential.user!.uid;
       print("id" + id.toString());
       print("uid : $uid");
+
       checkAlreadyAccount(uid!);
 
     } catch (e) {
@@ -126,23 +135,25 @@ class LoginController extends GetxController {
   }
 
   checkAlreadyAccount(String uid) async {
+    final prefs = await SharedPreferences.getInstance();
+
     final _dbref = FirebaseDatabase.instance.ref().child('Users');
     DataSnapshot  snapshot = await _dbref.get();
     Map usersMap = snapshot.value as Map;
     bool isAlreadyAccount = false;
 
     usersMap.forEach((key, value) {
-      int? number = int.tryParse(mobileNumberController.text.toString());
+      int? number = int.tryParse(mobileNumberController1.text.toString());
       if(number == value['MobileNo']) {
         isAlreadyAccount = true;
       }
     });
 
-    if(isAlreadyAccount) {
-      _dbRef.child(uid).set({
+    if(!isAlreadyAccount) {
+      _dbRef.child(uid!).set({
         "CountryCode" : 'IN',
         "DialCode" : "+91",
-        "MobileNo" : mobileNumberController.text,
+        "MobileNo" : mobileNumberController1.text,
         "createdAt" : getCurrentTime(),
         "UserName": "m3mtennis",
         "Email" : "m3mtennis@gmail.com",
@@ -153,6 +164,11 @@ class LoginController extends GetxController {
     } else {
       isLoading.value = false;
     }
+    mobileNumberController1.clear();
+    otpController.clear();
+
+    prefs.setString(SharedPreferenKey.userId, uid!);
+    prefs.setBool(SharedPreferenKey.isLogin, true);
     Get.to(()=>SuccessScreen());
   }
 

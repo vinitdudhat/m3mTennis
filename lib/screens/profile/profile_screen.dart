@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:m3m_tennis/controller/authentication/login_Controller.dart';
+import 'package:get/get.dart';
+import 'package:m3m_tennis/screens/authentication/login_Screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../comman/constAsset.dart';
 import '../../comman/constColor.dart';
 import '../../comman/constFontStyle.dart';
@@ -41,7 +45,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: Icon(Icons.arrow_back_ios,color: ConstColor.backBtnColor,),
         ),
         actions: [
-          IconButton(onPressed: (){}, icon: Icon(Icons.logout,color: ConstColor.backBtnColor,))
+          IconButton(onPressed: () async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            // FirebaseAuth auth = FirebaseAuth.instance;
+            // await auth.signOut().then((value) async {
+            //   print('User logged out');
+            //   await prefs.clear();
+            //   Get.offAll(() => LoginScreen());
+            // });
+
+            await prefs.clear();
+            Get.offAll(() => LoginScreen());
+          }, icon: Icon(Icons.logout,color: ConstColor.backBtnColor,))
         ],
       ),
       backgroundColor: ConstColor.backGroundColor,

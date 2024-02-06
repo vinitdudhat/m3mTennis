@@ -45,8 +45,9 @@ dependencies:
   cloud_firestore: ^4.15.3
   firebase_auth: ^4.17.3
   form_field_validator: ^1.1.0
-  google_sign_in: ^6.2.1
   uuid: ^4.3.3
+  google_sign_in: ^6.2.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

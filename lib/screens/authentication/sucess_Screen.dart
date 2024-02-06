@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:m3m_tennis/comman/constColor.dart';
 import 'package:m3m_tennis/comman/constFontStyle.dart';
+import 'package:timer_count_down/timer_count_down.dart';
 
 import '../dashboard/home_Screen.dart';
 
@@ -19,12 +20,12 @@ class _SuccessScreenState extends State<SuccessScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Timer(
-      Duration(seconds: 3),
-      () {
-        Get.to(() => HomeScreen());
-      },
-    );
+    // Timer(
+    //   Duration(seconds: 3),
+    //   () {
+    //     Get.to(() => HomeScreen());
+    //   },
+    // );
   }
 
   @override
@@ -64,10 +65,26 @@ class _SuccessScreenState extends State<SuccessScreen> {
               ),
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.3),
-                child: Text(
-                  "Redirecting to your booking screen \nin 3 sec",
-                  textAlign: TextAlign.center,
-                  style: ConstFontStyle().buttonTextStyle,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Redirecting to your booking screen",
+                      textAlign: TextAlign.center,
+                      style: ConstFontStyle().buttonTextStyle,
+                    ),
+                    Countdown(
+                      build: (BuildContext context, double time) =>
+                          Text(time.toString(),style : ConstFontStyle().buttonTextStyle),
+                      interval: Duration(milliseconds: 100),
+                      onFinished: () {
+                        Get.offAll(() => HomeScreen());
+                        print('Timer is done!');
+                      },
+                      seconds: 3,
+                    ),
+                  ],
                 ),
               ),
             ],

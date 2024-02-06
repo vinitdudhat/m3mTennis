@@ -84,7 +84,7 @@ class _MobileNumScreenState extends State<MobileNumScreen> {
                       onTap: () {
                         if (loginController.formKey.currentState!.validate()) {
                           // loginController.checkNumberRegister();
-                          loginController.sendOtp();
+                          loginController.sendOtp(loginController.mobileNumberController.text);
                           // if (loginController.mobileNumberController.text.isEmpty) {
                           //   Utils().snackBar("Please Fill Mobile Number...",'');
                         }

@@ -29,6 +29,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   LoginController loginController = Get.put(LoginController());
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var deviceHeight = MediaQuery
         .of(context)
