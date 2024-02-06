@@ -75,27 +75,38 @@ class _MobileNumScreenState extends State<MobileNumScreen> {
                   )
               ),
 
-              Padding(
-                padding: EdgeInsets.only(top: deviceHeight * 0.06),
-                child: RoundButton(
-                  title: 'Send OTP',
-                  onTap: () {
-                    if (loginController.formKey.currentState!.validate()) {
-                      loginController.sendOtp();
-                      // if (loginController.mobileNumberController.text.isEmpty) {
-                      //   Utils().snackBar("Please Fill Mobile Number...",'');
-                    }
-                    // else {
-                    //   Get.to(() => OtpScreen(mobileNo: loginController.mobileNumberController.text,));
-                    // }
-                  },
-                ),
+              Obx(
+                () {
+                  return Padding(
+                    padding: EdgeInsets.only(top: deviceHeight * 0.06),
+                    child: RoundButton(
+                      title: 'Send OTP',
+                      onTap: () {
+                        if (loginController.formKey.currentState!.validate()) {
+                          // loginController.checkNumberRegister();
+                          loginController.sendOtp();
+                          // if (loginController.mobileNumberController.text.isEmpty) {
+                          //   Utils().snackBar("Please Fill Mobile Number...",'');
+                        }
+                        // else {
+                        //   Get.to(() => OtpScreen(mobileNo: loginController.mobileNumberController.text, verificationID: '',));
+                        // }
+                      },
+                      loading: loginController.isLoading.value,
+                    ),
+                  );
+                },
               ),
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.06),
-                child: Text(
-                  "Login With e-mail",
-                  style: ConstFontStyle().buttonTextStyle,
+                child: GestureDetector(
+                  onTap: () {
+
+                  },
+                  child: Text(
+                    "Login With e-mail",
+                    style: ConstFontStyle().buttonTextStyle,
+                  ),
                 ),
               )
             ],
