@@ -7,7 +7,6 @@ class ConstColor {
 
   static const Color primaryColor = Color(0xff58E967);
   static const Color backGroundColor = Color(0xff131313);
-  static const Color selectedColor = Color(0xff572222);
 
   static const Color black = Colors.black;
   static const Color white = Colors.white;

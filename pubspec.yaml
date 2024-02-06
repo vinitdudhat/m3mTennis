@@ -45,6 +45,7 @@ dependencies:
   cloud_firestore: ^4.15.3
   firebase_auth: ^4.17.3
   form_field_validator: ^1.1.0
+  uuid: ^4.3.3
 
 
 dev_dependencies:
