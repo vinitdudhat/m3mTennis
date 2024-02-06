@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:m3m_tennis/comman/constAsset.dart';
 import 'package:m3m_tennis/comman/constFontStyle.dart';
+import 'package:m3m_tennis/screens/authentication/sucess_Screen.dart';
 
 import '../../comman/constColor.dart';
 import '../../widget/button_widget.dart';
@@ -17,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+
   @override
   Widget build(BuildContext context) {
     var deviceHeight = MediaQuery.of(context).size.height;
@@ -69,7 +73,39 @@ class _LoginScreenState extends State<LoginScreen> {
             Padding(
               padding: EdgeInsets.only(top: deviceHeight * 0.02),
               child: RoundButtonWithIcon(
-                onTap: () {},
+                onTap: () async {
+                  final GoogleSignIn googleSignIn = GoogleSignIn();
+                  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+                  // Future<User?> signInWithGoogle(BuildContext context) async {
+                    try {
+                      final GoogleSignInAccount? googleSignInAccount = await googleSignIn
+                          .signIn();
+                      if (googleSignInAccount != null) {
+                        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount
+                            .authentication;
+                        final AuthCredential credential = GoogleAuthProvider.credential(
+                          accessToken: googleSignInAuthentication.accessToken,
+                          idToken: googleSignInAuthentication.idToken,
+                        );
+                        final UserCredential authResult = await _auth.signInWithCredential(
+                            credential);
+                        final User? user = authResult.user;
+                        print("userr++++"+user.toString());
+                        if (user != null) {
+                          Get.to(() => const SuccessScreen());
+                          setState(() {});
+                        }else{
+                          print("user is null");
+                        }
+                        // return user;
+                      }
+                    } catch (error) {
+                      print("eeee+++++"+error.toString());
+                      return null;
+                    }
+                  // }
+                },
                 title: 'Login with e-mail',
                 image: ConstAsset.emailIcon,
               ),

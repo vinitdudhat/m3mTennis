@@ -89,7 +89,7 @@ class _MobileNumScreenState extends State<MobileNumScreen> {
                           //   Utils().snackBar("Please Fill Mobile Number...",'');
                         }
                         // else {
-                        //   Get.to(() => OtpScreen(mobileNo: loginController.mobileNumberController.text,));
+                        //   Get.to(() => OtpScreen(mobileNo: loginController.mobileNumberController.text, verificationID: '',));
                         // }
                       },
                       loading: loginController.isLoading.value,
@@ -99,9 +99,14 @@ class _MobileNumScreenState extends State<MobileNumScreen> {
               ),
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.06),
-                child: Text(
-                  "Login With e-mail",
-                  style: ConstFontStyle().buttonTextStyle,
+                child: GestureDetector(
+                  onTap: () {
+
+                  },
+                  child: Text(
+                    "Login With e-mail",
+                    style: ConstFontStyle().buttonTextStyle,
+                  ),
                 ),
               )
             ],
