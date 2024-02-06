@@ -17,6 +17,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   LoginController loginController = Get.put(LoginController());
   final dbref = FirebaseDatabase.instance.ref('Users');
   String? mobileNumber;
+  String email = '';
+  String userName = '';
+  String profilePhoto = '';
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("idd++++"+loginController.id.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       backgroundColor: ConstColor.backGroundColor,
       body: StreamBuilder(
-        stream: dbref.child("85f96a47-a6bc-4aa9-acc5-6b77179a6fea").onValue,
+        stream: dbref.child(loginController.id.toString()).onValue,
         builder: (context, snapshot) {
           if(!snapshot.hasData){
             return Center(child: CircularProgressIndicator(),);
@@ -45,7 +54,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Map? userDetails = snapshot.data!.snapshot.value as Map?;
             print(userDetails);
 
-            mobileNumber = userDetails!['Mobileo'].toString();
+            mobileNumber = userDetails?['MobileNo'].toString();
+            email = userDetails!['Email'].toString();
+            userName = userDetails['UserName'].toString();
+            profilePhoto = userDetails['ProfilePic'].toString();
 
             return Column(
               children: [
@@ -62,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             backgroundColor: ConstColor.primaryColor,
                             radius: 65,
                             child: ClipOval(
-                                child: Image.asset(ConstAsset.avatar)),
+                                child: profilePhoto.isEmpty ? Image.asset(ConstAsset.avatar) : Image.network(profilePhoto.toString())),
                           ),
                         ),
                         Positioned(
@@ -84,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Aditi Sharma",style: ConstFontStyle().mainTextStyle2,),
+                      Text(userName ?? "",style: ConstFontStyle().mainTextStyle2,),
                       Icon(Icons.edit_outlined,color: ConstColor.primaryColor,)
                     ],
                   ),
@@ -166,7 +178,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text("Email",style: ConstFontStyle().mainTextStyle.copyWith(
                       color: ConstColor.greyTextColor
                   ),),
-                  Text(loginController.email.isEmpty ? "m3mtennis@gmail.com" : loginController.email.value.toString(),style: ConstFontStyle().mainTextStyle.copyWith(
+                  Text(email ?? "" ,style: ConstFontStyle().mainTextStyle.copyWith(
                       color: ConstColor.greyTextColor
                   ),)
                 ],

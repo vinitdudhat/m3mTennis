@@ -1,7 +1,5 @@
 
 import 'dart:developer';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,17 +17,12 @@ class LoginController extends GetxController {
   RxString userName = ''.obs;
   RxString email = ''.obs;
   RxString photo = ''.obs;
+  String id = '';
   final GlobalKey<FormState> formKey = GlobalKey();
   String? verificationID;
-
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  final _dbRef = FirebaseDatabase.instance.ref('Users');
-
-
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final FirebaseAuth auth = FirebaseAuth.instance;
-
-
+  final _dbRef = FirebaseDatabase.instance.ref('Users');
 
   signInWithGoogle() async {
     try {
@@ -51,6 +44,19 @@ class LoginController extends GetxController {
         userName.value = user.displayName.toString();
         email.value = user.email.toString();
         photo.value = user.photoURL.toString();
+        String? uid = value.user?.uid;
+        id = value.user!.uid;
+        print("id"+id.toString());
+        _dbRef.child(uid!).set({
+          "CountryCode" : 'IN',
+          "DialCode" : "+91",
+          "MobileNo" : "xxx xxx xxx",
+          "createdAt" : getCurrentTime(),
+          "UserName": user.displayName.toString(),
+          "Email" : user.email.toString(),
+          "ProfilePic" : user.photoURL.toString(),
+          'userId' : uid,
+        });
         print("name or email"+user.email.toString()+user.displayName.toString());
         Get.to(() => const SuccessScreen());
       } else {
@@ -109,12 +115,13 @@ class LoginController extends GetxController {
 
       print("userCredential : $userCredential");
       String? uid = userCredential.user?.uid;
+      id = userCredential.user!.uid;
+      print("id" + id.toString());
       print("uid : $uid");
       checkAlreadyAccount(uid!);
 
     } catch (e) {
       isLoading.value = false;
-      // Utils().snackBar(context,"Invalid OTP");
     }
   }
 
@@ -132,11 +139,14 @@ class LoginController extends GetxController {
     });
 
     if(isAlreadyAccount) {
-      _dbRef.child(uid!).set({
+      _dbRef.child(uid).set({
         "CountryCode" : 'IN',
         "DialCode" : "+91",
         "MobileNo" : mobileNumberController.text,
         "createdAt" : getCurrentTime(),
+        "UserName": "m3mtennis",
+        "Email" : "m3mtennis@gmail.com",
+        "ProfilePic" : null,
         'userId' : uid,
       });
       isLoading.value = false;
