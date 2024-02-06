@@ -2,13 +2,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:m3m_tennis/comman/snackbar.dart';
 import 'package:m3m_tennis/screens/authentication/otp_Screen.dart';
+import 'package:m3m_tennis/screens/authentication/sucess_Screen.dart';
 
 class LoginController extends GetxController {
   TextEditingController mobileNumberController = TextEditingController();
   RxBool isLoading = false.obs;
   final GlobalKey<FormState> formKey = GlobalKey();
+
+
+
 
   sendOtp() async {
     try {
