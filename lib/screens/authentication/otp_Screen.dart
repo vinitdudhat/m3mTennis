@@ -32,7 +32,7 @@ class _OtpScreenState extends State<OtpScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    loginController.mobileNumberController.text = widget.mobileNo.toString();
+    loginController.mobileNumberController1.text = widget.mobileNo.toString();
     loginController.verificationID = widget.verificationID;
   }
 
@@ -42,8 +42,8 @@ class _OtpScreenState extends State<OtpScreen> {
     var deviceWidth = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async {
-        return true;
-        // return false;
+        // return true;
+        return false;
       },
       child: Scaffold(
         backgroundColor: ConstColor.backGroundColor,
@@ -76,7 +76,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     child: CommonTextfield(
                       obSecure: false,
                       readOnly: true,
-                      controller: loginController.mobileNumberController,
+                      controller: loginController.mobileNumberController1,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(10),
                       ],
@@ -158,6 +158,7 @@ class _OtpScreenState extends State<OtpScreen> {
                             Text(time.toString(),style : ConstFontStyle().buttonTextStyle),
                         interval: Duration(milliseconds: 100),
                         onFinished: () {
+                          loginController.sendOtp(loginController.mobileNumberController1.text);
                           print('Timer is done!');
                         },
                         seconds: 60,
