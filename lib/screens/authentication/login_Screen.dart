@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,9 +26,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
 
   LoginController loginController = Get.put(LoginController());
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  final GoogleSignIn googleSignIn = GoogleSignIn();
-
   @override
   Widget build(BuildContext context) {
     var deviceHeight = MediaQuery
@@ -86,8 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: EdgeInsets.only(top: deviceHeight * 0.02),
               child: RoundButtonWithIcon(
                 onTap: () {
-                  signInWithGoogle(context);
-                  // signInwithGoogle(context);
+                  loginController.signInWithGoogle();
                 },
                 title: 'Login with e-mail',
                 image: ConstAsset.emailIcon,
@@ -99,58 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Future<void> signInwithGoogle(context) async {
-  //   try {
-  //     final GoogleSignInAccount? googleSignInAccount =
-  //     await googleSignIn.signIn();
-  //     final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
-  //     final AuthCredential credential = GoogleAuthProvider.credential(
-  //       accessToken: googleSignInAuthentication.accessToken,
-  //       idToken: googleSignInAuthentication.idToken,
-  //     );
-  //     final result = await auth.signInWithCredential(credential);
-  //     print('${result.user!.email}+++++++++++++++++++++++++++++++');
-  //     if (result != null) {
-  //       Utils().snackBar('Login Successfull!!!', "");
-  //       Get.to(()=> SuccessScreen());
-  //       setState(() { });
-  //     }else{
-  //       print("error resilt null");
-  //     }
-  //   } on FirebaseAuthException catch (e) {
-  //     Utils().snackBar(e.toString(), "+Error");
-  //     print('${e.message}***************************************************');
-  //     throw e;
-  //   }
-  // }
-  // final GoogleSignIn googleSignIn = GoogleSignIn();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<User?> signInWithGoogle(BuildContext context) async {
-    try {
-      final GoogleSignInAccount? googleSignInAccount = await googleSignIn
-          .signIn();
-      if (googleSignInAccount != null) {
-        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount
-            .authentication;
-        final AuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleSignInAuthentication.accessToken,
-          idToken: googleSignInAuthentication.idToken,
-        );
-        final UserCredential authResult = await _auth.signInWithCredential(
-            credential);
-        final User? user = authResult.user;
-        if (user != null) {
-          Get.to(() => SuccessScreen());
-          setState(() {});
-        }else{
-          print("user is null");
-        }
-        return user;
-      }
-    } catch (error) {
-      print(error);
-      return null;
-    }
-  }
+
+
 }
