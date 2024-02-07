@@ -81,12 +81,12 @@ class _MobileNumScreenState extends State<MobileNumScreen> {
                     padding: EdgeInsets.only(top: deviceHeight * 0.06),
                     child: RoundButton(
                       title: 'Send OTP',
-                      onTap: () {
+                      onTap: loginController.isLoading.value ? () => null  : () {
                         if (loginController.formKey.currentState!.validate()) {
                           // loginController.checkNumberRegister();
                           loginController.sendOtp(loginController.mobileNumberController.text);
                           // if (loginController.mobileNumberController.text.isEmpty) {
-                          //   Utils().snackBar("Please Fill Mobile Number...",'');
+                          //   Utils().snackBar(message:"Please Fill Mobile Number...",'');
                         }
                         // else {
                         //   Get.to(() => OtpScreen(mobileNo: loginController.mobileNumberController.text, verificationID: '',));

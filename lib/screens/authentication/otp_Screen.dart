@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 import 'package:m3m_tennis/screens/authentication/sucess_Screen.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -91,57 +92,74 @@ class _OtpScreenState extends State<OtpScreen> {
                 Padding(
                   padding: EdgeInsets.only(top: deviceHeight * 0.1, right: deviceWidth * 0.06,
                     left: deviceWidth * 0.06, ),
-                  child: PinCodeTextField(
-                    controller: loginController.otpController,
-                    appContext: context,
-                    pastedTextStyle: TextStyle(
-                      color: ConstColor.greyTextColor,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20,
-                      fontFamily: ConstFont.popinsMedium
+                  child: Form(
+                    key: loginController.formKey1,
+                    child: PinCodeTextField(
+                      controller: loginController.otpController,
+                      appContext: context,
+                      pastedTextStyle: TextStyle(
+                        color: ConstColor.greyTextColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                        fontFamily: ConstFont.popinsMedium
+                      ),
+                      length: 6,
+                      blinkWhenObscuring: true,
+                      animationType: AnimationType.fade,
+                      // validator: (v) {
+                      //   if (v!.length < 6) {
+                      //     return "I'm from validator";
+                      //   } else {
+                      //     return null;
+                      //   }
+                      // },
+                      pinTheme: PinTheme(
+                        shape: PinCodeFieldShape.underline,
+                        fieldHeight: 50,
+                        fieldWidth: 40,
+                        activeColor: ConstColor.greyTextColor,
+                        activeFillColor: ConstColor.greyTextColor,
+                        inactiveColor: ConstColor.greyTextColor,
+                          selectedColor : ConstColor.greyTextColor
+                      ),
+                      cursorColor: ConstColor.greyTextColor,
+                      animationDuration: Duration(milliseconds: 300),
+                      enableActiveFill: false,
+                      keyboardType: TextInputType.number,
+                      boxShadows: const [
+                        BoxShadow(
+                          offset: Offset(0, 1),
+                          color: Colors.black12,
+                          blurRadius: 10,
+                        )
+                      ],
+                      onCompleted: (v) {
+                        debugPrint("Completed");
+                      },
+                      validator: MultiValidator([
+                        RequiredValidator(
+                            errorText:
+                            'Please enter OTP'),
+                        LengthRangeValidator(min: 6, max: 6, errorText: "Please enter valid OTP"),
+                      ]),
                     ),
-                    length: 6,
-                    blinkWhenObscuring: true,
-                    animationType: AnimationType.fade,
-                    // validator: (v) {
-                    //   if (v!.length < 6) {
-                    //     return "I'm from validator";
-                    //   } else {
-                    //     return null;
-                    //   }
-                    // },
-                    pinTheme: PinTheme(
-                      shape: PinCodeFieldShape.underline,
-                      fieldHeight: 50,
-                      fieldWidth: 40,
-                      activeColor: ConstColor.greyTextColor,
-                      activeFillColor: ConstColor.greyTextColor,
-                      inactiveColor: ConstColor.greyTextColor,
-                        selectedColor : ConstColor.greyTextColor
-                    ),
-                    cursorColor: ConstColor.greyTextColor,
-                    animationDuration: Duration(milliseconds: 300),
-                    enableActiveFill: false,
-                    keyboardType: TextInputType.number,
-                    boxShadows: const [
-                      BoxShadow(
-                        offset: Offset(0, 1),
-                        color: Colors.black12,
-                        blurRadius: 10,
-                      )
-                    ],
-                    onCompleted: (v) {
-                      debugPrint("Completed");
-                    },
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: deviceHeight * 0.06),
-                  child: RoundButton(
-                    title: 'Verify',
-                    onTap: () {
-                      loginController.checkValidOtp();
-                    },
+                Obx(
+                  () => Padding(
+                    padding: EdgeInsets.only(top: deviceHeight * 0.06),
+                    child: RoundButton(
+                      loading: loginController.isLoading.value,
+                      title: 'Verify',
+                      onTap: loginController.isLoading.value
+                          ? () => null
+                          : () {
+                        if (loginController.formKey1.currentState!
+                            .validate()) {
+                          loginController.checkValidOtp();
+                        }
+                      },
+                    ),
                   ),
                 ),
                 Padding(

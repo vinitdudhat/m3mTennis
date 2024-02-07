@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:m3m_tennis/screens/authentication/login_Screen.dart';
+import 'package:m3m_tennis/screens/practise_screen.dart';
 import 'package:m3m_tennis/screens/splash_screen.dart';
 
 void main() async {
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       // home: HomeScreen(),
       home: SplashScreen(),
+      // home: ChartPage(),
       // LoginScreen(),
     );
   }

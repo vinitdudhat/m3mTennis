@@ -12,12 +12,20 @@ class ConstFontStyle{
     fontFamily: ConstFont.popinsRegular,
   );
 
-  final TextStyle mainTextStyle1 = TextStyle(
+  final TextStyle titleTextStyle1 = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w500,
     color: ConstColor.white,
     fontFamily: ConstFont.popinsBold,
   );
+  
+  final TextStyle mainTextStyle1 = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w500,
+    color: ConstColor.greyTextColor,
+    fontFamily: ConstFont.popinsBold,
+  );
+  
   final TextStyle mainTextStyle2 = TextStyle(
     fontSize: 24,
     color: ConstColor.greyTextColor,
@@ -48,11 +56,35 @@ class ConstFontStyle{
       color: ConstColor.white
   );
 
+  final TextStyle titleText1 = TextStyle(
+      fontFamily: ConstFont.popinsRegular,
+      fontSize: 14,
+      color: ConstColor.white
+  );
+
   final TextStyle lableTextStyle = TextStyle(
       fontFamily: ConstFont.popinsRegular,
       fontSize: 18,
       color: ConstColor.greyTextColor
   );
 
+  final TextStyle textStyle1 = TextStyle(
+      fontFamily: ConstFont.popinsRegular,
+      fontSize: 14,
+      color: ConstColor.black
+  );
+
+
+  final TextStyle headline1 = TextStyle(
+      fontFamily: ConstFont.popinsRegular,
+      fontSize: 12,
+      color: ConstColor.primaryColor
+  );
+
+  final TextStyle headline2 = TextStyle(
+      fontFamily: ConstFont.popinsRegular,
+      fontSize: 14,
+      color: ConstColor.primaryColor
+  );
 
 }

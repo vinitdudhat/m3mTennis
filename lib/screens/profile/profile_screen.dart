@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:m3m_tennis/comman/const_fonts.dart';
 import 'package:m3m_tennis/controller/authentication/login_Controller.dart';
 import 'package:get/get.dart';
 import 'package:m3m_tennis/screens/authentication/login_Screen.dart';
@@ -18,50 +19,47 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  LoginController loginController = Get.put(LoginController());
+  // LoginController loginController = Get.put(LoginController());
   final dbref = FirebaseDatabase.instance.ref('Users');
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
   String? mobileNumber;
   String email = '';
   String userName = '';
-  String profilePhoto = '';
+  String? profilePhoto;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("idd++++"+loginController.id.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     var deviceHeight = MediaQuery.of(context).size.height;
     var deviceWidth = MediaQuery.of(context).size.width;
+    var userId = auth.currentUser?.uid;
+    print("userId+++++++"+ userId.toString());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ConstColor.backGroundColor,
         title: Text("Profile",style : ConstFontStyle().titleText),
         centerTitle: true,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Get.back();
+          },
           icon: Icon(Icons.arrow_back_ios,color: ConstColor.backBtnColor,),
         ),
         actions: [
           IconButton(onPressed: () async {
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            // FirebaseAuth auth = FirebaseAuth.instance;
-            // await auth.signOut().then((value) async {
-            //   print('User logged out');
-            //   await prefs.clear();
-            //   Get.offAll(() => LoginScreen());
-            // });
-
-            await prefs.clear();
-            Get.offAll(() => LoginScreen());
+            logoutBottomSheet(context);
           }, icon: Icon(Icons.logout,color: ConstColor.backBtnColor,))
         ],
       ),
       backgroundColor: ConstColor.backGroundColor,
       body: StreamBuilder(
-        stream: dbref.child(loginController.id.toString()).onValue,
+        stream: dbref.child(userId.toString()).onValue,
         builder: (context, snapshot) {
           if(!snapshot.hasData){
             return Center(child: CircularProgressIndicator(),);
@@ -72,7 +70,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             mobileNumber = userDetails?['MobileNo'].toString();
             email = userDetails!['Email'].toString();
             userName = userDetails['UserName'].toString();
-            profilePhoto = userDetails['ProfilePic'].toString();
+            if(userDetails['ProfilePic'] != null ) {
+              profilePhoto = userDetails['ProfilePic'].toString();
+            }
 
             return Column(
               children: [
@@ -89,7 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             backgroundColor: ConstColor.primaryColor,
                             radius: 65,
                             child: ClipOval(
-                                child: profilePhoto.isEmpty ? Image.asset(ConstAsset.avatar) : Image.network(profilePhoto.toString())),
+                                child: profilePhoto == null ? Image.asset(ConstAsset.avatar) : Image.network(profilePhoto.toString())),
                           ),
                         ),
                         Positioned(
@@ -242,5 +242,174 @@ class _ProfileScreenState extends State<ProfileScreen> {
         },
       ),
     );
+  }
+
+  void logoutBottomSheet(BuildContext context) {
+
+    showModalBottomSheet(
+      context: context,
+      // isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius:
+          BorderRadius.vertical(
+            top: Radius.circular(15),
+          )
+      ),
+      backgroundColor: ConstColor.btnBackGroundColor,
+      builder: (BuildContext context) {
+        return Container(
+          width: double.infinity,
+          height: MediaQuery
+              .of(context)
+              .size
+              .height * 0.33,
+          decoration: BoxDecoration(
+            color: ConstColor.btnBackGroundColor,
+              borderRadius:
+              BorderRadius.vertical(
+                top: Radius.circular(15),
+              )
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0,vertical: 5),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                 Padding(
+                    padding: EdgeInsets.only(bottom: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.015),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        IconButton(onPressed: () {
+                          Get.back();
+                        }, icon: Icon(Icons.close,size: 25,color: ConstColor.greyTextColor,)
+                        ),
+                        Text("Confirmation",
+                          style: ConstFontStyle().mainTextStyle1!.copyWith(fontFamily: ConstFont.popinsMedium,)),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.135),
+                    child: Text(
+                      "Are you sure you want to logout?",
+                      textAlign: TextAlign.center,
+                      style: ConstFontStyle().buttonTextStyle),
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.only(bottom: MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.02),
+
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Get.back();
+                          },
+                          child: Card(
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25)),
+                            child: Container(
+                              height: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height * 0.044,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width * 0.27,
+                              decoration: BoxDecoration(
+                                  // color: Color(0xffD6D1D3),
+                                  border: Border.all(color: Color(0xffD6D1D3)),
+                                  borderRadius: BorderRadius.circular(25)),
+                              child: Center(
+                                child: Text(
+                                  'Cancel',
+                                    style: ConstFontStyle().mainTextStyle
+
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () async {
+                            FirebaseAuth auth = FirebaseAuth.instance;
+                            await auth.signOut().then((value) async {
+                              print('User logged out');
+                              SharedPreferences prefs = await SharedPreferences.getInstance();
+                              await prefs.clear();
+                              Get.offAll(() => LoginScreen());
+                            });
+                           },
+                          child: Card(
+                            elevation: 4,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25)),
+                            child: Container(
+                              height: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .height * 0.044,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width * 0.27,
+                              decoration: BoxDecoration(
+                                  color: ConstColor.primaryColor,
+                                  borderRadius: BorderRadius.circular(25)),
+                              child: Center(
+                                child: Text(
+                                  'Confirm',
+                                  style: ConstFontStyle().mainTextStyle!.copyWith(color: ConstColor.btnBackGroundColor)
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),); // Replace with your bottom sheet widget
+      },);
+    // showModalBottomSheet(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return Container(
+    //       padding: EdgeInsets.all(16.0),
+    //       child: Column(
+    //         mainAxisSize: MainAxisSize.min,
+    //         children: <Widget>[
+    //           ListTile(
+    //             leading: Icon(Icons.exit_to_app),
+    //             title: Text('Logout'),
+    //             onTap: () {
+    //               // SharedPreferences prefs = await SharedPreferences.getInstance();
+    //               // await prefs.clear();
+    //               // Get.offAll(() => LoginScreen());
+    //               Navigator.pop(context);
+    //             },
+    //           ),
+    //         ],
+    //       ),
+    //     );
+    //   },
+    // );
   }
 }

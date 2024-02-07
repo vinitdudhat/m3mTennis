@@ -50,7 +50,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                 padding: EdgeInsets.only(top: deviceHeight * 0.3),
                 child: Text(
                   "SUCCESS!!",
-                  style: ConstFontStyle().mainTextStyle1,
+                  style: ConstFontStyle().titleTextStyle1,
                 ),
               ),
               Padding(

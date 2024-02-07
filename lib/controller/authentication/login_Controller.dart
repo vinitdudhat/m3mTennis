@@ -1,4 +1,3 @@
-
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -22,10 +21,114 @@ class LoginController extends GetxController {
   RxString photo = ''.obs;
   String id = '';
   final GlobalKey<FormState> formKey = GlobalKey();
+  final GlobalKey<FormState> formKey1 = GlobalKey();
   String? verificationID;
   final GoogleSignIn googleSignIn = GoogleSignIn();
   final FirebaseAuth auth = FirebaseAuth.instance;
   final _dbRef = FirebaseDatabase.instance.ref('Users');
+
+
+  sendOtp(String mobileNumber) async {
+    isLoading.value = true;
+
+    try {
+      await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: '+91' + mobileNumber,
+        verificationCompleted: (PhoneAuthCredential credential) {},
+        verificationFailed: (FirebaseAuthException e) {
+          isLoading.value = false;
+          Utils().snackBar(message: "Something went wrong. Please try again.");
+          // Utils().snackBar(message: e.toString());
+
+          // reusable().showMessage(context,"OTP not send. Please try again");
+        },
+        codeSent: (String verificationId, int? resendToken) {
+          isLoading.value = false;
+          print('codesent');
+          String verification = verificationId;
+          print(verification);
+          verificationID = verificationId;
+
+          Utils().snackBar(message: "OTP send to your mobile number.");
+          Get.to(() => OtpScreen(
+                mobileNo: mobileNumber,
+                verificationID: verification,
+              ));
+          mobileNumberController.clear();
+
+          // Get.to(() =>  Otpscreen(verification: verification, mobileNumber: phoneNumber.text.toString(), dialCode: dialCode,));
+        },
+        codeAutoRetrievalTimeout: (String verificationId) {},
+      );
+    } catch (e) {
+      isLoading.value = false;
+      Utils().snackBar(message: "Something went wrong. Please try again.");
+      print("otp not sent");
+    }
+  }
+
+  void checkValidOtp() async {
+    print(otpController.text);
+    isLoading.value = true;
+
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+          verificationId: verificationID!, smsCode: otpController.text);
+      print("credential : $credential");
+
+      UserCredential userCredential =
+          await auth.signInWithCredential(credential);
+      // await auth.signInWithCredential(credential);
+
+      print("userCredential : $userCredential");
+      String? uid = userCredential.user?.uid;
+      id = userCredential.user!.uid;
+      print("id" + id.toString());
+      print("uid : $uid");
+
+      checkAlreadyAccount(uid!);
+    } catch (e) {
+      isLoading.value = false;
+    }
+  }
+
+  checkAlreadyAccount(String uid) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final _dbref = FirebaseDatabase.instance.ref().child('Users');
+    DataSnapshot snapshot = await _dbref.get();
+    Map usersMap = snapshot.value as Map;
+    bool isAlreadyAccount = false;
+
+    usersMap.forEach((key, value) {
+      int? number = int.tryParse(mobileNumberController1.text.toString());
+      if (number == value['MobileNo']) {
+        isAlreadyAccount = true;
+      }
+    });
+
+    if (!isAlreadyAccount) {
+      _dbRef.child(uid!).set({
+        "CountryCode": 'IN',
+        "DialCode": "+91",
+        "MobileNo": mobileNumberController1.text,
+        "createdAt": getCurrentTime(),
+        "UserName": "m3mtennis",
+        "Email": "m3mtennis@gmail.com",
+        "ProfilePic": null,
+        'userId': uid,
+      });
+      isLoading.value = false;
+    } else {
+      isLoading.value = false;
+    }
+    mobileNumberController1.clear();
+    otpController.clear();
+
+    prefs.setString(SharedPreferenKey.userId, uid!);
+    prefs.setBool(SharedPreferenKey.isLogin, true);
+    Get.offAll(() => SuccessScreen());
+  }
 
   signInWithGoogle() async {
     try {
@@ -39,127 +142,56 @@ class LoginController extends GetxController {
       );
       print("Token----------${googleAuth.accessToken}");
       print("Token---------${googleUser.email.toString()}");
-      final value = await FirebaseAuth.instance.signInWithCredential(
-          credential);
+      final value =
+      await FirebaseAuth.instance.signInWithCredential(credential);
       log(value.credential!.accessToken!);
       final User? user = value.user;
+      print("user : $user");
+
       if (user != null) {
-        userName.value = user.displayName.toString();
-        email.value = user.email.toString();
-        photo.value = user.photoURL.toString();
-        String? uid = value.user?.uid;
         id = value.user!.uid;
-        print("id"+id.toString());
-        _dbRef.child(uid!).set({
-          "CountryCode" : 'IN',
-          "DialCode" : "+91",
-          "MobileNo" : "xxx xxx xxx",
-          "createdAt" : getCurrentTime(),
-          "UserName": user.displayName.toString(),
-          "Email" : user.email.toString(),
-          "ProfilePic" : user.photoURL.toString(),
-          'userId' : uid,
-        });
-        print("name or email"+user.email.toString()+user.displayName.toString());
-        Get.to(() => const SuccessScreen());
+        print("id********" + id.toString());
+        checkAlreadyAccountGoogle(id, user.email.toString(),
+            user.displayName.toString(), user.photoURL.toString());
+
       } else {
+        Utils().snackBar(message:"Something went wrong. Please try again.");
         print("e+++++");
       }
-    }catch(e){
-      print("erroororr"+e.toString());
-    }
-  }
-
-  sendOtp(String mobileNumber) async {
-    isLoading.value = true;
-
-    try {
-        await FirebaseAuth.instance.verifyPhoneNumber(
-          phoneNumber: '+91' + mobileNumber,
-          verificationCompleted:
-              (PhoneAuthCredential credential) {},
-          verificationFailed: (FirebaseAuthException e) {
-            isLoading.value = false;
-
-            Utils().snackBar("", e.toString());
-
-            // reusable().showMessage(context,"OTP not send. Please try again");
-          },
-          codeSent:
-              (String verificationId, int? resendToken) {
-                isLoading.value = false;
-               print('codesent');
-            String verification = verificationId;
-            print(verification);
-
-                Get.to(() => OtpScreen(mobileNo: mobileNumber, verificationID: verification,));
-                mobileNumberController.clear();
-
-                // Get.to(() =>  Otpscreen(verification: verification, mobileNumber: phoneNumber.text.toString(), dialCode: dialCode,));
-          },
-          codeAutoRetrievalTimeout:
-              (String verificationId) {
-          },
-        );
-      } catch (e) {
-      isLoading.value = false;
-        print("otp not sent");
-      }
-  }
-
-  void checkValidOtp() async {
-    print(otpController.text);
-    isLoading.value = true;
-
-    try {
-      PhoneAuthCredential credential =
-      PhoneAuthProvider.credential(
-          verificationId: verificationID!,
-          smsCode: otpController.text);
-      print("credential : $credential");
-
-      UserCredential userCredential = await auth.signInWithCredential(credential);
-      await auth.signInWithCredential(credential);
-
-      print("userCredential : $userCredential");
-      String? uid = userCredential.user?.uid;
-      id = userCredential.user!.uid;
-      print("id" + id.toString());
-      print("uid : $uid");
-
-      checkAlreadyAccount(uid!);
-
     } catch (e) {
-      isLoading.value = false;
+      Utils().snackBar(message: "Something went wrong. Please try again.");
+      // Utils().snackBar(message: e.toString());
+      print("erroororr" + e.toString());
     }
   }
 
-  checkAlreadyAccount(String uid) async {
+  checkAlreadyAccountGoogle(
+      String uid, String email, String userName, String profile) async {
     final prefs = await SharedPreferences.getInstance();
 
     final _dbref = FirebaseDatabase.instance.ref().child('Users');
-    DataSnapshot  snapshot = await _dbref.get();
+    DataSnapshot snapshot = await _dbref.get();
     Map usersMap = snapshot.value as Map;
     bool isAlreadyAccount = false;
 
     usersMap.forEach((key, value) {
-      int? number = int.tryParse(mobileNumberController1.text.toString());
-      if(number == value['MobileNo']) {
+      if (email == value['Email']) {
         isAlreadyAccount = true;
       }
     });
 
-    if(!isAlreadyAccount) {
+    if (!isAlreadyAccount) {
       _dbRef.child(uid!).set({
-        "CountryCode" : 'IN',
-        "DialCode" : "+91",
-        "MobileNo" : mobileNumberController1.text,
-        "createdAt" : getCurrentTime(),
-        "UserName": "m3mtennis",
-        "Email" : "m3mtennis@gmail.com",
-        "ProfilePic" : null,
-        'userId' : uid,
+        "CountryCode": 'IN',
+        "DialCode": "+91",
+        "MobileNo": "xxx xxx xxx",
+        "createdAt": getCurrentTime(),
+        "UserName": userName,
+        "Email": email,
+        "ProfilePic": profile,
+        'userId': uid,
       });
+      // });
       isLoading.value = false;
     } else {
       isLoading.value = false;
@@ -167,9 +199,9 @@ class LoginController extends GetxController {
     mobileNumberController1.clear();
     otpController.clear();
 
+    Utils().snackBar(message:"Login Successful");
     prefs.setString(SharedPreferenKey.userId, uid!);
     prefs.setBool(SharedPreferenKey.isLogin, true);
-    Get.to(()=>SuccessScreen());
+    Get.offAll(() => SuccessScreen());
   }
-
 }
