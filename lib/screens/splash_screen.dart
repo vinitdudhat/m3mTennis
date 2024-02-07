@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:m3m_tennis/comman/constAsset.dart';
+import 'package:m3m_tennis/comman/constColor.dart';
 import 'package:m3m_tennis/repository/const_pref_key.dart';
 import 'package:m3m_tennis/screens/authentication/login_Screen.dart';
 import 'package:m3m_tennis/screens/dashboard/home_Screen.dart';
@@ -39,6 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
     var deviceWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      backgroundColor: ConstColor.backGroundColor,
       body: Center(
         child: SizedBox(
             height: deviceHeight * 0.15,

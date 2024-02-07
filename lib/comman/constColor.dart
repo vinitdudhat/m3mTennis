@@ -12,6 +12,8 @@ class ConstColor {
   static const Color white = Colors.white;
 
   static const Color btnBackGroundColor = Color(0xff272B30);
+  static const Color cardBackGroundColor = Color(0xff41474C);
+  static const Color borderColor = Color(0xff272B30);
   static const Color lineColor = Color(0xff989898);
 
   // text

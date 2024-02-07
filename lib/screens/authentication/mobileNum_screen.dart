@@ -29,6 +29,7 @@ class _MobileNumScreenState extends State<MobileNumScreen> {
     var deviceHeight = MediaQuery.of(context).size.height;
     var deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: ConstColor.backGroundColor,
       body: SingleChildScrollView(
         child: Center(
           child: Column(

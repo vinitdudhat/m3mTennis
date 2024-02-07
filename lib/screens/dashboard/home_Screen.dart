@@ -41,7 +41,9 @@ class _HomeScreenState extends State<HomeScreen> {
     var deviceWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      backgroundColor: ConstColor.backGroundColor,
       appBar: AppBar(
+        backgroundColor: ConstColor.backGroundColor,
         title: Text("Book your next play",style: ConstFontStyle().titleText),
         // titleTextStyle :ConstFontStyle.titleText,
         centerTitle: true,
@@ -50,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Get.to(() => ProfileScreen());
             },
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person,color: ConstColor.greyTextColor,),
             // color: ,
           )
         ],
@@ -174,13 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                      ),
                                    ),
                                    Container(
-                                     // padding: EdgeInsets.symmetric(vertical: 10),
-                                     // height: deviceHeight,
                                      height: deviceHeight * 1.08,
-                                     // height: deviceHeight * 0.7,
                                      width: deviceWidth * 0.8,
-                                     // color: Colors.amber,
-
                                      child:  GridView.builder(
                                        controller: _scrollController,
                                        scrollDirection: Axis.vertical,
@@ -229,7 +226,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                ),
                                              ),
                                            );
-                                         } else {
+                                         }
+                                         else {
 
                                            // bool isBooked = ;
                                            // Map bookingData =

@@ -97,6 +97,9 @@ class _OtpScreenState extends State<OtpScreen> {
                     child: PinCodeTextField(
                       controller: loginController.otpController,
                       appContext: context,
+                      textStyle: TextStyle(
+                        color: ConstColor.greyTextColor
+                      ),
                       pastedTextStyle: TextStyle(
                         color: ConstColor.greyTextColor,
                         fontWeight: FontWeight.w600,
@@ -106,13 +109,6 @@ class _OtpScreenState extends State<OtpScreen> {
                       length: 6,
                       blinkWhenObscuring: true,
                       animationType: AnimationType.fade,
-                      // validator: (v) {
-                      //   if (v!.length < 6) {
-                      //     return "I'm from validator";
-                      //   } else {
-                      //     return null;
-                      //   }
-                      // },
                       pinTheme: PinTheme(
                         shape: PinCodeFieldShape.underline,
                         fieldHeight: 50,

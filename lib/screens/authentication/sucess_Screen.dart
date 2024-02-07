@@ -20,12 +20,6 @@ class _SuccessScreenState extends State<SuccessScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // Timer(
-    //   Duration(seconds: 3),
-    //   () {
-    //     Get.to(() => HomeScreen());
-    //   },
-    // );
   }
 
   @override
@@ -33,6 +27,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
     var deviceHeight = MediaQuery.of(context).size.height;
     var deviceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: ConstColor.backGroundColor,
       body: Center(
         child: SingleChildScrollView(
           child: Column(
