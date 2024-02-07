@@ -7,6 +7,7 @@ import 'package:m3m_tennis/repository/common_function.dart';
 class BookSlotController extends GetxController {
   RxInt selectedSlotIndex = 0.obs;
   String selectedSlotTime = "9:00 am - 10:00 am";
+  // String selected = "9:00 am - 10:00 am";
 
   List timeList = [8, 9, 10, 11, 12, 13,14,15,16];
   List slotList = ["8:00 am - 9:00 am", "9:00 am - 10:00 am", "10:00 am - 11:00 am", "11:00 am - 12:00 am",
