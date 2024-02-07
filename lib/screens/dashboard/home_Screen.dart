@@ -69,8 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
              var practiseData = bookingData!['Practise'];
              print("practiseData : $practiseData");
 
-             var bookingsData = bookingData!['User_Bookings'];
-             print("bookingsData : $bookingsData");
+             var userBookingsData = bookingData!['User_Bookings'];
+             print("userBookingsData : $userBookingsData");
 
              return Stack(
                children: [
@@ -103,7 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                      width: deviceWidth *0.2,
                                    ),
                                    Container(
-                                     height: deviceHeight * 2,
+                                     height: deviceHeight * 0.95,
+                                     // * 2,
                                      // height: deviceHeight * 0.7,
                                      width: deviceWidth * 0.2,
                                      // color: Colors.amber,
@@ -176,8 +177,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                      ),
                                    ),
                                    Container(
-                                     height: deviceHeight * 1.08,
+                                     // padding: EdgeInsets.symmetric(vertical: 10),
+                                     // height: deviceHeight,
+                                     height: deviceHeight * 0.95,
+                                     // height: deviceHeight * 1.08,
+                                     // height: deviceHeight * 0.7,
                                      width: deviceWidth * 0.8,
+                                     // color: Colors.amber,
+
                                      child:  GridView.builder(
                                        controller: _scrollController,
                                        scrollDirection: Axis.vertical,
@@ -190,19 +197,48 @@ class _HomeScreenState extends State<HomeScreen> {
                                          crossAxisSpacing: 0,
                                        ),
                                        cacheExtent: 9999,
-                                       itemCount:  bookSlotController.timeList.length * 2,
+                                       itemCount:  bookSlotController.slotList.length * 2,
                                        itemBuilder: (context, index) {
                                          int timeIndex = index ~/ 2;
-                                         var time = bookSlotController.timeList[timeIndex];
-                                         String slotTime = convertTo12HourFormat(time).toString().padLeft(2, '0') +" - "+ convertTo12HourFormat(bookSlotController.timeList[timeIndex+1]);
-                                         print("slotTime : $slotTime");
+                                         String slotTime = bookSlotController.slotList[timeIndex];
 
                                          String courtId = index % 2 == 0 ? 'EC'  : 'WC';
-                                         int practiseBookTime = courtId == 'EC' ? practiseData['EC']['bookTime'] : practiseData['WC']['bookTime'];
-                                         bool practiseSlot = practiseBookTime == time ? true : false;
+                                         bool isPractiseSlot = false;
 
+                                         if(courtId == 'EC') {
+                                           // print("length : ${practiseData['EC']['slotList'].length}");
+                                           if(practiseData['EC']['slotList'].length != 0) {
 
-                                         if(practiseSlot) {
+                                             for(int i=1; i <= practiseData['EC']['slotList'].length; i++) {
+                                               // print("i+++" + i.toString());
+                                               var slot = practiseData['EC']['slotList']["slot${i.toString()}"];
+                                               // print("sloti+++" + slot.toString());
+
+                                               String isPractiseSlotTime = slot['from'] +" - "+ slot['to'];
+                                               // print("isPractiseSlotTime : $isPractiseSlotTime");
+                                               // print("slotTime : $slotTime");
+
+                                               bool match = slotTime == isPractiseSlotTime;
+                                               if(match) {
+                                                 isPractiseSlot = true;
+                                               }
+                                               // print("isisPractiseSlot : $isPractiseSlot");
+                                             }
+                                           }
+                                         } else {
+                                           if(practiseData['WC']['slotList'].length != 0) {
+                                             for(int i=1; i <= practiseData['WC']['slotList'].length; i++) {
+                                               var slot = practiseData['WC']['slotList']["slot${i.toString()}"];
+                                               String isPractiseSlotTime = slot['from'] +" - "+ slot['to'];
+                                               bool match = slotTime == isPractiseSlotTime;
+                                               if(match) {
+                                                 isPractiseSlot = true;
+                                               }
+                                             }
+                                           }
+                                         }
+
+                                         if(isPractiseSlot) {
                                            return Container(
                                              decoration: BoxDecoration(
                                                color: Colors.transparent,
@@ -226,15 +262,54 @@ class _HomeScreenState extends State<HomeScreen> {
                                                ),
                                              ),
                                            );
-                                         }
-                                         else {
+                                         } else {
 
-                                           // bool isBooked = ;
-                                           // Map bookingData =
+                                           Map bookData = userBookingsData;
+                                           // print("bookData : $bookData");
+                                           bool isBookedSlot = false;
 
-                                           return GestureDetector(
+                                           bookData.forEach((key, value) {
+                                             // print("key : $key");
+                                             print("value : $value");
+                                             if(value['courtId'] == courtId) {
+                                               String bookedSlotTime = value['from'] +" - "+ value['to'];
+                                               print("slotTime $slotTime");
+                                               print("bookedSlotTime $bookedSlotTime");
+
+                                               bool match = slotTime ==  bookedSlotTime;
+                                               print("match $match");
+                                               if(match) {
+                                                 isBookedSlot = true;
+                                               }
+                                             }
+                                           });
+                                           print("isBookedSlot $isBookedSlot");
+
+                                           return  isBookedSlot ?
+                                           Container(
+                                             decoration: BoxDecoration(
+                                               // color: C,
+                                               border: Border(
+                                                 top: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
+                                                 right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
+                                               ),
+                                             ),
+                                             child: Center(
+                                               child:  Container(
+                                                 height: deviceHeight * 0.09,
+                                                 width: deviceWidth * 0.33,
+                                                 decoration: BoxDecoration(
+                                                     color: ConstColor.highLightBooking,
+                                                     borderRadius: BorderRadius.circular(5)
+                                                 ),
+                                                 child: Center(child: Text(
+                                                   slotTime, style:  ConstFontStyle().titleText1,)),
+                                               ),
+                                             ),
+                                           )
+                                               : GestureDetector(
                                              onTap: () {
-                                               print(time);
+                                               print(slotTime);
                                                print(courtId);
 
                                                bookSlotController.selectedSlotIndex.value = index;

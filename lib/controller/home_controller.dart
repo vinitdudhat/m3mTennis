@@ -6,10 +6,16 @@ import 'package:m3m_tennis/repository/common_function.dart';
 
 class BookSlotController extends GetxController {
   RxInt selectedSlotIndex = 0.obs;
-  String selectedSlotTime = "9:00 - 10:00 AM";
+  String selectedSlotTime = "9:00 am - 10:00 am";
+  // String selected = "9:00 am - 10:00 am";
 
   List timeList = [8, 9, 10, 11, 12, 13,14,15,16];
-  // List timeList = ["9:00 - 10:00 AM", "9:00 - 10:00 AM", "9:00 - 10:00 AM", "9:00 - 10:00 AM", 10, 11, 12, 13, 14, 15, 16];
+  List slotList = ["8:00 am - 9:00 am", "9:00 am - 10:00 am", "10:00 am - 11:00 am", "11:00 am - 12:00 am",
+    "12:00 am - 01:00 pm",
+    "01:00 pm - 02:00 pm",
+    "02:00 pm - 03:00 pm",
+    "03:00 pm - 04:00 pm",
+  ];
 
   String? currentDate;
   DateTime? selectedDate;
@@ -20,6 +26,14 @@ class BookSlotController extends GetxController {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
   confirmBookingSlot() {
+    print(selectedSlotTime);
+    List<String> times = selectedSlotTime.split(" - ");
+
+    String fromTime = times[0];
+    String toTime = times[1];
+    // print(fromTime);
+    // print(toTime);
+
     // print(auth.currentUser!.displayName.toString());
 
     String bookingId = uniqueString();
@@ -33,9 +47,11 @@ class BookSlotController extends GetxController {
         "name" : auth.currentUser?.displayName.toString(),
       },
       "date" : formatDate(selectedDate!),
-      "slotTime" : selectedSlotTime,
+      "from" : fromTime,
+      "to" : toTime,
+      "courtId" : "WC",
+      // "slotTime" : selectedSlotTime,
       "createdAt" : currentTime,
-      "updatedAt" : currentTime,
     });
   }
 
