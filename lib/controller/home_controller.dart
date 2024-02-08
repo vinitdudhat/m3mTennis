@@ -100,60 +100,87 @@ class BookSlotController extends GetxController {
 
     // final _dbref = FirebaseDatabase.instance.ref().child('_dbRef');
     DataSnapshot snapshot = await _dbRef.orderByChild('userId').equalTo(auth.currentUser?.uid).get();
-    Map bookingsData = snapshot.value as Map;
-    print(bookingsData);
-    print(bookingsData.length);
-    DateTime currentTime = DateTime.now();
-    String currentDate = currentTime!.toString().substring(0, 10);
-    // print("currentDate : $currentDate");
+    // print(snapshot.value == null);
 
-    bool userAbelToBook = true;
 
-    bookingsData.forEach((key, value) {
-      // print("date : ${value['date']}");
 
-      bool isSameDate = currentDate == value['date'];
-      // print('Is same date: $isSameDate');
+    if(snapshot.value != null) {
 
-      List<String> dateComponents = value['date'].split("-");
-      int year = int.parse(dateComponents[0]);
-      int month = int.parse(dateComponents[1]);
-      int day = int.parse(dateComponents[2]);
-      DateTime firebaseDate = DateTime(year, month, day);
-      bool isAfterDate = firebaseDate.isAfter(currentTime);
-      // print('isAfter date: $isAfterDate');
+      Map bookingsData = snapshot.value as Map;
+      print(bookingsData);
+      print(bookingsData.length);
+      DateTime currentTime = DateTime.now();
+      String currentDate = currentTime!.toString().substring(0, 10);
+      // print("currentDate : $currentDate");
 
-      // print("toTime : ${value['to']}");
+      bool userAbelToBook = true;
 
-      if(isAfterDate || isSameDate) {
-        print("date : ${value['date']}");
-        print("toTime : ${value['to']}");
-        String toTime = convertTo24HourFormat(value['to']);
-        print("toTime : $toTime");
-        List<String> timeParts = toTime.split(':');
+      bookingsData.forEach((key, value) {
+        // print("date : ${value['date']}");
 
-        DateTime targetTime = DateTime(
-          year,
-          month,
-          day,
-          int.parse(timeParts[0]),
-          int.parse(timeParts[1]),
-        );
+        bool isSameDate = currentDate == value['date'];
+        // print('Is same date: $isSameDate');
 
-        bool isAfterTargetTime = currentTime.isAfter(targetTime);
-        print('isAfterTargetTime $isAfterTargetTime');
+        List<String> dateComponents = value['date'].split("-");
+        int year = int.parse(dateComponents[0]);
+        int month = int.parse(dateComponents[1]);
+        int day = int.parse(dateComponents[2]);
+        DateTime firebaseDate = DateTime(year, month, day);
+        bool isAfterDate = firebaseDate.isAfter(currentTime);
+        // print('isAfter date: $isAfterDate');
 
-        bool isBookingCompleted = isAfterTargetTime;
-        print('isBookingCompleted $isBookingCompleted');
+        // print("toTime : ${value['to']}");
 
-        if (!isBookingCompleted) {
-          print('The booking is not complete.');
-          userAbelToBook = false;
+        if(isAfterDate || isSameDate) {
+          print("date : ${value['date']}");
+          print("toTime : ${value['to']}");
+          String toTime = convertTo24HourFormat(value['to']);
+          print("toTime : $toTime");
+          List<String> timeParts = toTime.split(':');
+
+          DateTime targetTime = DateTime(
+            year,
+            month,
+            day,
+            int.parse(timeParts[0]),
+            int.parse(timeParts[1]),
+          );
+
+          bool isAfterTargetTime = currentTime.isAfter(targetTime);
+          print('isAfterTargetTime $isAfterTargetTime');
+
+          bool isBookingCompleted = isAfterTargetTime;
+          print('isBookingCompleted $isBookingCompleted');
+
+          if (!isBookingCompleted) {
+            print('The booking is not complete.');
+            userAbelToBook = false;
+          }
         }
-      }
-    });
+      });
 
-    if (userAbelToBook) {
+
+      if (userAbelToBook) {
+        print('User abel to book');
+        Utils().snackBar(message: "User abel to book.");
+
+        int courtId = selectedCourtId == 'WC' ? 2 : 1;
+
+        DateTime dateTime =
+        DateTime.parse(selectedDate!.toString().substring(0, 10));
+        String formattedDate = DateFormat('dd MMM yyyy').format(dateTime);
+
+        confirmationBottomSheet(
+            context: context,
+            courtId: courtId,
+            slot: selectedSlotTime!,
+            date: formattedDate);
+      } else {
+        Utils().snackBar(message: "You are able to book after your present slot complete.");
+        print('User not abel to book now');
+      }
+
+    } else {
       print('User abel to book');
       Utils().snackBar(message: "User abel to book.");
 
@@ -168,9 +195,6 @@ class BookSlotController extends GetxController {
           courtId: courtId,
           slot: selectedSlotTime!,
           date: formattedDate);
-    } else {
-      Utils().snackBar(message: "You are able to book after your present slot complete.");
-      print('User not abel to book now');
     }
   }
 
