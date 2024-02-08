@@ -18,6 +18,61 @@ String convertTo12HourFormat(int hour) {
   }
 }
 
+String convertTo24HourFormat(String time12Hour) {
+  // Parse the time in 12-hour format
+  DateFormat inputFormat = DateFormat('h:mm a');
+  DateTime dateTime = inputFormat.parse(time12Hour);
+
+  // Extract hour and minute components
+  int hour = dateTime.hour;
+  int minute = dateTime.minute;
+
+  // Convert 12:00 PM to 24:00 format
+  if (time12Hour.endsWith('PM') && hour == 12) {
+    hour = 0;
+  }
+
+  // Convert the time to 24-hour format
+  String time24Hour = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+
+  return time24Hour;
+}
+
+// String convertTo24HourFormat(String time) {
+//   String time12Hour = '12:00 PM';
+//
+//   // Parse the time in 12-hour format
+//   DateFormat inputFormat = DateFormat('h:mm a');
+//   DateTime dateTime = inputFormat.parse(time12Hour);
+//
+//   // Convert the time to 24-hour format
+//   DateFormat outputFormat = DateFormat('HH:mm');
+//   String time24Hour = outputFormat.format(dateTime);
+//
+//   print(time24Hour); // Output: 12:00
+//
+//   // DateFormat inputFormat = DateFormat('h:mm a');
+//   // DateTime dateTime = inputFormat.parse(time);
+//   //
+//   // // Convert the time to 24-hour format
+//   // DateFormat outputFormat = DateFormat('HH:mm');
+//   // String time24Hour = outputFormat.format(dateTime);
+//   // // print(time24Hour); // Output: 21:00
+//
+//   return time24Hour;
+// }
+
+// String convertTo24HourFormat(String time12Hour) {
+//   // Parse the time in 12-hour format
+//   DateFormat inputFormat = DateFormat('h:mm a');
+//   DateTime dateTime = inputFormat.parse(time12Hour);
+//
+//   // Convert the time to 24-hour format
+//   DateFormat outputFormat = DateFormat('HH:mm');
+//   return outputFormat.format(dateTime);
+// }
+
+
 String getCurrentTime() {
   Timestamp timestamp = Timestamp.now();
   DateTime dateTime = timestamp.toDate();

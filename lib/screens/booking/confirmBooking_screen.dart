@@ -4,12 +4,17 @@ import 'package:get/get.dart';
 import 'package:m3m_tennis/comman/confirmationCard.dart';
 import 'package:m3m_tennis/comman/constColor.dart';
 import 'package:m3m_tennis/comman/constFontStyle.dart';
+import 'package:m3m_tennis/screens/booking/myBooking%20_screen.dart';
 
 import '../../controller/booking/mybooking_Controller.dart';
 import '../../widget/textformField_widget.dart';
 
 class ConfirmBookingScreen extends StatefulWidget {
-  const ConfirmBookingScreen({super.key});
+  final int courtId;
+  final String date;
+  final String slot;
+
+  const ConfirmBookingScreen({super.key, required this.courtId, required this.date, required this.slot});
 
   @override
   State<ConfirmBookingScreen> createState() => _ConfirmBookingScreenState();
@@ -63,7 +68,8 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
               ),
              Padding(
                padding: EdgeInsets.only(top: deviceHeight * 0.01),
-               child: CommonConfirmationCard(courtNumber: "Court #1",date: "13 Jan 2024",time: "11 - 12 am"),
+               child: CommonConfirmationCard(courtNumber: "Court #${widget.courtId}",date: widget.date,time: widget.slot),
+               // CommonConfirmationCard(courtNumber: "Court #1",date: "13 Jan 2024",time: "11 - 12 am"),
              ),
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.04),
@@ -119,14 +125,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                   ),
                 ),
               ),
-              // TextFormField(
-              //   decoration: InputDecoration(
-              //     suffixIcon: Text("Remove",style: ConstFontStyle().mainTextStyle.copyWith(
-              //         color: ConstColor.primaryColor,
-              //         fontWeight: FontWeight.w400
-              //     ),),
-              //   ),
-              // ),
+
 
               Padding(
                 padding: EdgeInsets.only(
@@ -191,12 +190,17 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
 
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.05),
-                child: Center(
-                  child: Text(
-                    "Invite Later",
-                    style: ConstFontStyle().mainTextStyle.copyWith(
-                        color: ConstColor.primaryColor,
-                        fontWeight: FontWeight.w500),
+                child: GestureDetector(
+                  onTap: (){
+                    Get.to(()=> MyBookingScreen());
+                  },
+                  child: Center(
+                    child: Text(
+                      "Invite Later",
+                      style: ConstFontStyle().mainTextStyle.copyWith(
+                          color: ConstColor.primaryColor,
+                          fontWeight: FontWeight.w500),
+                    ),
                   ),
                 ),
               ),

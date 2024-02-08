@@ -45,7 +45,8 @@ class _CommonConfirmationCardState extends State<CommonConfirmationCard> {
                   padding: EdgeInsets.only(top: deviceHeight * 0.01),
                   child: Container(
                     height: deviceHeight * 0.03,
-                    width: deviceWidth * 0.25,
+                    // width: deviceWidth * 0.25,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
