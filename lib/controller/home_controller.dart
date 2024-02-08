@@ -104,7 +104,7 @@ class BookSlotController extends GetxController {
     print(bookingsData);
     print(bookingsData.length);
     DateTime currentTime = DateTime.now();
-    String currentDate = currentTime!.toString().substring(0, 10);
+    String currentDate = currentTime.toString().substring(0, 10);
     // print("currentDate : $currentDate");
 
     bool userAbelToBook = true;

@@ -5,6 +5,7 @@ import 'package:m3m_tennis/comman/confirmationCard.dart';
 import 'package:m3m_tennis/comman/constColor.dart';
 import 'package:m3m_tennis/comman/constFontStyle.dart';
 import 'package:m3m_tennis/screens/booking/myBooking%20_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../controller/booking/mybooking_Controller.dart';
 import '../../widget/textformField_widget.dart';
@@ -192,7 +193,8 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                 padding: EdgeInsets.only(top: deviceHeight * 0.05),
                 child: GestureDetector(
                   onTap: (){
-                    Get.to(()=> MyBookingScreen());
+                    openWhatsApp();
+                    // Get.to(()=> MyBookingScreen());
                   },
                   child: Center(
                     child: Text(
@@ -209,5 +211,13 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
         ),
       ),
     );
+  }
+  openWhatsApp() async{
+    var androidUrl = "whatsapp://send?phone&text=Hi, You are Invited to play Badminton.";
+    try{
+      await launchUrl(Uri.parse(androidUrl));
+    } on Exception{
+      print('WhatsApp is not installed.');
+    }
   }
 }
