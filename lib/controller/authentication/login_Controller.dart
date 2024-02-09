@@ -97,37 +97,55 @@ class LoginController extends GetxController {
 
     final _dbref = FirebaseDatabase.instance.ref().child('Users');
     DataSnapshot snapshot = await _dbref.get();
-    Map usersMap = snapshot.value as Map;
-    bool isAlreadyAccount = false;
+    if(snapshot.value != null) {
+      Map usersMap = snapshot.value as Map;
+      bool isAlreadyAccount = false;
 
-    usersMap.forEach((key, value) {
-      int? number = int.tryParse(mobileNumberController1.text.toString());
-      if (number == value['MobileNo']) {
-        isAlreadyAccount = true;
+      usersMap.forEach((key, value) {
+        String? number = mobileNumberController1.text.toString();
+        if (number == value['MobileNo']) {
+          isAlreadyAccount = true;
+        }
+      });
+
+      if (isAlreadyAccount) {
+        isLoading.value = false;
+      } else {
+        _dbRef.child(uid!).update({
+          "CountryCode": 'IN',
+          "DialCode": "+91",
+          "MobileNo": mobileNumberController1.text,
+          "createdAt": getCurrentTime(),
+          "UserName": "",
+          "ProfilePic": null,
+          'userId': uid,
+        });
+        isLoading.value = false;
       }
-    });
+      mobileNumberController1.clear();
+      otpController.clear();
 
-    if (!isAlreadyAccount) {
+      prefs.setString(SharedPreferenKey.userId, uid!);
+      prefs.setBool(SharedPreferenKey.isLogin, true);
+      Get.offAll(() => SuccessScreen());
+    } else {
       _dbRef.child(uid!).set({
         "CountryCode": 'IN',
         "DialCode": "+91",
         "MobileNo": mobileNumberController1.text,
         "createdAt": getCurrentTime(),
-        "UserName": "m3mtennis",
-        "Email": "m3mtennis@gmail.com",
+        "UserName": "",
         "ProfilePic": null,
         'userId': uid,
       });
       isLoading.value = false;
-    } else {
-      isLoading.value = false;
-    }
-    mobileNumberController1.clear();
-    otpController.clear();
+      mobileNumberController1.clear();
+      otpController.clear();
 
-    prefs.setString(SharedPreferenKey.userId, uid!);
-    prefs.setBool(SharedPreferenKey.isLogin, true);
-    Get.offAll(() => SuccessScreen());
+      prefs.setString(SharedPreferenKey.userId, uid!);
+      prefs.setBool(SharedPreferenKey.isLogin, true);
+      Get.offAll(() => SuccessScreen());
+    }
   }
 
   signInWithGoogle() async {
@@ -171,20 +189,43 @@ class LoginController extends GetxController {
 
     final _dbref = FirebaseDatabase.instance.ref().child('Users');
     DataSnapshot snapshot = await _dbref.get();
-    Map usersMap = snapshot.value as Map;
-    bool isAlreadyAccount = false;
 
-    usersMap.forEach((key, value) {
-      if (email == value['Email']) {
-        isAlreadyAccount = true;
+    if(snapshot.value != null) {
+      Map usersMap = snapshot.value as Map;
+      bool isAlreadyAccount = false;
+
+      usersMap.forEach((key, value) {
+        if (email == value['Email']) {
+          isAlreadyAccount = true;
+        }
+      });
+
+      if (!isAlreadyAccount) {
+        _dbRef.child(uid!).set({
+          "CountryCode": 'IN',
+          "DialCode": "+91",
+          "createdAt": getCurrentTime(),
+          "UserName": userName,
+          "Email": email,
+          "ProfilePic": profile,
+          'userId': uid,
+        });
+        // });
+        isLoading.value = false;
+      } else {
+        isLoading.value = false;
       }
-    });
+      mobileNumberController1.clear();
+      otpController.clear();
 
-    if (!isAlreadyAccount) {
+      Utils().snackBar(message:"Login Successfull");
+      prefs.setString(SharedPreferenKey.userId, uid!);
+      prefs.setBool(SharedPreferenKey.isLogin, true);
+      Get.offAll(() => SuccessScreen());
+    } else {
       _dbRef.child(uid!).set({
         "CountryCode": 'IN',
         "DialCode": "+91",
-        "MobileNo": "xxx xxx xxx",
         "createdAt": getCurrentTime(),
         "UserName": userName,
         "Email": email,
@@ -193,15 +234,11 @@ class LoginController extends GetxController {
       });
       // });
       isLoading.value = false;
-    } else {
-      isLoading.value = false;
+      Utils().snackBar(message:"Login Successfull");
+      prefs.setString(SharedPreferenKey.userId, uid!);
+      prefs.setBool(SharedPreferenKey.isLogin, true);
+      Get.offAll(() => SuccessScreen());
     }
-    mobileNumberController1.clear();
-    otpController.clear();
 
-    Utils().snackBar(message:"Login Successful");
-    prefs.setString(SharedPreferenKey.userId, uid!);
-    prefs.setBool(SharedPreferenKey.isLogin, true);
-    Get.offAll(() => SuccessScreen());
   }
 }

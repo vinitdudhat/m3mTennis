@@ -87,4 +87,10 @@ class ConstFontStyle{
       color: ConstColor.primaryColor
   );
 
+  final TextStyle highlight1 = TextStyle(
+      fontFamily: ConstFont.popinsRegular,
+      fontSize: 14,
+      color: ConstColor.errorColor
+  );
+
 }

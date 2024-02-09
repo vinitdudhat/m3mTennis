@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                      // height: deviceHeight
                                      //     // * 0.95,
                                      // * 2,
-                                     height: deviceHeight * 2,
+                                     height: deviceHeight * 1.9,
                                      // height: deviceHeight * 0.7,
                                      width: deviceWidth * 0.2,
                                      // color: Colors.amber,
@@ -194,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                      // padding: EdgeInsets.symmetric(vertical: 10),
                                      // height: deviceHeight,
                                      // height: deviceHeight * 0.95,
-                                     height: deviceHeight * 2,
+                                     height: deviceHeight * 1.9,
                                      // height: deviceHeight * 1.08,
                                      // height: deviceHeight * 0.7,
                                      width: deviceWidth * 0.8,
@@ -238,6 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                          int.parse(timeHours[1]),
                                          );
                                          isCompleted = currentTime.isAfter(targetTime);
+
 
                                          String courtId = index % 2 == 0 ? 'EC'  : 'WC';
                                          bool isPractiseSlot = false;
@@ -314,6 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                  // print("bookData : $bookData");
                                                  bool isBookedSlot = false;
                                                  bool bookedSlotIsYour = false;
+                                                 String userId = "";
 
                                                  if(bookData != null) {
                                                    bookData.forEach((key, value) {
@@ -353,6 +355,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                        bool match = slotTime == bookedSlotTime;
                                                        print("match $match");
                                                        if(match) {
+                                                         userId = value['userId'];
                                                          isBookedSlot = true;
                                                          bookedSlotIsYour = bookSlotController.auth.currentUser?.uid == value['userId'];
                                                        }
@@ -385,7 +388,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                                          children: [
                                                            Text(isCompleted ? "Completed" : slotTime, style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),textAlign:  TextAlign.center),
                                                            SizedBox(height: 3,),
-                                                           Text(bookedSlotIsYour ? "Your Booking" : "Other" ,textAlign:  TextAlign.center, style:  ConstFontStyle().titleText1,),
+                                                           StreamBuilder(
+                                                               stream: bookSlotController.dbRefUser.child(userId.toString()).onValue,
+                                                               builder: (context, snapshot) {
+                                                                 if(!snapshot.hasData) {
+                                                                   return Text(bookedSlotIsYour ? "Your Booking" : "Other" ,textAlign:  TextAlign.center, style:  ConstFontStyle().titleText1,);
+                                                                 } else {
+                                                                   Map? userDetails = snapshot.data!.snapshot.value as Map?;
+                                                                   // print("userName : $userName");
+                                                                   String userName = userDetails!['UserName'].toString();
+                                                                   print("userName : $userName");
+
+                                                                   return Text(bookedSlotIsYour ? "Your Booking" : userName ,textAlign:  TextAlign.center, style:  ConstFontStyle().titleText1,);
+                                                                 }
+                                                               },
+                                                           ),
                                                            // Text(isCompleted ? "Completed" : "" ,textAlign:  TextAlign.center, style:  ConstFontStyle().titleText1,),
                                                          ],
                                                        ),
@@ -464,15 +481,20 @@ class _HomeScreenState extends State<HomeScreen> {
                    bottom: deviceHeight * 0.02, // Adjust top position as needed
                    right: deviceWidth * 0.3, // Adjust right position as needed
                    child: ElevatedButton(
-                     onPressed: () {
+                     onPressed: () async {
                       // bookSlotController.confirmBookingSlot(context);
 
-                       if(bookSlotController.selectedSlotTime == null) {
-                         Utils().snackBar(message: "Please select slot for booking.");
-                       } else if(bookSlotController.selectedIsCompleted) {
-                         Utils().snackBar(message: "Slot is completed. Please choose available slot.");
-                       } else {
-                         bookSlotController.checkUserAbelToBook(context: context);
+                       if(await bookSlotController.checkUserNameExist()) {
+                         Utils().snackBar(message: "Please add your name first.");
+                         Get.to(() => ProfileScreen());
+                       }  else {
+                         if(bookSlotController.selectedSlotTime == null) {
+                           Utils().snackBar(message: "Please select slot for booking.");
+                         } else if(bookSlotController.selectedIsCompleted) {
+                           Utils().snackBar(message: "Slot is completed. Please choose available slot.");
+                         }  else {
+                           bookSlotController.checkUserAbelToBook(context: context);
+                         }
                        }
 
                        // int courtId = bookSlotController.selectedCourtId == 'WC' ? 2 : 1;

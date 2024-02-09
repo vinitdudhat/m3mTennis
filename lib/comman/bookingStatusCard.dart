@@ -1,5 +1,7 @@
 import 'package:expandable/expandable.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'constColor.dart';
 import 'constFontStyle.dart';
@@ -8,17 +10,25 @@ class BookingStatusCard extends StatefulWidget {
   String courtNo;
   String cDate;
   String cTime;
-  String inviteMember;
+  // String inviteMember;
+  List inviteMemberList;
+  List inviteMemberKeyList;
   String bookingId;
   String bookingDate;
+  bool isUpcoming;
+  final VoidCallback? onTap;
+
   BookingStatusCard(
       {super.key,
       required this.courtNo,
       required this.cDate,
       required this.cTime,
-      required this.inviteMember,
+      required this.inviteMemberList,
+      required this.inviteMemberKeyList,
       required this.bookingId,
-      required this.bookingDate});
+      required this.bookingDate, this.isUpcoming = false,    this.onTap,
+
+      });
 
   @override
   State<BookingStatusCard> createState() => _BookingStatusCardState();
@@ -97,21 +107,87 @@ class _BookingStatusCardState extends State<BookingStatusCard> {
               Divider(
                 color: ConstColor.greyTextColor,
               ),
-              Text(
-                "Invite Member",
-                softWrap: true,
-                style: ConstFontStyle().mainTextStyle.copyWith(
-                    fontWeight: FontWeight.w200,
-                    color: ConstColor.greyTextColor),
-              ),
               Padding(
-                padding: EdgeInsets.only(top: deviceHeight * 0.03),
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
                 child: Text(
-                 widget.inviteMember,
+                  "You can invite up to 3 members",
                   softWrap: true,
-                  style: ConstFontStyle().buttonTextStyle,
+                  style: ConstFontStyle().mainTextStyle.copyWith(
+                      fontWeight: FontWeight.w200,
+                      color: ConstColor.greyTextColor),
                 ),
               ),
+
+              widget.inviteMemberList.length == 0 ?
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                child: Text(
+                  "0 Member",
+                  softWrap: true,
+                  style: ConstFontStyle().mainTextStyle.copyWith(
+                      fontWeight: FontWeight.w200,
+                      color: ConstColor.greyTextColor),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              )
+                  : Container(
+                height: widget.isUpcoming ? deviceHeight * 0.06 * widget.inviteMemberList.length : deviceHeight * 0.03 * widget.inviteMemberList.length,
+                width: deviceWidth,
+                child: ListView.builder(
+                  itemCount: widget.inviteMemberList.length,
+                  itemBuilder: (context, index) {
+                    String key = widget.inviteMemberKeyList[index];
+                    print("key : $key");
+                    String name = widget.inviteMemberList[index];
+                    print("name : $name");
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2.0),
+                        child: Container(
+                          // color: Colors.amber,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                                child: Container(
+                                  // color: Colors.amber,
+                                  width: widget.isUpcoming ? deviceWidth * 0.64 : deviceWidth * 0.8,
+                                  child: Text(
+                                    name,
+                                    // "user user user user user user v useruseruseruseruseruser",
+                                    // widget.inviteMemberList['member1'],
+                                    softWrap: true,
+                                    style: ConstFontStyle().buttonTextStyle,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              widget.isUpcoming ? TextButton(
+                                onPressed: () {
+                                  final dbref = FirebaseDatabase.instance.ref('Booking');
+                                  dbref.child('User_Bookings').child(widget.bookingId).child('memberList').child(key).remove().then((_) {
+                                    print('Member remove successfully.');
+                                  });
+                                }, child: Text(
+                                "Remove",
+                                softWrap: true,
+                                style: ConstFontStyle().highlight1,
+                              ),
+                                style: ButtonStyle(
+                                  overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                ),
+                              )  : SizedBox.shrink()
+                            ],
+                          ),
+                        ),
+                      );
+                  },
+                ),
+              ),
+
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.01),
                 child: Divider(
@@ -161,6 +237,25 @@ class _BookingStatusCardState extends State<BookingStatusCard> {
                     ),
                   ],
                 ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              widget.isUpcoming ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: widget.onTap,
+                    child: Text(
+                      "Cancel Booking",
+                      style: ConstFontStyle()
+                          .highlight1,
+                    ),
+                  ),
+                ],
+              ) : SizedBox.shrink(),
+              SizedBox(
+                height: 5,
               )
             ],
           ),

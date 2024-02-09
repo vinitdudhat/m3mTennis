@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:m3m_tennis/repository/common_function.dart';
+import 'package:m3m_tennis/screens/dashboard/home_Screen.dart';
 import '../../comman/bookingStatusCard.dart';
 import '../../comman/constColor.dart';
 import '../../comman/constFontStyle.dart';
@@ -162,23 +163,57 @@ class _MyBookingScreenState extends State<MyBookingScreen> {
                       return Column(
                         children: [
                           myBookingController.isActive.value == 1 ?
+
                           Container(
                             height: deviceHeight * 0.79,
                             width: deviceWidth,
                             padding: EdgeInsets.only(top: 10),
-                            child: ListView.builder(
+                            child: upcomingBooking.length == 0 ?
+                      Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.offAll(() => HomeScreen());
+                        },
+                        child: Text(
+                          "Book your 1st slot.",
+                          style:
+                          // ConstFontStyle().titleText,
+                            ConstFontStyle().titleText.copyWith(
+                                color: ConstColor.greyTextColor)
+                        ),
+                      ),
+                    )
+                        : ListView.builder(
                               itemCount: completedBooking.length,
                               physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 var item = completedBooking[index];
-                                int courtId = item['courtId'] == 'EC' ? 1 : 2 ;
+                                // int courtId = item['courtId'] == 'EC' ? 1 : 2 ;
+                                String courtId = item['courtId'] == 'EC' ? "East Court" : "West Court" ;
 
-                                DateTime dateTime =
-                                DateTime.parse(item['date']);
-                                String formattedDate = DateFormat('dd MMM yyyy').format(dateTime);
+                                String formattedDate = convertToShowingDateFormat(item['date']);
                                 String slotTime = item['from'] + " - " + item['to'];
+                                String bookingId = item['BookingId'];
+                                String bookedOn = convertToShowingDateFormat(item['createdAt']);
+                                List memberList = [];
+                                List inviteMemberKeyList = [];
+                                Map? memberMap = item['memberList'];
+                                // print("memberMap : $memberMap");
 
-                                return BookingStatusCard(courtNo: "Court #$courtId", cDate: formattedDate, cTime: slotTime,inviteMember: "vinay",bookingId: "DFHdhb",bookingDate: "25 Dec 2024");
+                                if(memberMap != null) {
+                                  // memberList = memberMap.to
+                                  memberList.addAll(memberMap.values);
+                                  inviteMemberKeyList.addAll(memberMap.keys);
+                                }
+                                // print("memberList : $memberList");
+                                // print("inviteMemberKeyList : $inviteMemberKeyList");
+
+                                return BookingStatusCard(courtNo: "$courtId",
+                                    cDate: formattedDate,
+                                    cTime: slotTime,
+                                    inviteMemberList: memberList,
+                                    inviteMemberKeyList: inviteMemberKeyList,
+                                    bookingId: bookingId,bookingDate: bookedOn);
                               },
                             ),
                           )
@@ -193,19 +228,55 @@ class _MyBookingScreenState extends State<MyBookingScreen> {
                             height: deviceHeight * 0.79,
                             width: deviceWidth,
                             padding: EdgeInsets.only(top: 10),
-                            child: ListView.builder(
+                            child: upcomingBooking.length == 0 ?
+                    Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.offAll(() => HomeScreen());
+                        },
+                        child: Text(
+                        "Book your upcoming golf slot for play.",
+                        style:
+                        // ConstFontStyle().titleText,
+                        ConstFontStyle().titleText.copyWith(
+                            color: ConstColor.greyTextColor),
+                        ),
+                      ),
+                    )
+                                : ListView.builder(
                               itemCount: upcomingBooking.length,
                               physics: NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
                                 var item = upcomingBooking[index];
-                                int courtId = item['courtId'] == 'EC' ? 1 : 2 ;
+                                // int courtId = item['courtId'] == 'EC' ? 1 : 2 ;
+                                String courtId = item['courtId'] == 'EC' ? "East Court" : "West Court" ;
 
-                                DateTime dateTime =
-                                DateTime.parse(item['date']);
-                                String formattedDate = DateFormat('dd MMM yyyy').format(dateTime);
+                                String formattedDate = convertToShowingDateFormat(item['date']);
                                 String slotTime = item['from'] + " - " + item['to'];
+                                String bookingId = item['BookingId'];
+                                String bookedOn = convertToShowingDateFormat(item['createdAt']);
 
-                                return BookingStatusCard(courtNo: "Court #$courtId", cDate: formattedDate, cTime: slotTime,inviteMember: "vinay",bookingId: "DFHdhb",bookingDate: "25 Dec 2024");
+                                List memberList = [];
+                                List inviteMemberKeyList = [];
+                                Map? memberMap = item['memberList'];
+                                print("memberMap : $memberMap");
+
+                                if(memberMap != null) {
+                                  // memberList = memberMap.to
+                                  memberList.addAll(memberMap.values);
+                                  inviteMemberKeyList.addAll(memberMap.keys);
+                                }
+                                print("memberList : $memberList");
+                                print("inviteMemberKeyList : $inviteMemberKeyList");
+
+                                return BookingStatusCard(courtNo: courtId,
+                                    cDate: formattedDate,
+                                    cTime: slotTime,
+                                    inviteMemberList: memberList,
+                                    inviteMemberKeyList: inviteMemberKeyList,
+                                    bookingId: bookingId,bookingDate: bookedOn,isUpcoming: true,
+                                  onTap: () => myBookingController.cancelBottomSheet(context: context,bookingId: bookingId, slotTime: slotTime),
+                                );
                               },
                             ),
                           )

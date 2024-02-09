@@ -12,6 +12,7 @@ import 'package:m3m_tennis/comman/constColor.dart';
 import 'package:m3m_tennis/comman/constFontStyle.dart';
 import 'package:m3m_tennis/comman/const_fonts.dart';
 import 'package:m3m_tennis/repository/common_function.dart';
+import 'package:m3m_tennis/screens/profile/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../comman/snackbar.dart';
@@ -25,7 +26,7 @@ class BookSlotController extends GetxController {
   bool selectedIsCompleted = false;
   // String selected = "9:00 AM - 10:00 AM";
 
-  List timeList = [6,7,8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23,24];
+  List timeList = [6,7,8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23];
   List slotList = [
     "06:00 AM - 07:00 AM",
     "07:00 AM - 08:00 AM",
@@ -44,7 +45,6 @@ class BookSlotController extends GetxController {
     "08:00 PM - 09:00 PM",
     "09:00 PM - 10:00 PM",
     "10:00 PM - 11:00 PM",
-    "11:00 PM - 12:00 PM",
   ];
 
   String? currentDate;
@@ -53,11 +53,12 @@ class BookSlotController extends GetxController {
   List<DateTime> next7Days = [];
 
   final _dbRef = FirebaseDatabase.instance.ref('Booking').child("User_Bookings");
-  // final _dbRefUser = FirebaseDatabase.instance.ref('Booking').child("User_Bookings");
+  final dbRefUser = FirebaseDatabase.instance.ref('Users');
   final FirebaseAuth auth = FirebaseAuth.instance;
+  String userName = '';
 
   confirmBookingSlot(
-      {required int courtId, required String date, required String slot}) {
+      {required String courtId, required String date, required String slot}) {
     print(selectedSlotTime);
     List<String> times = selectedSlotTime!.split(" - ");
     String fromTime = times[0];
@@ -90,22 +91,35 @@ class BookSlotController extends GetxController {
 
     // _dbRefUser.child().
     Get.back();
-    Get.to(() => ConfirmBookingScreen(courtId: courtId, date: date, slot: slot));
+    Get.to(() => ConfirmBookingScreen(courtId: courtId, date: date, slot: slot, bookingId: bookingId,userName: userName,));
     Utils().snackBar(message: "Your Booking Is Confirmed");
     selectedSlotTime = null;
     selectedSlotIndex.value = -1;
   }
 
-  checkUserAbelToBook({required BuildContext context}) async {
+  Future<bool> checkUserNameExist() async {
+    DataSnapshot snapshot = await dbRefUser.child(auth.currentUser!.uid).get();
+    Map bookingsData = snapshot.value as Map;
 
+    if(bookingsData['UserName'] == null || bookingsData['UserName'] == '') {
+
+      // print("username001 : ${bookingsData['UserName']}");
+      // Utils().snackBar(message: "Please add your name first.");
+      // Get.to(() => ProfileScreen());
+      return true;
+    } else {
+      userName = bookingsData['UserName'];
+      print("username1 : ${bookingsData['UserName']}");
+      return false;
+    }
+  }
+
+  checkUserAbelToBook({required BuildContext context}) async {
     // final _dbref = FirebaseDatabase.instance.ref().child('_dbRef');
     DataSnapshot snapshot = await _dbRef.orderByChild('userId').equalTo(auth.currentUser?.uid).get();
     // print(snapshot.value == null);
 
-
-
     if(snapshot.value != null) {
-
       Map bookingsData = snapshot.value as Map;
       print(bookingsData);
       print(bookingsData.length);
@@ -161,10 +175,11 @@ class BookSlotController extends GetxController {
 
 
       if (userAbelToBook) {
-        print('User abel to book');
-        Utils().snackBar(message: "User abel to book.");
+        // print('User abel to book');
+        // Utils().snackBar(message: "User abel to book.");
 
-        int courtId = selectedCourtId == 'WC' ? 2 : 1;
+        // int courtId = selectedCourtId == 'WC' ? 2 : 1;
+        String courtId = selectedCourtId == 'EC' ? "East Court" : "West Court" ;
 
         DateTime dateTime =
         DateTime.parse(selectedDate!.toString().substring(0, 10));
@@ -182,9 +197,10 @@ class BookSlotController extends GetxController {
 
     } else {
       print('User abel to book');
-      Utils().snackBar(message: "User abel to book.");
+      // Utils().snackBar(message: "User abel to book.");
 
-      int courtId = selectedCourtId == 'WC' ? 2 : 1;
+      // int courtId = selectedCourtId == 'WC' ? 2 : 1;
+      String courtId = selectedCourtId == 'EC' ? "East Court" : "West Court" ;
 
       DateTime dateTime =
       DateTime.parse(selectedDate!.toString().substring(0, 10));
@@ -216,7 +232,7 @@ class BookSlotController extends GetxController {
   // }
 
   void confirmationBottomSheet(
-      {required BuildContext context, required int courtId, required String date, required String slot}) {
+      {required BuildContext context, required String courtId, required String date, required String slot}) {
     showModalBottomSheet(
       context: context,
       // isScrollControlled: true,
@@ -228,7 +244,7 @@ class BookSlotController extends GetxController {
       builder: (BuildContext context) {
         return Container(
           width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.4,
+          height: MediaQuery.of(context).size.height * 0.38,
           decoration: BoxDecoration(
               color: ConstColor.btnBackGroundColor,
               borderRadius: BorderRadius.vertical(
@@ -263,7 +279,7 @@ class BookSlotController extends GetxController {
                       ],
                     ),
                   ),
-                  CommonConfirmationCard(courtNumber: "Court #$courtId",date: date,time: slot),
+                  CommonConfirmationCard(courtNumber: courtId,date: date,time: slot),
                   Padding(
                     padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).size.height * 0.02),

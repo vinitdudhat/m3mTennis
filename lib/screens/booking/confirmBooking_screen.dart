@@ -1,21 +1,26 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:m3m_tennis/comman/confirmationCard.dart';
 import 'package:m3m_tennis/comman/constColor.dart';
 import 'package:m3m_tennis/comman/constFontStyle.dart';
+import 'package:m3m_tennis/comman/snackbar.dart';
 import 'package:m3m_tennis/screens/booking/myBooking%20_screen.dart';
+import 'package:m3m_tennis/widget/button_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../controller/booking/mybooking_Controller.dart';
 import '../../widget/textformField_widget.dart';
 
 class ConfirmBookingScreen extends StatefulWidget {
-  final int courtId;
+  final String userName;
+  final String courtId;
   final String date;
   final String slot;
+  final String bookingId;
 
-  const ConfirmBookingScreen({super.key, required this.courtId, required this.date, required this.slot});
+  const ConfirmBookingScreen({super.key, required this.courtId, required this.date, required this.slot, required this.bookingId, required this.userName});
 
   @override
   State<ConfirmBookingScreen> createState() => _ConfirmBookingScreenState();
@@ -47,7 +52,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Center(
                 child: Padding(
@@ -69,7 +74,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
               ),
              Padding(
                padding: EdgeInsets.only(top: deviceHeight * 0.01),
-               child: CommonConfirmationCard(courtNumber: "Court #${widget.courtId}",date: widget.date,time: widget.slot),
+               child: CommonConfirmationCard(courtNumber: widget.courtId,date: widget.date,time: widget.slot),
                // CommonConfirmationCard(courtNumber: "Court #1",date: "13 Jan 2024",time: "11 - 12 am"),
              ),
               Padding(
@@ -110,12 +115,19 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                       padding: EdgeInsets.all(12.0),
                       child: Row(
                         children: [
-                          Text(
-                            "Aditi Sharma",
-                            style: ConstFontStyle().buttonTextStyle,
+                          Container(
+                            width: deviceWidth * 0.7,
+                            // color: Colors.grey,
+                            child: Text(
+                            widget.userName,
+                              // "Aditi Sharma Aditi Sharma Aditi Sharma Aditi Sharma Aditi Sharma Aditi Sharma",
+                              style: ConstFontStyle().buttonTextStyle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                           Text(
-                            "      (Host)",
+                            " (Host)",
                             style: ConstFontStyle()
                                 .buttonTextStyle
                                 .copyWith(fontWeight: FontWeight.w200),
@@ -155,6 +167,14 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                     left: deviceWidth * 0.01),
                 child: InviteField(
                   obSecure: false,
+                  // readOnly: myBookingController.member1.text == '' ? true : false,
+                  // onTap: () {
+                  //   if(myBookingController.member1.text == '') {
+                  //
+                  //   } else {
+                  //
+                  //   }
+                  // },
                   hintText: "Member2",
                   controller: myBookingController.member2,
                   suffix: InkWell(
@@ -190,7 +210,21 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
               ),
 
               Padding(
-                padding: EdgeInsets.only(top: deviceHeight * 0.05),
+                padding: EdgeInsets.only(top: deviceHeight * 0.04),
+                child: RoundButton(
+                  title: 'Add',
+                  onTap: () {
+                    if(myBookingController.member1.text.isNotEmpty) {
+                      myBookingController.addMemberInBooking(bookingId: widget.bookingId);
+                    } else {
+                      Utils().snackBar(message: "Please enter at least 1 member name.");
+                    }
+                  },
+                ),
+              ),
+
+              Padding(
+                padding: EdgeInsets.only(top: deviceHeight * 0.03),
                 child: GestureDetector(
                   onTap: (){
                     openWhatsApp();
@@ -206,6 +240,9 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 10,
+              )
             ],
           ),
         ),

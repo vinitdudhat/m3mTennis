@@ -38,6 +38,17 @@ String convertTo24HourFormat(String time12Hour) {
   return time24Hour;
 }
 
+String convertToShowingDateFormat(String timestamp) {
+  // Parse the timestamp string
+  DateTime dateTime = DateTime.parse(timestamp);
+
+  // Format the date
+  DateFormat outputFormat = DateFormat('dd MMM yyyy');
+  String formattedDate = outputFormat.format(dateTime);
+
+  return formattedDate;
+}
+
 // String convertTo24HourFormat(String time) {
 //   String time12Hour = '12:00 PM';
 //

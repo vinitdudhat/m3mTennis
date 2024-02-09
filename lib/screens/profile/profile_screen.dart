@@ -2,11 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:m3m_tennis/comman/const_fonts.dart';
 import 'package:m3m_tennis/controller/authentication/login_Controller.dart';
 import 'package:get/get.dart';
 import 'package:m3m_tennis/controller/authentication/profile_controller.dart';
 import 'package:m3m_tennis/screens/authentication/login_Screen.dart';
+import 'package:m3m_tennis/screens/profile/updateProfile_Screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../comman/constAsset.dart';
 import '../../comman/constColor.dart';
@@ -25,11 +27,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   ProfileController profileController = Get.put(ProfileController());
   final dbref = FirebaseDatabase.instance.ref('Users');
   final FirebaseAuth auth = FirebaseAuth.instance;
+  final dbrefBooking = FirebaseDatabase.instance.ref('Booking');
 
   String? mobileNumber;
-  String email = '';
-  String userName = '';
+  String? email = '';
+  String? userName = '';
   String? profilePhoto;
+  String? memberSince;
+  String? flatNumber;
 
 
   @override
@@ -81,271 +86,374 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Map? userDetails = snapshot.data!.snapshot.value as Map?;
             print(userDetails);
 
-            mobileNumber = userDetails?['MobileNo'].toString();
-            email = userDetails!['Email'].toString();
-            userName = userDetails['UserName'].toString();
+            mobileNumber = userDetails?['MobileNo'];
+            print("mobileNumber : $mobileNumber");
+            email = userDetails!['Email'];
+            userName = userDetails['UserName'];
+            if(userName == "") {
+              userName = null;
+            }
+
+            DateTime dateTime = DateTime.parse(userDetails['createdAt']);
+            memberSince = DateFormat('MMM yyyy').format(dateTime);
+            flatNumber =  userDetails['FlatNo'];
+
             if (userDetails['ProfilePic'] != null) {
               profilePhoto = userDetails['ProfilePic'].toString();
             }
 
             return Obx(
-                  ()=> Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: deviceHeight * 0.02),
-                    child: Center(
-                      child: Stack(
-                        alignment: Alignment.bottomRight,
+                  ()=> SingleChildScrollView(
+                    child: Column(
+                                    children: [
+                    // Padding(
+                    //   padding: EdgeInsets.only(top: deviceHeight * 0.02),
+                    //   child: Center(
+                    //     child: Stack(
+                    //       alignment: Alignment.bottomRight,
+                    //       children: [
+                    //         // Container(
+                     //         // padding:
+                       //       //     EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    //         //   child: CircleAvatar(
+                    //         //     backgroundColor: Colors.transparent,
+                    //         //     radius: 65,
+                    //         //     child: ClipOval(
+                    //         //         child: profilePhoto == null
+                    //         //             ? Image.asset(ConstAsset.avatar)
+                    //         //             : Image.network(profilePhoto.toString(),fit: BoxFit.fill,)),
+                    //         //   ),
+                    //         // ),
+                    //         // Positioned(
+                    //         //   left: 55,
+                    //         //   child: GestureDetector(
+                    //         //     onTap: () {
+                    //         //     },
+                    //         //     child: Center(
+                    //         //       child: Icon(
+                    //         //         Icons.verified,
+                    //         //         color: ConstColor.primaryColor,
+                    //         //       ),
+                    //         //     ),
+                    //         //   ),
+                    //         // )
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 10),
+                                        child: Stack(
+                                          alignment: Alignment.bottomRight,
+                                          children: [
+                                            Container(
+                                        padding:
+                                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.transparent,
+                                                  shape: BoxShape.circle
+                                              ),
+                                              child: ClipOval(
+                                                child: profilePhoto != null ? Image(
+                                                  image: NetworkImage(profilePhoto!),
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                  loadingBuilder: (context, child, loadingProgress) {
+                                                    if(loadingProgress == null) return child ;
+                                                    return Container(
+                                                        width: 100,
+                                                        height: 100,
+                                                        decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            shape: BoxShape.circle
+                                                        ),
+                                                        child: Center(child: CircularProgressIndicator()));
+                                                  },
+                                                ) : Image.asset(ConstAsset.avatar,
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,),
+                                              ),
+                                            ),
+                                            Positioned(
+                                              left: 50,
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                },
+                                                child: Center(
+                                                  child: Icon(
+                                                    Icons.verified,
+                                                    color: ConstColor.primaryColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+
+                                      Padding(
+                      padding: EdgeInsets.only(top: deviceHeight * 0.015),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            child: CircleAvatar(
-                              backgroundColor: ConstColor.primaryColor,
-                              radius: 65,
-                              child: ClipOval(
-                                  child: profilePhoto == null
-                                      ? Image.asset(ConstAsset.avatar)
-                                      : Image.network(profilePhoto.toString())),
-                            ),
+                          Text(
+                            userName ?? "M3M Tennis",
+                            style: ConstFontStyle().mainTextStyle2,
                           ),
-                          Positioned(
-                            left: 55,
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: Center(
-                                child: Icon(
-                                  Icons.verified,
-                                  color: ConstColor.primaryColor,
-                                ),
-                              ),
+                          SizedBox(width: 10,),
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(() => UpdateProfileScreen(userName: userName == null ? "" : userName!,flat: flatNumber == null ? "" : flatNumber!, profileImage: profilePhoto,));
+                            },
+                            child: Icon(
+                              Icons.edit_outlined,
+                              color: ConstColor.primaryColor,
                             ),
                           )
                         ],
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: deviceHeight * 0.015),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          userName ?? "",
-                          style: ConstFontStyle().mainTextStyle2,
-                        ),
-                        Icon(
-                          Icons.edit_outlined,
-                          color: ConstColor.primaryColor,
-                        )
-                      ],
+                    Text(
+                      "Flat #${flatNumber == null ? 1234 : flatNumber}",
+                      style: ConstFontStyle()
+                          .mainTextStyle
+                          .copyWith(color: ConstColor.greyTextColor),
                     ),
-                  ),
-                  Text(
-                    "Flat #3789",
-                    style: ConstFontStyle()
-                        .mainTextStyle
-                        .copyWith(color: ConstColor.greyTextColor),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: deviceWidth * 0.02,
-                        vertical: deviceHeight * 0.01),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              "36",
-                              style: ConstFontStyle()
-                                  .mainTextStyle
-                                  .copyWith(color: ConstColor.greyTextColor),
+                    StreamBuilder(
+                      stream: dbrefBooking.child('User_Bookings').orderByChild('userId').equalTo(userId.toString()).onValue,
+                      builder: (context, snapshot) {
+                        if(!snapshot.hasData) {
+                          return Container();
+                        } else {
+                          Map? bookData = snapshot.data!.snapshot.value as Map?;
+                          print("bookData : $bookData");
+                    
+                          int totalBooking = 0;
+                          if(bookData != null) {
+                            totalBooking = bookData!.length;
+                          }
+                    
+                          return  Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: deviceWidth * 0.02,
+                                vertical: deviceHeight * 0.01),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Column(
+                                  children: [
+                                    Text(
+                                    totalBooking.toString(),
+                                      style: ConstFontStyle()
+                                          .mainTextStyle
+                                          .copyWith(color: ConstColor.greyTextColor),
+                                    ),
+                                    Text(
+                                      "Bookings",
+                                      style: ConstFontStyle().mainTextStyle3,
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: deviceWidth * 0.02),
+                                  child: Text(
+                                    "|",
+                                    style: TextStyle(
+                                        fontSize: 30, color: ConstColor.greyTextColor),
+                                  ),
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      "${totalBooking} hrs",
+                                      style: ConstFontStyle()
+                                          .mainTextStyle
+                                          .copyWith(color: ConstColor.greyTextColor),
+                                    ),
+                                    Text(
+                                      "Played",
+                                      style: ConstFontStyle().mainTextStyle3,
+                                    ),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: deviceWidth * 0.02),
+                                  child: Text(
+                                    "|",
+                                    style: TextStyle(
+                                        fontSize: 30, color: ConstColor.greyTextColor),
+                                  ),
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      memberSince!.toString(),
+                                      // "Jun 2023",
+                                      style: ConstFontStyle()
+                                          .mainTextStyle
+                                          .copyWith(color: ConstColor.greyTextColor),
+                                    ),
+                                    Text(
+                                      "Member Since",
+                                      style: ConstFontStyle().mainTextStyle3,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            Text(
-                              "Bookings",
-                              style: ConstFontStyle().mainTextStyle3,
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: deviceWidth * 0.02),
-                          child: Text(
-                            "|",
-                            style: TextStyle(
-                                fontSize: 30, color: ConstColor.greyTextColor),
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              "36 hrs",
-                              style: ConstFontStyle()
-                                  .mainTextStyle
-                                  .copyWith(color: ConstColor.greyTextColor),
-                            ),
-                            Text(
-                              "Played",
-                              style: ConstFontStyle().mainTextStyle3,
-                            ),
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: deviceWidth * 0.02),
-                          child: Text(
-                            "|",
-                            style: TextStyle(
-                                fontSize: 30, color: ConstColor.greyTextColor),
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              "Jun 2023",
-                              style: ConstFontStyle()
-                                  .mainTextStyle
-                                  .copyWith(color: ConstColor.greyTextColor),
-                            ),
-                            Text(
-                              "Member Since",
-                              style: ConstFontStyle().mainTextStyle3,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        right: deviceWidth * 0.04,
-                        left: deviceWidth * 0.04,
-                        top: deviceHeight * 0.02,
-                        bottom: deviceWidth * 0.015),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Phone Number",
-                          style: ConstFontStyle()
-                              .mainTextStyle
-                              .copyWith(color: ConstColor.greyTextColor),
-                        ),
-                        Text(
-                          mobileNumber ?? "",
-                          style: ConstFontStyle()
-                              .mainTextStyle
-                              .copyWith(color: ConstColor.greyTextColor),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
-                    child: Divider(
-                      color: ConstColor.greyTextColor,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        right: deviceWidth * 0.04,
-                        left: deviceWidth * 0.04,
-                        top: deviceHeight * 0.03,
-                        bottom: deviceWidth * 0.015),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Email",
-                          style: ConstFontStyle()
-                              .mainTextStyle
-                              .copyWith(color: ConstColor.greyTextColor),
-                        ),
-                        Text(
-                          email ?? "",
-                          style: ConstFontStyle()
-                              .mainTextStyle
-                              .copyWith(color: ConstColor.greyTextColor),
-                        )
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
-                    child: Divider(
-                      color: ConstColor.greyTextColor,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        right: deviceWidth * 0.04,
-                        left: deviceWidth * 0.04,
-                        top: deviceHeight * 0.03,
-                        bottom: deviceWidth * 0.015),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Notification",
-                          style: ConstFontStyle()
-                              .mainTextStyle
-                              .copyWith(color: ConstColor.greyTextColor),
-                        ),
-                        Switch(
-                          value: profileController.toggleValue.value,
-                          activeColor: ConstColor.primaryColor,
-                          onChanged: (value) {
-                            // setState(() {
-                              profileController.toggleValue.value = value;
-                            // });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
-                    child: Divider(
-                      color: ConstColor.greyTextColor,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        right: deviceWidth * 0.04,
-                        left: deviceWidth * 0.04,
-                        top: deviceHeight * 0.03,
-                        bottom: deviceWidth * 0.015),
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.to(() => BookingCriteriaScreen());
+                          );
+                        }
                       },
+                    ),
+                    Visibility(
+                      visible: mobileNumber != null,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                                right: deviceWidth * 0.04,
+                                left: deviceWidth * 0.04,
+                                top: deviceHeight * 0.02,
+                                bottom: deviceWidth * 0.015),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Phone Number",
+                                  style: ConstFontStyle()
+                                      .mainTextStyle
+                                      .copyWith(color: ConstColor.greyTextColor),
+                                ),
+                                Text(
+                                  mobileNumber ?? "",
+                                  style: ConstFontStyle()
+                                      .mainTextStyle
+                                      .copyWith(color: ConstColor.greyTextColor),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
+                            child: Divider(
+                              color: ConstColor.greyTextColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    Visibility(
+                      visible: email != null,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                                right: deviceWidth * 0.04,
+                                left: deviceWidth * 0.04,
+                                top: deviceHeight * 0.03,
+                                bottom: deviceWidth * 0.015),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Email",
+                                  style: ConstFontStyle()
+                                      .mainTextStyle
+                                      .copyWith(color: ConstColor.greyTextColor),
+                                ),
+                                Text(
+                                  email ?? "",
+                                  style: ConstFontStyle()
+                                      .mainTextStyle
+                                      .copyWith(color: ConstColor.greyTextColor),
+                                )
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
+                            child: Divider(
+                              color: ConstColor.greyTextColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          right: deviceWidth * 0.04,
+                          left: deviceWidth * 0.04,
+                          top: deviceHeight * 0.03,
+                          bottom: deviceWidth * 0.015),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Booking Criteria",
+                            "Notification",
                             style: ConstFontStyle()
                                 .mainTextStyle
                                 .copyWith(color: ConstColor.greyTextColor),
                           ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: ConstColor.greyTextColor,
-                            size: 20,
-                          )
+                          Switch(
+                            value: profileController.toggleValue.value,
+                            activeColor: ConstColor.primaryColor,
+                            onChanged: (value) {
+                              // setState(() {
+                                profileController.toggleValue.value = value;
+                              // });
+                            },
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
-                    child: Divider(
-                      color: ConstColor.greyTextColor,
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
+                      child: Divider(
+                        color: ConstColor.greyTextColor,
+                      ),
                     ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          right: deviceWidth * 0.04,
+                          left: deviceWidth * 0.04,
+                          top: deviceHeight * 0.03,
+                          bottom: deviceWidth * 0.015),
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.to(() => BookingCriteriaScreen());
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Booking Criteria",
+                              style: ConstFontStyle()
+                                  .mainTextStyle
+                                  .copyWith(color: ConstColor.greyTextColor),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: ConstColor.greyTextColor,
+                              size: 20,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
+                      child: Divider(
+                        color: ConstColor.greyTextColor,
+                      ),
+                    ),
+                                    ],
+                                  ),
                   ),
-                ],
-              ),
             );
           }
         },
