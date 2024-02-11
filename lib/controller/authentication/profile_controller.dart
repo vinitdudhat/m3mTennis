@@ -3,5 +3,5 @@
 import 'package:get/get.dart';
 
 class ProfileController extends GetxController{
-  RxBool toggleValue = false.obs;
+  RxBool toggleValue = true.obs;
 }

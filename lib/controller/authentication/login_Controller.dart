@@ -124,7 +124,6 @@ class LoginController extends GetxController {
       }
       mobileNumberController1.clear();
       otpController.clear();
-
       prefs.setString(SharedPreferenKey.userId, uid!);
       prefs.setBool(SharedPreferenKey.isLogin, true);
       Get.offAll(() => SuccessScreen());
@@ -217,7 +216,6 @@ class LoginController extends GetxController {
       }
       mobileNumberController1.clear();
       otpController.clear();
-
       Utils().snackBar(message:"Login Successfull");
       prefs.setString(SharedPreferenKey.userId, uid!);
       prefs.setBool(SharedPreferenKey.isLogin, true);

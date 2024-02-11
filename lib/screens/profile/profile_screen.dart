@@ -205,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           SizedBox(width: 10,),
                           GestureDetector(
                             onTap: () {
-                              Get.to(() => UpdateProfileScreen(userName: userName == null ? "" : userName!,flat: flatNumber == null ? "" : flatNumber!, profileImage: profilePhoto,));
+                              Get.to(() => UpdateProfileScreen(userName: userName == null ? "" : userName!,flat: flatNumber == null ? "" : flatNumber!, profileImage: profilePhoto, mobile: mobileNumber == null ? "" : mobileNumber,email: email == null ? "" : email,));
                             },
                             child: Icon(
                               Icons.edit_outlined,
@@ -311,7 +311,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Visibility(
                       visible: mobileNumber != null,
-                      child: Column(
+                      child:
+                                      Column(
                         children: [
                           Padding(
                             padding: EdgeInsets.only(
@@ -349,7 +350,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     
                     Visibility(
                       visible: email != null,
-                      child: Column(
+                      child:
+                                      Column(
                         children: [
                           Padding(
                             padding: EdgeInsets.only(

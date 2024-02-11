@@ -5,6 +5,77 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+String adjustTimeRange(String originalTimeRange) {
+  List<String> times = originalTimeRange.split(' - ');
+  String startTime = times[0];
+  String endTime = times[1];
+
+  String start = adjustTime(startTime);
+  String end = adjustTime(endTime);
+  // print(start);
+  // print(end);
+
+  String adjustTimeRange = start +" - "+ end;
+
+  return adjustTimeRange;
+}
+
+String adjustTime(String originalTime) {
+  List<String> parts = originalTime.split(' ');
+  List<String> timeParts = parts[0].split(':');
+  int hour = int.parse(timeParts[0]);
+  int minute = int.parse(timeParts[1]);
+  String period = parts[1];
+
+  // Adjust the minutes
+  minute += 30;
+  if (minute >= 60) {
+    minute -= 60;
+    hour++;
+    if (hour == 12) {
+      // If the hour becomes 12, toggle the period
+      period = (period == 'AM') ? 'PM' : 'AM';
+    } else if (hour > 12) {
+      hour -= 12;
+    }
+  }
+
+  // Format the adjusted time
+  String adjustedTime = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period';
+
+  return adjustedTime;
+}
+
+//
+// String adjustTimeRange(String originalTimeRange) {
+//   // Split the original time range into start and end times
+//   List<String> times = originalTimeRange.split(' - ');
+//
+//   // Parse the start and end times
+//   String startTime = times[0];
+//   String endTime = times[1];
+//
+//   // Parse the start and end times into DateTime objects
+//   DateTime start = DateTime.parse('2024-01-01 ' + startTime);
+//   DateTime end = DateTime.parse('2024-01-01 ' + endTime);
+//
+//   // Calculate the mid-time between start and end times
+//   DateTime midTime = start.add(end.difference(start) ~/ 2);
+//
+//   // Adjust the start and end times by adding and subtracting 30 minutes
+//   DateTime adjustedStartTime = start.add(Duration(minutes: 30));
+//   DateTime adjustedEndTime = end.add(Duration(minutes: 30));
+//
+//   // Format the adjusted times into strings
+//   String adjustedStartTimeString = '${adjustedStartTime.hour.toString().padLeft(2, '0')}:${adjustedStartTime.minute.toString().padLeft(2, '0')} ${adjustedStartTime.hour >= 12 ? 'PM' : 'AM'}';
+//   String adjustedEndTimeString = '${adjustedEndTime.hour.toString().padLeft(2, '0')}:${adjustedEndTime.minute.toString().padLeft(2, '0')} ${adjustedEndTime.hour >= 12 ? 'PM' : 'AM'}';
+//
+//   // Concatenate the adjusted times into a time range string
+//   String adjustedTimeRange = '$adjustedStartTimeString - $adjustedEndTimeString';
+//
+//   return adjustedTimeRange;
+// }
+
 String convertTo12HourFormat(int hour) {
   if (hour == 24) {
     return '12 PM';

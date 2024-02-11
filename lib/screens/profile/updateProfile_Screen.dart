@@ -1,9 +1,9 @@
-
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,7 +20,15 @@ class UpdateProfileScreen extends StatefulWidget {
   final String userName;
   final String flat;
   final String? profileImage;
-  const UpdateProfileScreen({super.key, required this.userName, required this.flat, required this.profileImage});
+  final String? mobile;
+  final String? email;
+  UpdateProfileScreen(
+      {super.key,
+      required this.userName,
+      required this.flat,
+      required this.profileImage,
+      required this.mobile,
+      required this.email});
 
   @override
   State<UpdateProfileScreen> createState() => _UpdateProfileScreenState();
@@ -30,18 +38,23 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   final FirebaseAuth auth = FirebaseAuth.instance;
   TextEditingController username = TextEditingController();
   TextEditingController flat = TextEditingController();
+  TextEditingController mobile = TextEditingController();
+  TextEditingController email = TextEditingController();
   ProfileController profileController = Get.put(ProfileController());
   File? imageNotes;
   String selectedItemNotes = "Camera";
   final GlobalKey<FormState> formKey = GlobalKey();
   String? netProfileImage;
   bool isProfileImageUpdate = false;
+  String type = '';
 
   @override
   void initState() {
     username.text = widget.userName;
     flat.text = widget.flat;
     netProfileImage = widget.profileImage;
+    mobile.text = widget.mobile!;
+    email.text = widget.email!;
     super.initState();
   }
 
@@ -73,58 +86,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                // Padding(
-                //   padding: EdgeInsets.only(top: 10),
-                //   child: Stack(
-                //     alignment: Alignment.bottomRight,
-                //     children: [
-                //       Container(
-                //         padding:
-                //         EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                //         decoration: BoxDecoration(
-                //             color: Colors.transparent,
-                //             shape: BoxShape.circle
-                //         ),
-                //         child: ClipOval(
-                //           child: profilePhoto != null ? Image(
-                //             image: NetworkImage(profilePhoto!),
-                //             width: 100,
-                //             height: 100,
-                //             fit: BoxFit.cover,
-                //             loadingBuilder: (context, child, loadingProgress) {
-                //               if(loadingProgress == null) return child ;
-                //               return Container(
-                //                   width: 100,
-                //                   height: 100,
-                //                   decoration: BoxDecoration(
-                //                       color: Colors.white,
-                //                       shape: BoxShape.circle
-                //                   ),
-                //                   child: Center(child: CircularProgressIndicator()));
-                //             },
-                //           ) : Image.asset(ConstAsset.avatar,
-                //             width: 100,
-                //             height: 100,
-                //             fit: BoxFit.cover,),
-                //         ),
-                //       ),
-                //       Positioned(
-                //         left: 50,
-                //         child: GestureDetector(
-                //           onTap: () {
-                //           },
-                //           child: Center(
-                //             child: Icon(
-                //               Icons.verified,
-                //               color: ConstColor.primaryColor,
-                //             ),
-                //           ),
-                //         ),
-                //       )
-                //     ],
-                //   ),
-                // ),
-
                 Padding(
                   padding: EdgeInsets.only(top: deviceHeight * 0.02),
                   child: Center(
@@ -132,24 +93,22 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       alignment: Alignment.bottomRight,
                       children: [
                         Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 13),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 13),
                           child: CircleAvatar(
                             radius: 55,
-                            backgroundColor:  isProfileImageUpdate ? ConstColor.greyTextColor : Colors.transparent,
+                            backgroundColor: isProfileImageUpdate
+                                ? ConstColor.greyTextColor
+                                : Colors.transparent,
                             child: ClipOval(
-                              child: isProfileImageUpdate ?
-                                  Center(child: CircularProgressIndicator())
-                                  : netProfileImage != null ? Image.network(
-                                netProfileImage!,)
-                                  :  Image.asset(ConstAsset.avatar),
+                              child: isProfileImageUpdate
+                                  ? Center(child: CircularProgressIndicator())
+                                  : netProfileImage != null
+                                      ? Image.network(
+                                          netProfileImage!,
+                                        )
+                                      : Image.asset(ConstAsset.avatar),
                             ),
-                            // Image.asset(
-                            //         'asset/image_png/avatar.png',
-                            //         width: deviceWidth * 0.23,
-                            //         height: deviceHeight * 0.1,
-                            //         fit: BoxFit.cover,
-                            //       ),
                           ),
                         ),
                         Positioned(
@@ -241,25 +200,90 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                     },
                   ),
                 ),
+
+                widget.mobile == "" ?
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: deviceWidth * 0.03,
+                      vertical: deviceHeight * 0.01),
+                  child: TextFormField(
+                    controller: mobile,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(10),
+                    ],
+                    style: TextStyle(color: ConstColor.greyTextColor),
+                    decoration: InputDecoration(
+                        hintText: 'Enter Mobile No.',
+                        labelStyle: ConstFontStyle()
+                            .lableTextStyle
+                            .copyWith(color: ConstColor.greyTextColor),
+                        hintStyle: ConstFontStyle()
+                            .lableTextStyle
+                            .copyWith(color: ConstColor.greyTextColor),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 15.0), // Adjust vertical padding
+                        alignLabelWithHint: true,
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: ConstColor.greyTextColor,
+                          ),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.phone_android_rounded,
+                          color: ConstColor.greyTextColor,
+                        )),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Please enter your Mobile No.";
+                      }
+                    },
+                  ),
+                ) : SizedBox(),
+
+                widget.email == "" ?
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: deviceWidth * 0.03,
+                      vertical: deviceHeight * 0.01),
+                  child: TextFormField(
+                    controller: email,
+                    style: TextStyle(color: ConstColor.greyTextColor),
+                    decoration: InputDecoration(
+                        hintText: 'Enter Email',
+                        labelStyle: ConstFontStyle()
+                            .lableTextStyle
+                            .copyWith(color: ConstColor.greyTextColor),
+                        hintStyle: ConstFontStyle()
+                            .lableTextStyle
+                            .copyWith(color: ConstColor.greyTextColor),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 15.0), // Adjust vertical padding
+                        alignLabelWithHint: true,
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: ConstColor.greyTextColor,
+                          ),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          color: ConstColor.greyTextColor,
+                        )),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Please enter your Email";
+                      }
+                    },
+                  ),
+                ) :SizedBox(),
                 Padding(
                   padding: EdgeInsets.only(top: deviceHeight * 0.03),
                   child: RoundButton(
                       title: "Save",
                       onTap: () {
                         if (formKey.currentState!.validate()) {
-                          updateProfileDetails( username.text,
-                                      flat.text);
+                          updateProfileDetails(username.text, flat.text,mobile.text,email.text);
                         }
-                      //     if (username.text.isEmpty) {
-                      //     Utils().snackBar(message: "Please Fill UserName");
-                      //   } else if (flat.text.isEmpty) {
-                      //     Utils().snackBar(message: "Please Fill FlateNo");
-                      //   } else {
-                      //     updateProfile(
-                      //         username.text,
-                      //         flat.text,
-                      //         imageNotes.toString());
-                      //   }
                       }),
                 ),
               ],
@@ -270,59 +294,29 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     );
   }
 
-  // Future<File> compressImage(File croppedImage) async {
-  //   final bytes = await croppedImage.readAsBytes();
-  //   final kb = bytes.length / 1024;
-  //   final mb = kb / 1024;
-  //
-  //   print('original image size kb:'+kb.toString());
-  //   print('original image size: mb'+mb.toString());
-  //
-  //   final dir = await path_provider.getTemporaryDirectory();
-  //   final targetPath = '${dir.absolute.path}/temporary.jpeg';
-  //   // print(targetPath);
-  //
-  //   final result = await FlutterImageCompress.compressAndGetFile(
-  //       croppedImage!.path,
-  //       targetPath,
-  //       quality: 33,
-  //       format: CompressFormat.jpeg
-  //   );
-  //
-  //   final data = await result!.readAsBytes() ;
-  //   final newKb = data.length / 1024;
-  //   final newMb = newKb / 1024;
-  //
-  //   print('compress image size newKb:'+newKb.toString());
-  //   print('compress image size newMb:'+newMb.toString());
-  //
-  //   File compressImage = File(result.path) ;
-  //   // setState(() {
-  //   //   image = compressImage;
-  //   // });
-  //   return compressImage;
-  // }
-
-
-
-  updateProfileDetails(String name, String flatno,) {
+  updateProfileDetails(
+    String name,
+    String flatno,
+      String mobile,
+      String email,
+  ) {
     var userId = auth.currentUser?.uid;
-    final _dbref = FirebaseDatabase.instance.ref().child('Users').child(userId.toString());
+    final _dbref =
+        FirebaseDatabase.instance.ref().child('Users').child(userId.toString());
 
     _dbref.update({
-      'UserName' : name,
-      'FlatNo' : flatno,
+      'UserName': name,
+      'FlatNo': flatno,
+      'MobileNo': mobile,
+      'Email': email,
     }).then((value) {
       Get.back();
-      Utils().snackBar(message:  "Profile details updated successfully");
-    }).onError((error, stackTrace){
+      Utils().snackBar(message: "Profile details updated successfully");
+    }).onError((error, stackTrace) {
       print("error in update profile");
-      Utils().snackBar(message:  "Please try again to update your details.");
+      Utils().snackBar(message: "Please try again to update your details.");
     });
   }
-
-
-
 
   Future getImageCamera() async {
     final image = await ImagePicker().pickImage(source: ImageSource.camera);
@@ -352,7 +346,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     if (isImageSizeValid(imageFile, maxSizeInBytes: 2 * 1024 * 1024)) {
       return true;
     } else {
-      Utils().snackBar(message: "The selected image size exceeds the maximum allowed size of 2 MB.");
+      Utils().snackBar(
+          message:
+              "The selected image size exceeds the maximum allowed size of 2 MB.");
       return false;
     }
   }
@@ -374,43 +370,47 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
 
   updateProfileImage(File image) async {
     var userId = auth.currentUser?.uid;
-    final _dbref = FirebaseDatabase.instance.ref().child('Users').child(userId.toString());
+    final _dbref =
+        FirebaseDatabase.instance.ref().child('Users').child(userId.toString());
 
-    if(image != null) {
+    if (image != null) {
       bool isValidImageSize = validateImgeSize(image!);
 
-      if(isValidImageSize) {
+      if (isValidImageSize) {
         setState(() {
           isProfileImageUpdate = true;
         });
 
         File profileImage = image!;
-        firebase_storage.Reference storageRef = firebase_storage.FirebaseStorage.instance.ref('/Users/${userId}');
-        firebase_storage.UploadTask uploadeTask = storageRef.putFile(profileImage!);
+        firebase_storage.Reference storageRef =
+            firebase_storage.FirebaseStorage.instance.ref('/Users/${userId}');
+        firebase_storage.UploadTask uploadeTask =
+            storageRef.putFile(profileImage!);
         print("uploadeTask : $uploadeTask");
 
         Future.value(uploadeTask).then((value) async {
           var newUrl = await storageRef.getDownloadURL();
 
           _dbref.update({
-            'ProfilePic' : newUrl,
+            'ProfilePic': newUrl,
           }).then((value) {
             // Get.back();
             setState(() {
               netProfileImage = newUrl.toString();
               isProfileImageUpdate = false;
             });
-            Utils().snackBar(message:  "Updated successfully");
-          }).onError((error, stackTrace){
+            Utils().snackBar(message: "Updated successfully");
+          }).onError((error, stackTrace) {
             setState(() {
               isProfileImageUpdate = false;
             });
             print("error in update profile");
-            Utils().snackBar(message:  "Error in Update Profile");
+            Utils().snackBar(message: "Error in Update Profile");
           });
-
         }).onError((error, stackTrace) {
-          Utils().snackBar(message:  "Profile not updated",);
+          Utils().snackBar(
+            message: "Profile not updated",
+          );
           setState(() {
             isProfileImageUpdate = false;
           });
@@ -466,7 +466,4 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       },
     );
   }
-
-
-
 }
