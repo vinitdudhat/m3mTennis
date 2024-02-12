@@ -35,7 +35,7 @@ class BookSlotController extends GetxController {
   //   "11:00 AM - 12:00 AM",
   //   ];
 
-  List timeList = [6,7,8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23 /*, 24 , 25 , 26*/];
+  List timeList = [6,7,8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23];
   List slotList = [
     "06:00 AM - 07:00 AM",
     "07:00 AM - 08:00 AM",
@@ -53,10 +53,10 @@ class BookSlotController extends GetxController {
     "07:00 PM - 08:00 PM",
     "08:00 PM - 09:00 PM",
     "09:00 PM - 10:00 PM",
-    // "10:00 PM - 10:30 PM",
     "10:00 PM - 11:00 PM",
-    // "11:00 PM - 11:30 PM",
   ];
+  
+  List bookedSlotList = [];
 
 
   // List timeList = [6,7,8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23];
@@ -180,10 +180,10 @@ class BookSlotController extends GetxController {
 
         if(isAfterDate || isSameDate) {
           print("date : ${value['date']}");
-          print("toTime : ${value['to']}");
-          String toTime = convertTo24HourFormat(value['to']);
-          print("toTime : $toTime");
-          List<String> timeParts = toTime.split(':');
+          print("fromTime : ${value['from']}");
+          String fromTime = convertTo24HourFormat(value['from']);
+          print("fromTime : $fromTime");
+          List<String> timeParts = fromTime.split(':');
 
           DateTime targetTime = DateTime(
             year,
@@ -247,6 +247,32 @@ class BookSlotController extends GetxController {
     }
   }
 
+  // checkUserAbelToSelectSlot({required BuildContext context,required String targetedSlot}) async {
+  //   // final _dbref = FirebaseDatabase.instance.ref().child('_dbRef');
+  //   DataSnapshot snapshot = await _dbRef.orderByChild('date').equalTo(selectedDate!.toString().substring(0, 10)).get();
+  //
+  //   if(snapshot.value != null) {
+  //     Map bookingsData = snapshot.value as Map;
+  //     print(bookingsData);
+  //     print(bookingsData.length);
+  //
+  //     bool userAbelToSelectSlot = true;
+  //
+  //     bookingsData.forEach((key, value) {
+  //       String slotTime = value['from'] +" - "+ value['to'];
+  //
+  //       if(slotTime == ) {
+  //
+  //        } else {
+  //
+  //        }
+  //     });
+  //   } else {
+  //
+  //   }
+  // }
+
+
   // availableSlot() {
   //   final DatabaseReference databaseReference = FirebaseDatabase.instance.reference();
   //
@@ -263,6 +289,10 @@ class BookSlotController extends GetxController {
   //     print('Error retrieving data: $error');
   //   });
   // }
+
+  
+  
+  
 
   void confirmationBottomSheet(
       {required BuildContext context, required String courtId, required String date, required String slot}) {
