@@ -46,6 +46,24 @@ String adjustTime(String originalTime) {
   return adjustedTime;
 }
 
+bool isBetweenInTimeRange({required List<DateTime> timeSlot, required DateTime checkTime}) {
+
+  DateTime startTimeRange1 = timeSlot[0];
+  DateTime endTimeRange1 = timeSlot[1];
+
+  DateTime rangeStart = checkTime;
+  // DateTime rangeStart = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 9, 30);
+
+  bool isInRange = isBetween(rangeStart, startTimeRange1, endTimeRange1);
+
+  return isInRange;
+}
+
+bool isBetween(DateTime target, DateTime start, DateTime end) {
+  return target.isAfter(start) && target.isBefore(end);
+}
+
+
 //
 // String adjustTimeRange(String originalTimeRange) {
 //   // Split the original time range into start and end times

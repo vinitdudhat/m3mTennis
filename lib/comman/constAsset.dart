@@ -10,6 +10,6 @@ class ConstAsset{
   // icon
   static const String mobileIcon = "asset/icon_svg/mobile.svg";
   static const String emailIcon = "asset/icon_svg/email.svg";
-
+  static const String bookingIcon = "asset/icon_svg/My Booking Icon.svg";
 
 }

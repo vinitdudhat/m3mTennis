@@ -1,9 +1,11 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:m3m_tennis/comman/constAsset.dart';
 import 'package:m3m_tennis/comman/constColor.dart';
 import 'package:m3m_tennis/comman/constFontStyle.dart';
 import 'package:m3m_tennis/comman/snackbar.dart';
@@ -50,11 +52,14 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("Book your next play",style: ConstFontStyle().titleText),
         // titleTextStyle :ConstFontStyle.titleText,
         centerTitle: true,
-        leading: GestureDetector(
-            onTap: () {
-              Get.to(() => MyBookingScreen());
-            },
-            child: Icon(Icons.event_note_sharp,color: ConstColor.greyTextColor,)),
+        leading: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: GestureDetector(
+              onTap: () {
+                Get.to(() => MyBookingScreen());
+              },
+              child: SvgPicture.asset(ConstAsset.bookingIcon,)),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -212,9 +217,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                          int timeIndex = index ~/ 2;
                                          String slotTime = bookSlotController.slotList[timeIndex];
                                          String halfHourSlotTime = adjustTimeRange(slotTime);
-                                         // print(adjustedTimeRange);
-
-                                         bool isCompleted = false;
+                                         // print("halfHourSlotTime :$index : $halfHourSlotTime");
+                                         bool isCompletedOneHourSlot = false;
+                                         bool isCompletedHalfHourSlot = false;
 
                                          DateTime currentTime = DateTime.now();
                                          List<String> dateComponents = bookSlotController.selectedDate!.toString().substring(0, 10).split("-");
@@ -223,82 +228,481 @@ class _HomeScreenState extends State<HomeScreen> {
                                          int day = int.parse(dateComponents[2]);
 
                                          List<String> timeParts = slotTime.split(' - ');
-                                         String endTime = timeParts[1];
-                                         String toTime = convertTo24HourFormat(endTime);
-                                         print("toTime000 : $toTime");
+                                         List<String> timeParts1 = halfHourSlotTime.split(' - ');
 
-                                         List<String> timeHours = toTime.split(':');
-                                         DateTime targetTime = DateTime(
+                                         String startTime = timeParts[0];
+                                         String endTime = timeParts[1];
+                                         String fromTime = convertTo24HourFormat(startTime);
+                                         String toTime = convertTo24HourFormat(endTime);
+                                         // print("toTime000 : $toTime");
+                                         
+                                         String startTime1 = timeParts1[0];
+                                         String endTime1 = timeParts1[1];
+                                         String fromTime1 = convertTo24HourFormat(startTime1);
+                                         String toTime1 = convertTo24HourFormat(endTime1);
+                                         
+                                         
+                                         List<String> timeHoursFrom = fromTime.split(':');
+                                         List<String> timeHoursTo = toTime.split(':');
+
+                                         DateTime slotFromTime = DateTime(
+                                           year,
+                                           month,
+                                           day,
+                                           int.parse(timeHoursFrom[0]),
+                                           int.parse(timeHoursFrom[1]),
+                                         );
+                                         DateTime slotToTime = DateTime(
                                          year,
                                          month,
                                          day,
-                                         int.parse(timeHours[0]),
-                                         int.parse(timeHours[1]),
+                                         int.parse(timeHoursTo[0]),
+                                         int.parse(timeHoursTo[1]),
                                          );
-                                         isCompleted = currentTime.isAfter(targetTime);
+                                         // print("slotFromTime : $slotFromTime");
+                                         // print("slotToTime : $slotToTime");
+
+                                         isCompletedOneHourSlot = currentTime.isAfter(slotToTime);
+
+                                         List<String> timeHoursFrom1 = fromTime1.split(':');
+                                         List<String> timeHoursTo1 = toTime1.split(':');
+                                         DateTime slotFromTime1 = DateTime(
+                                           year,
+                                           month,
+                                           day,
+                                           int.parse(timeHoursFrom1[0]),
+                                           int.parse(timeHoursFrom1[1]),
+                                         );
+                                         DateTime slotToTime1 = DateTime(
+                                           year,
+                                           month,
+                                           day,
+                                           int.parse(timeHoursTo1[0]),
+                                           int.parse(timeHoursTo1[1]),
+                                         );
+                                         // print("slotFromTime : $slotFromTime");
+                                         // print("slotToTime : $slotToTime");
+                                         isCompletedHalfHourSlot = currentTime.isAfter(slotToTime1);
 
                                          String courtId = index % 2 == 0 ? 'EC'  : 'WC';
                                          bool isPractiseSlot = false;
+                                         bool isPractiseSlotOneHour = false;
+                                         bool isPractiseSlotHalfHour = false;
+                                         bool isPractiseSlotFirstHalf = false;
+                                         bool isPractiseSlotSecondHalf = false;
+
+                                         String practiseSlotTime = '';
 
                                          if(courtId == 'EC') {
-                                           // print("length : ${practiseData['EC']['slotList'].length}");
                                            if(practiseData['EC']['slotList'].length != 0) {
-
                                              for(int i=1; i <= practiseData['EC']['slotList'].length; i++) {
                                                // print("i+++" + i.toString());
                                                var slot = practiseData['EC']['slotList']["slot${i.toString()}"];
                                                // print("sloti+++" + slot.toString());
-
-                                               String isPractiseSlotTime = slot['from'] +" - "+ slot['to'];
-                                               // print("isPractiseSlotTime : $isPractiseSlotTime");
+                                               String practiseSlot = slot['from'] +" - "+ slot['to'];
+                                               // print("practiseSlot000 : $practiseSlot");
+                                               // print("slotTime0000 : $slotTime");
                                                // print("slotTime : $slotTime");
 
-                                               bool match = slotTime == isPractiseSlotTime;
+                                               bool match = slotTime == practiseSlot;
+                                               // print("match000 : $match");
+
                                                if(match) {
                                                  isPractiseSlot = true;
+                                                 isPractiseSlotOneHour = true;
+                                                 practiseSlotTime = practiseSlot;
+                                               } else {
+                                                 String fromIn24Hours = convertTo24HourFormat(slot['from']);
+                                                 String toIn24Hours = convertTo24HourFormat(slot['to']);
+                                                 // print("fromIn24Hours : $fromIn24Hours");
+
+                                                 List<String> checkFromTime = fromIn24Hours.split(':');
+                                                 List<String> checkFromTime2 = toIn24Hours.split(':');
+
+                                                 DateTime fromTimeInDT = DateTime(
+                                                   year,
+                                                   month,
+                                                   day,
+                                                   int.parse(checkFromTime[0]),
+                                                   int.parse(checkFromTime[1]),
+                                                 );
+                                                 DateTime toTimeInDT = DateTime(
+                                                   year,
+                                                   month,
+                                                   day,
+                                                   int.parse(checkFromTime2[0]),
+                                                   int.parse(checkFromTime2[1]),
+                                                 );
+                                                 // print("fromTimeInDT $fromTimeInDT");
+
+                                                 bool isFromTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: fromTimeInDT);
+                                                 bool istoTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: toTimeInDT);
+                                                 // print("isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
+                                                 // print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
+
+                                                 if(isFromTimeBetweenInSlot) {
+                                                   isPractiseSlot = true;
+                                                   isPractiseSlotHalfHour = true;
+                                                   isPractiseSlotFirstHalf = true;
+                                                   practiseSlotTime = practiseSlot;
+                                                 } else if(istoTimeBetweenInSlot) {
+                                                   isPractiseSlot = true;
+                                                   isPractiseSlotHalfHour = true;
+                                                   isPractiseSlotSecondHalf = true;
+                                                 }
                                                }
-                                               // print("isisPractiseSlot : $isPractiseSlot");
                                              }
                                            }
                                          } else {
+                                           // print("length WC : ${practiseData['WC']['slotList'].length}");
+
                                            if(practiseData['WC']['slotList'].length != 0) {
+
                                              for(int i=1; i <= practiseData['WC']['slotList'].length; i++) {
+                                               // print("i+++" + i.toString());
                                                var slot = practiseData['WC']['slotList']["slot${i.toString()}"];
-                                               String isPractiseSlotTime = slot['from'] +" - "+ slot['to'];
-                                               bool match = slotTime == isPractiseSlotTime;
+                                               // print("sloti+++" + slot.toString());
+
+                                               String practiseSlot = slot['from'] +" - "+ slot['to'];
+                                               // print("practiseSlot000 : $practiseSlot");
+                                               // print("slotTime0000 : $slotTime");
+                                               // print("slotTime : $slotTime");
+
+                                               bool match = slotTime == practiseSlot;
+                                               // print("match000 : $match");
+
                                                if(match) {
                                                  isPractiseSlot = true;
+                                                 isPractiseSlotOneHour = true;
+                                                 practiseSlotTime = practiseSlot;
+                                               } else {
+                                                 String fromIn24Hours = convertTo24HourFormat(slot['from']);
+                                                 String toIn24Hours = convertTo24HourFormat(slot['to']);
+                                                 // print("fromIn24Hours : $fromIn24Hours");
+
+                                                 List<String> checkFromTime = fromIn24Hours.split(':');
+                                                 List<String> checkFromTime2 = toIn24Hours.split(':');
+
+                                                 DateTime fromTimeInDT = DateTime(
+                                                   year,
+                                                   month,
+                                                   day,
+                                                   int.parse(checkFromTime[0]),
+                                                   int.parse(checkFromTime[1]),
+                                                 );
+                                                 DateTime toTimeInDT = DateTime(
+                                                   year,
+                                                   month,
+                                                   day,
+                                                   int.parse(checkFromTime2[0]),
+                                                   int.parse(checkFromTime2[1]),
+                                                 );
+                                                 // print("fromTimeInDT $fromTimeInDT");
+
+                                                 bool isFromTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: fromTimeInDT);
+                                                 bool istoTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: toTimeInDT);
+                                                 // print("isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
+                                                 // print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
+
+                                                 if(isFromTimeBetweenInSlot) {
+                                                   isPractiseSlot = true;
+                                                   isPractiseSlotHalfHour = true;
+                                                   isPractiseSlotFirstHalf = true;
+                                                   practiseSlotTime = practiseSlot;
+                                                 } else if(istoTimeBetweenInSlot) {
+                                                   isPractiseSlot = true;
+                                                   isPractiseSlotHalfHour = true;
+                                                   isPractiseSlotSecondHalf = true;
+                                                 }
                                                }
                                              }
                                            }
                                          }
 
                                          if(isPractiseSlot) {
-                                           return Container(
-                                             decoration: BoxDecoration(
-                                               color: Colors.transparent,
-                                               border: Border(
-                                                 bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
-                                                 right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
-                                               ),
-                                             ),
-                                             child: Center(
-                                               child:  Container(
-                                                 height: deviceHeight * 0.09,
-                                                 width: deviceWidth * 0.33,
-                                                 decoration: BoxDecoration(
-                                                     color: ConstColor.childrenBooking,
-                                                     borderRadius: BorderRadius.circular(5)
-                                                 ),
-                                                 child: Center(child: Text(
-                                                   // time.toString(),
-                                                   "Children",
-                                                   style:  ConstFontStyle().titleText1,)),
-                                               ),
-                                             ),
+                                           return Builder(
+                                              builder: (context) {
+                                                if(isPractiseSlotOneHour) {
+                                                  return Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.transparent,
+                                                      border: Border(
+                                                        bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
+                                                        right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
+                                                      ),
+                                                    ),
+                                                    child: Center(
+                                                      child:  Container(
+                                                        height: deviceHeight * 0.09,
+                                                        width: deviceWidth * 0.33,
+                                                        decoration: BoxDecoration(
+                                                            color: ConstColor.highLightBooking,
+                                                            borderRadius: BorderRadius.circular(5)
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                                          children: [
+                                                            Text(
+                                                            practiseSlotTime.toString(),
+                                                           style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),
+                                                            ),
+                                                            Text(
+                                                              // time.toString(),
+                                                              "Practise Slot",
+                                                              style:  ConstFontStyle().titleText1,),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                } else if(isPractiseSlotHalfHour) {
+                                                  if(isPractiseSlotFirstHalf && isPractiseSlotSecondHalf) {
+                                                    return Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.transparent,
+                                                        border: Border(
+                                                          bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
+                                                          right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
+                                                        ),
+                                                      ),
+                                                      child: Container(
+                                                        height: deviceHeight * 0.09,
+                                                        width: deviceWidth * 0.33,
+                                                        decoration: BoxDecoration(
+                                                          // color: ConstColor.primaryColor,
+                                                            borderRadius: BorderRadius.circular(5)
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                          children: [
+                                                            Flexible(
+                                                              flex: 10,
+                                                              fit: FlexFit.tight,
+                                                              child: GestureDetector(
+                                                                onTap: () {
+                                                                  // print(slotTime);
+                                                                  //
+                                                                  // print(courtId);
+                                                                  // bookSlotController.selectedSlotIndex.value = index;
+                                                                  // bookSlotController.selectedSlotTime = slotTime ;
+                                                                  // bookSlotController.selectedCourtId = courtId;
+                                                                  // bookSlotController.selectedisCompletedOneHourSlot = isCompletedOneHourSlot;
+                                                                  // setState(() {
+                                                                  // });
+                                                                },
+                                                                child:  Container(
+                                                                    width: deviceWidth * 0.33,
+                                                                    margin: EdgeInsets.only(bottom: 5),
+                                                                    decoration: BoxDecoration(
+                                                                      color: ConstColor.childrenBooking,
+                                                                      borderRadius: BorderRadius.only(
+                                                                          bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)
+                                                                      ),
+                                                                    ),
+                                                                    child: Center(
+                                                                      child: Text(
+                                                                        // time.toString(),
+                                                                        "Children",
+                                                                        style:  ConstFontStyle().titleText1,),
+                                                                    )
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Flexible(
+                                                              flex: 1,
+                                                              fit: FlexFit.tight,
+                                                              child: Container(
+                                                                child: fullWidthPath),
+                                                            ),
+                                                            Flexible(
+                                                              flex: 10,
+                                                              fit: FlexFit.tight,
+                                                              child: GestureDetector(
+                                                                onTap: () {
+
+                                                                },
+                                                                child: Container(
+                                                                  // color: ConstColor.childrenBooking,
+                                                                  // height: deviceHeight * 0.09,
+                                                                  width: deviceWidth * 0.33,
+                                                                  decoration: BoxDecoration(
+                                                                    color: ConstColor.childrenBooking,
+                                                                    borderRadius: BorderRadius.only(
+                                                                        topLeft: Radius.circular(5), topRight: Radius.circular(5)
+                                                                    ),
+                                                                  ),
+                                                                  child: Center(
+                                                                    child: Text(
+                                                                      practiseSlotTime.toString(),
+                                                                      style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  } else if(isPractiseSlotFirstHalf) {
+                                                    return Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.transparent,
+                                                        border: Border(
+                                                          bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
+                                                          right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
+                                                        ),
+                                                      ),
+                                                      child: Container(
+                                                        height: deviceHeight * 0.09,
+                                                        width: deviceWidth * 0.33,
+                                                        decoration: BoxDecoration(
+                                                          // color: ConstColor.primaryColor,
+                                                            borderRadius: BorderRadius.circular(5)
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                          children: [
+                                                            Flexible(
+                                                              flex: 10,
+                                                              fit: FlexFit.tight,
+                                                              child: GestureDetector(
+                                                                onTap: () {
+                                                                  // print(slotTime);
+                                                                  //
+                                                                  // print(courtId);
+                                                                  // bookSlotController.selectedSlotIndex.value = index;
+                                                                  // bookSlotController.selectedSlotTime = slotTime ;
+                                                                  // bookSlotController.selectedCourtId = courtId;
+                                                                  // bookSlotController.selectedisCompletedOneHourSlot = isCompletedOneHourSlot;
+                                                                  // setState(() {
+                                                                  // });
+                                                                },
+                                                                child: Container(
+                                                                  color: Colors.transparent,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Flexible(
+                                                              flex: 1,
+                                                              fit: FlexFit.tight,
+                                                              child: Container(
+                                                                child: fullWidthPath),
+                                                            ),
+                                                            Flexible(
+                                                              flex: 10,
+                                                              fit: FlexFit.tight,
+                                                              child: Container(
+                                                                width: deviceWidth * 0.33,
+                                                                decoration: BoxDecoration(
+                                                                  color: ConstColor.childrenBooking,
+                                                                  borderRadius: BorderRadius.only(
+                                                                      topLeft: Radius.circular(5), topRight: Radius.circular(5)
+                                                                  ),
+                                                                ),
+                                                                child: Center(
+                                                                  child: Text(
+                                                                    practiseSlotTime.toString(),
+                                                                    style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),
+                                                                ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  } else if(isPractiseSlotSecondHalf) {
+                                                    return Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.transparent,
+                                                        border: Border(
+                                                          bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
+                                                          right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
+                                                        ),
+                                                      ),
+
+                                                      child: Container(
+                                                        height: deviceHeight * 0.09,
+                                                        width: deviceWidth * 0.33,
+                                                        decoration: BoxDecoration(
+                                                          // color: ConstColor.primaryColor,
+                                                            borderRadius: BorderRadius.circular(5)
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                          children: [
+                                                            Flexible(
+                                                              flex: 10,
+                                                              fit: FlexFit.tight,
+                                                              child: GestureDetector(
+                                                                onTap: () {
+
+                                                                },
+                                                                child: Container(
+                                                                    width: deviceWidth * 0.33,
+                                                                    margin: EdgeInsets.only(bottom: 5),
+                                                                    decoration: BoxDecoration(
+                                                                      color: ConstColor.childrenBooking,
+                                                                      borderRadius: BorderRadius.only(
+                                                                          bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)
+                                                                      ),
+                                                                    ),
+                                                                    child: Center(
+                                                                      child: Text(
+                                                                        // time.toString(),
+                                                                        "Children",
+                                                                        style:  ConstFontStyle().titleText1,),
+                                                                    )
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Flexible(
+                                                              flex: 1,
+                                                              fit: FlexFit.tight,
+                                                              child: Container(
+                                                                  child: fullWidthPath
+                                                              ),
+                                                            ),
+                                                            Flexible(
+                                                              flex: 10,
+                                                              fit: FlexFit.tight,
+                                                              child: GestureDetector(
+                                                                onTap: () {
+                                                                  // print(slotTime);
+                                                                  //
+                                                                  // print(courtId);
+                                                                  // bookSlotController.selectedSlotIndex.value = index;
+                                                                  // bookSlotController.selectedSlotTime = slotTime ;
+                                                                  // bookSlotController.selectedCourtId = courtId;
+                                                                  // bookSlotController.selectedisCompletedOneHourSlot = isCompletedOneHourSlot;
+                                                                  // setState(() {
+                                                                  // });
+                                                                },
+                                                                child: Container(
+                                                                  color: Colors.transparent,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    return Container();
+                                                  }
+                                                } else {
+                                                  return Container();
+                                                }
+                                              },
                                            );
                                          } else {
-
                                            return StreamBuilder(
                                              stream: dbref.child('User_Bookings').orderByChild('date').equalTo(bookSlotController.selectedDate!.toString().substring(0, 10)).onValue,
                                              builder: (context, snapshot) {
@@ -306,14 +710,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                                  return Container();
                                                } else {
                                                  Map? bookData = snapshot.data!.snapshot.value as Map?;
-                                                 // print("bookingData00001 : $bookingData");
+                                                 print("bookingData00001 : $bookingData");
 
                                                  bool isBookedSlot = false;
                                                  bool bookedSlotIsYour = false;
+                                                 bool isBookedSlotOneHour = false;
+                                                 bool isBookedSlotHalfHour = false;
+                                                 bool isBookedSlotFirstHalf = false;
+                                                 bool isBookedSlotSecondHalf = false;
+
+                                                 String bookedTime = '';
                                                  String userId = "";
 
-                                                 bool isSelectedSlot = false;
-
+                                                 // Select Slot
+                                                 // bool isSelectedSlot = false;
+                                                 // bool isSelectedSlotIsHalfHour = false;
+                                                 // bool isSelectedSlotHour = false;
 
                                                  if(bookData != null) {
                                                    bookData.forEach((key, value) {
@@ -321,165 +733,1017 @@ class _HomeScreenState extends State<HomeScreen> {
                                                        String bookedSlotTime = value['from'] +" - "+ value['to'];
 
                                                        bool match = slotTime == bookedSlotTime;
+                                                       // bool matchIsHalfHour = slotTime == bookedSlotTime || slotTime == halfHourSlotTime;
                                                        print("match $match");
                                                        if(match) {
                                                          userId = value['userId'];
                                                          isBookedSlot = true;
+                                                         isBookedSlotOneHour = true;
+                                                         bookedTime = bookedSlotTime;
                                                          bookedSlotIsYour = bookSlotController.auth.currentUser?.uid == value['userId'];
+                                                         // isSelectedSlot = true;
                                                        } else {
-                                                         // isSelectedSlot = ;
+                                                         // isSelectedSlot = false;
+
+                                                         String fromIn24Hours = convertTo24HourFormat(value['from']);
+                                                         String toIn24Hours = convertTo24HourFormat(value['to']);
+                                                         // print("fromIn24Hours : $fromIn24Hours");
+
+                                                         List<String> checkFromTime = fromIn24Hours.split(':');
+                                                         List<String> checkFromTime2 = toIn24Hours.split(':');
+
+                                                         DateTime fromTimeInDT = DateTime(
+                                                           year,
+                                                           month,
+                                                           day,
+                                                           int.parse(checkFromTime[0]),
+                                                           int.parse(checkFromTime[1]),
+                                                         );
+                                                         DateTime toTimeInDT = DateTime(
+                                                           year,
+                                                           month,
+                                                           day,
+                                                           int.parse(checkFromTime2[0]),
+                                                           int.parse(checkFromTime2[1]),
+                                                         );
+                                                         // print("fromTimeInDT $fromTimeInDT");
+
+                                                         bool isFromTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: fromTimeInDT);
+                                                         bool istoTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: toTimeInDT);
+                                                         print("isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
+                                                         print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
+
+                                                         if(isFromTimeBetweenInSlot) {
+                                                           bookedSlotIsYour = bookSlotController.auth.currentUser?.uid == value['userId'];
+                                                           userId = value['userId'];
+                                                           isBookedSlot = true;
+                                                           isBookedSlotHalfHour = true;
+                                                           isBookedSlotFirstHalf = true;
+                                                           bookedTime = bookedSlotTime;
+                                                         } else if(istoTimeBetweenInSlot) {
+                                                           bookedSlotIsYour = bookSlotController.auth.currentUser?.uid == value['userId'];
+                                                           userId = value['userId'];
+                                                           isBookedSlot = true;
+                                                           isBookedSlotHalfHour = true;
+                                                           isBookedSlotSecondHalf = true;
+                                                           // practiseSlotTime = bookedSlotTime;
+                                                         }
+
                                                        }
                                                      }
                                                    });
-                                                   print("isBookedSlot $isBookedSlot");
+                                                 }
+                                                 // print("isBookedSlot $isBookedSlot");
+                                                 // print("isBookedSlotHalfHour $isBookedSlotHalfHour");
+                                                 // print("isBookedSlotFirstHalf $isBookedSlotFirstHalf");
+                                                 // print("isBookedSlotSecondHalf $isBookedSlotSecondHalf");
+
+
+                                                 // Select Handel
+                                                 bool isSelected = false;
+                                                 bool isSelectedSlotOneHour = false;
+                                                 bool isSelectedSlotHalfHour = false;
+                                                 bool isSelectedSlotFirstHalf = false;
+                                                 bool isSelectedSlotSecondHalf = false;
+
+                                                 if(bookSlotController.selectedSlotTime != null) {
+                                                   if(bookSlotController.selectedCourtId == courtId) {
+                                                     isSelected = slotTime == bookSlotController.selectedSlotTime;
+                                                     if(isSelected) {
+                                                       isSelectedSlotOneHour = slotTime == bookSlotController.selectedSlotTime;
+                                                     } else {
+                                                       List<String> times = bookSlotController.selectedSlotTime!.split(" - ");
+                                                       String fromTime = times[0];
+                                                       String toTime = times[1];
+
+                                                       String fromIn24Hours = convertTo24HourFormat(fromTime);
+                                                       String toIn24Hours = convertTo24HourFormat(toTime);
+                                                       // print("fromIn24Hours : $fromIn24Hours");
+
+                                                       List<String> checkFromTime = fromIn24Hours.split(':');
+                                                       List<String> checkFromTime2 = toIn24Hours.split(':');
+
+                                                       DateTime fromTimeInDT = DateTime(
+                                                         year,
+                                                         month,
+                                                         day,
+                                                         int.parse(checkFromTime[0]),
+                                                         int.parse(checkFromTime[1]),
+                                                       );
+                                                       DateTime toTimeInDT = DateTime(
+                                                         year,
+                                                         month,
+                                                         day,
+                                                         int.parse(checkFromTime2[0]),
+                                                         int.parse(checkFromTime2[1]),
+                                                       );
+                                                       // print("fromTimeInDT $fromTimeInDT");
+
+                                                       bool isFromTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: fromTimeInDT);
+                                                       bool istoTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: toTimeInDT);
+                                                       print("isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
+                                                       print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
+
+                                                       if(isFromTimeBetweenInSlot) {
+                                                         isSelected = true;
+                                                         isSelectedSlotHalfHour = true;
+                                                         isSelectedSlotFirstHalf = true;
+                                                         // bookedTime = bookedSlotTime;
+                                                       } else if(istoTimeBetweenInSlot) {
+                                                         isSelected = true;
+                                                         isSelectedSlotHalfHour = true;
+                                                         isSelectedSlotSecondHalf = true;
+                                                       }
+                                                     }
+                                                   } else {
+
+                                                   }
                                                  }
 
-                                                 return isBookedSlot ?
-                                                 Container(
-                                                   decoration: BoxDecoration(
-                                                     // color: C,
-                                                     border: Border(
-                                                       bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
-                                                       right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
-                                                     ),
-                                                   ),
-                                                   child: Center(
-                                                     child:  Container(
-                                                       height: deviceHeight * 0.09,
-                                                       width: deviceWidth * 0.33,
-                                                       padding: EdgeInsets.symmetric(vertical: 2,horizontal: 3),
-                                                       decoration: BoxDecoration(
-                                                           color: ConstColor.highLightBooking,
-                                                           borderRadius: BorderRadius.circular(5)
-                                                       ),
-                                                       child: Column(
-                                                         mainAxisAlignment: MainAxisAlignment.center,
-                                                         crossAxisAlignment: CrossAxisAlignment.center,
-                                                         children: [
-                                                           Text(isCompleted ? "Completed" : slotTime, style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),textAlign:  TextAlign.center),
-                                                           SizedBox(height: 3,),
-                                                           StreamBuilder(
-                                                               stream: bookSlotController.dbRefUser.child(userId.toString()).onValue,
-                                                               builder: (context, snapshot) {
-                                                                 if(!snapshot.hasData) {
-                                                                   return Text(bookedSlotIsYour ? "Your Booking" : "Other" ,textAlign:  TextAlign.center, style:  ConstFontStyle().titleText1,);
-                                                                 } else {
-                                                                   Map? userDetails = snapshot.data!.snapshot.value as Map?;
-                                                                   // print("userName : $userName");
-                                                                   String userName = userDetails!['UserName'].toString();
-                                                                   print("userName : $userName");
-
-                                                                   return Text(bookedSlotIsYour ? "Your Booking" : userName ,textAlign:  TextAlign.center, style:  ConstFontStyle().titleText1,);
-                                                                 }
-                                                               },
+                                                 return Builder(
+                                                   builder: (context) {
+                                                     if (isBookedSlot) {
+                                                       if(isBookedSlotOneHour) {
+                                                         return Container(
+                                                           decoration:
+                                                           BoxDecoration(
+                                                             // color: C,
+                                                             border: Border(
+                                                               bottom: BorderSide(
+                                                                 width: 1.0,
+                                                                 color: ConstColor
+                                                                     .lineColor,
+                                                               ),
+                                                               // Top border
+                                                               right: BorderSide(
+                                                                 width: 1.0,
+                                                                 color: ConstColor
+                                                                     .lineColor,
+                                                               ), // Right border
+                                                             ),
                                                            ),
-                                                           // Text(isCompleted ? "Completed" : "" ,textAlign:  TextAlign.center, style:  ConstFontStyle().titleText1,),
-                                                         ],
-                                                       ),
-                                                     ),
-                                                   ),
-                                                 )
-                                                     :
-                                                 GestureDetector(
-                                                   onTap: () {
+                                                           child: Center(
+                                                             child: Container(
+                                                               height:
+                                                               deviceHeight *
+                                                                   0.09,
+                                                               width: deviceWidth *
+                                                                   0.33,
+                                                               padding: EdgeInsets
+                                                                   .symmetric(
+                                                                   vertical: 2,
+                                                                   horizontal:
+                                                                   3),
+                                                               decoration: BoxDecoration(
+                                                                   color: ConstColor
+                                                                       .highLightBooking,
+                                                                   borderRadius:
+                                                                   BorderRadius
+                                                                       .circular(
+                                                                       5)),
+                                                               child: Column(
+                                                                 mainAxisAlignment:
+                                                                 MainAxisAlignment
+                                                                     .center,
+                                                                 crossAxisAlignment:
+                                                                 CrossAxisAlignment
+                                                                     .center,
+                                                                 children: [
+                                                                   Text(
+                                                                       isCompletedOneHourSlot
+                                                                           ? "Completed"
+                                                                           : slotTime,
+                                                                       style: ConstFontStyle()
+                                                                           .titleText1!
+                                                                           .copyWith(
+                                                                         fontSize:
+                                                                         12,
+                                                                       ),
+                                                                       textAlign:
+                                                                       TextAlign
+                                                                           .center),
+                                                                   SizedBox(
+                                                                     height: 3,
+                                                                   ),
+                                                                   StreamBuilder(
+                                                                     stream: bookSlotController
+                                                                         .dbRefUser
+                                                                         .child(userId
+                                                                         .toString())
+                                                                         .onValue,
+                                                                     builder: (context,
+                                                                         snapshot) {
+                                                                       if (!snapshot
+                                                                           .hasData) {
+                                                                         return Text(
+                                                                           bookedSlotIsYour
+                                                                               ? "Your Booking"
+                                                                               : "Other",
+                                                                           textAlign:
+                                                                           TextAlign.center,
+                                                                           style: ConstFontStyle()
+                                                                               .titleText1,
+                                                                         );
+                                                                       } else {
+                                                                         Map? userDetails = snapshot
+                                                                             .data!
+                                                                             .snapshot
+                                                                             .value as Map?;
+                                                                         // print("userName : $userName");
+                                                                         String
+                                                                         userName =
+                                                                         userDetails!['UserName']
+                                                                             .toString();
+                                                                         // print(
+                                                                         //     "userName : $userName");
 
+                                                                         return Text(
+                                                                           bookedSlotIsYour
+                                                                               ? "Your Booking"
+                                                                               : userName,
+                                                                           textAlign:
+                                                                           TextAlign.center,
+                                                                           style: ConstFontStyle()
+                                                                               .titleText1,
+                                                                         );
+                                                                       }
+                                                                     },
+                                                                   ),
+                                                                   // Text(isCompletedOneHourSlot ? "Completed" : "" ,textAlign:  TextAlign.center, style:  ConstFontStyle().titleText1,),
+                                                                 ],
+                                                               ),
+                                                             ),
+                                                           ),
+                                                         );
+                                                       } else if(isBookedSlotHalfHour) {
+                                                         if(isBookedSlotFirstHalf && isBookedSlotSecondHalf) {
+                                                           return Container(
+                                                             decoration: BoxDecoration(
+                                                               color: Colors.transparent,
+                                                               border: Border(
+                                                                 bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
+                                                                 right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
+                                                               ),
+                                                             ),
+                                                             child: Container(
+                                                               height: deviceHeight * 0.09,
+                                                               width: deviceWidth * 0.33,
+                                                               decoration: BoxDecoration(
+                                                                 // color: ConstColor.primaryColor,
+                                                                   borderRadius: BorderRadius.circular(5)
+                                                               ),
+                                                               child: Column(
+                                                                 mainAxisAlignment:
+                                                                 MainAxisAlignment
+                                                                     .center,
+                                                                 children: [
+                                                                   Flexible(
+                                                                     flex: 10,
+                                                                     fit: FlexFit.tight,
+                                                                     child: GestureDetector(
+                                                                       onTap: () {
+                                                                         // print(slotTime);
+                                                                         //
+                                                                         // print(courtId);
+                                                                         // bookSlotController.selectedSlotIndex.value = index;
+                                                                         // bookSlotController.selectedSlotTime = slotTime ;
+                                                                         // bookSlotController.selectedCourtId = courtId;
+                                                                         // bookSlotController.selectedisCompletedOneHourSlot = isCompletedOneHourSlot;
+                                                                         // setState(() {
+                                                                         // });
+                                                                       },
+                                                                       child:  Container(
+                                                                           width: deviceWidth * 0.33,
+                                                                           margin: EdgeInsets.only(bottom: 5),
+                                                                           decoration: BoxDecoration(
+                                                                             color: ConstColor.highLightBooking,
+                                                                             borderRadius: BorderRadius.only(
+                                                                                 bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)
+                                                                             ),
+                                                                           ),
+                                                                           child: Center(
+                                                                             child: StreamBuilder(
+                                                                               stream: bookSlotController
+                                                                                   .dbRefUser
+                                                                                   .child(userId
+                                                                                   .toString())
+                                                                                   .onValue,
+                                                                               builder: (context,
+                                                                                   snapshot) {
+                                                                                 if (!snapshot
+                                                                                     .hasData) {
+                                                                                   return Text(
+                                                                                     bookedSlotIsYour
+                                                                                         ? "Your Booking"
+                                                                                         : "Other",
+                                                                                     textAlign:
+                                                                                     TextAlign.center,
+                                                                                     style: ConstFontStyle()
+                                                                                         .titleText1,
+                                                                                   );
+                                                                                 } else {
+                                                                                   Map? userDetails = snapshot
+                                                                                       .data!
+                                                                                       .snapshot
+                                                                                       .value as Map?;
+                                                                                   // print("userName : $userName");
+                                                                                   String
+                                                                                   userName =
+                                                                                   userDetails!['UserName']
+                                                                                       .toString();
+                                                                                   print("userName00011 : $userName");
+                                                                                   return Text(
+                                                                                     bookedSlotIsYour
+                                                                                         ? "Your Booking"
+                                                                                         : userName,
+                                                                                     textAlign:
+                                                                                     TextAlign.center,
+                                                                                     style: ConstFontStyle()
+                                                                                         .titleText1,
+                                                                                   );
+                                                                                 }
+                                                                               },
+                                                                             ),
+
+                                                                             // Text(
+                                                                             //   // time.toString(),
+                                                                             //   "Children",
+                                                                             //   style:  ConstFontStyle().titleText1,),
+                                                                           )
+                                                                       ),
+                                                                     ),
+                                                                   ),
+                                                                   Flexible(
+                                                                     flex: 1,
+                                                                     fit: FlexFit.tight,
+                                                                     child: Container(
+                                                                         child: fullWidthPath),
+                                                                   ),
+                                                                   Flexible(
+                                                                     flex: 10,
+                                                                     fit: FlexFit.tight,
+                                                                     child: GestureDetector(
+                                                                       onTap: () {
+
+                                                                       },
+                                                                       child: Container(
+                                                                         // color: ConstColor.childrenBooking,
+                                                                         // height: deviceHeight * 0.09,
+                                                                         width: deviceWidth * 0.33,
+                                                                         decoration: BoxDecoration(
+                                                                           color: ConstColor.highLightBooking,
+                                                                           borderRadius: BorderRadius.only(
+                                                                               topLeft: Radius.circular(5), topRight: Radius.circular(5)
+                                                                           ),
+                                                                         ),
+                                                                         child: Center(
+                                                                           child: Text(
+                                                                             bookedTime.toString(),
+                                                                             style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),),
+                                                                         ),
+                                                                       ),
+                                                                     ),
+                                                                   ),
+                                                                 ],
+                                                               ),
+                                                             ),
+                                                           );
+                                                         } else if(isBookedSlotFirstHalf) {
+                                                           return Container(
+                                                             decoration: BoxDecoration(
+                                                               color: Colors.transparent,
+                                                               border: Border(
+                                                                 bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
+                                                                 right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
+                                                               ),
+                                                             ),
+                                                             child: Container(
+                                                               height: deviceHeight * 0.09,
+                                                               width: deviceWidth * 0.33,
+                                                               decoration: BoxDecoration(
+                                                                 // color: ConstColor.primaryColor,
+                                                                   borderRadius: BorderRadius.circular(5)
+                                                               ),
+                                                               child: Column(
+                                                                 mainAxisAlignment:
+                                                                 MainAxisAlignment
+                                                                     .center,
+                                                                 children: [
+                                                                   Flexible(
+                                                                     flex: 10,
+                                                                     fit: FlexFit.tight,
+                                                                     child: GestureDetector(
+                                                                       onTap: () {
+
+                                                                       },
+                                                                       child: Container(
+                                                                         color: Colors.transparent,
+                                                                       ),
+                                                                     ),
+                                                                   ),
+                                                                   Flexible(
+                                                                     flex: 1,
+                                                                     fit: FlexFit.tight,
+                                                                     child: Container(
+                                                                         child: fullWidthPath),
+                                                                   ),
+                                                                   Flexible(
+                                                                     flex: 10,
+                                                                     fit: FlexFit.tight,
+                                                                     child: Container(
+                                                                       width: deviceWidth * 0.33,
+                                                                       decoration: BoxDecoration(
+                                                                         color: ConstColor.highLightBooking,
+                                                                         borderRadius: BorderRadius.only(
+                                                                             topLeft: Radius.circular(5), topRight: Radius.circular(5)
+                                                                         ),
+                                                                       ),
+                                                                       child: Center(
+                                                                         child: Text(
+                                                                           bookedTime.toString(),
+                                                                           style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),
+                                                                         ),
+                                                                       ),
+                                                                     ),
+                                                                   ),
+                                                                 ],
+                                                               ),
+                                                             ),
+                                                           );
+                                                         } else if(isBookedSlotFirstHalf && isSelectedSlotSecondHalf) {
+                                                           return Container(
+                                                             decoration: BoxDecoration(
+                                                               color: Colors.transparent,
+                                                               border: Border(
+                                                                 bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
+                                                                 right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
+                                                               ),
+                                                             ),
+                                                             child: Container(
+                                                               height: deviceHeight * 0.09,
+                                                               width: deviceWidth * 0.33,
+                                                               decoration: BoxDecoration(
+                                                                 // color: ConstColor.primaryColor,
+                                                                   borderRadius: BorderRadius.circular(5)
+                                                               ),
+                                                               child: Column(
+                                                                 mainAxisAlignment:
+                                                                 MainAxisAlignment
+                                                                     .center,
+                                                                 children: [
+                                                                   Flexible(
+                                                                     flex: 10,
+                                                                     fit: FlexFit.tight,
+                                                                     child: GestureDetector(
+                                                                       onTap: () {
+
+                                                                       },
+                                                                       child: Container(
+                                                                         color: Colors.transparent,
+                                                                       ),
+                                                                     ),
+                                                                   ),
+                                                                   Flexible(
+                                                                     flex: 1,
+                                                                     fit: FlexFit.tight,
+                                                                     child: Container(
+                                                                         child: fullWidthPath),
+                                                                   ),
+                                                                   Flexible(
+                                                                     flex: 10,
+                                                                     fit: FlexFit.tight,
+                                                                     child: Container(
+                                                                       width: deviceWidth * 0.33,
+                                                                       decoration: BoxDecoration(
+                                                                         color: ConstColor.highLightBooking,
+                                                                         borderRadius: BorderRadius.only(
+                                                                             topLeft: Radius.circular(5), topRight: Radius.circular(5)
+                                                                         ),
+                                                                       ),
+                                                                       child: Center(
+                                                                         child: Text(
+                                                                           bookedTime.toString(),
+                                                                           style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),
+                                                                         ),
+                                                                       ),
+                                                                     ),
+                                                                   ),
+                                                                 ],
+                                                               ),
+                                                             ),
+                                                           );
+                                                         } else if(isBookedSlotSecondHalf) {
+                                                           return Container(
+                                                             decoration: BoxDecoration(
+                                                               color: Colors.transparent,
+                                                               border: Border(
+                                                                 bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
+                                                                 right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
+                                                               ),
+                                                             ),
+
+                                                             child: Container(
+                                                               height: deviceHeight * 0.09,
+                                                               width: deviceWidth * 0.33,
+                                                               decoration: BoxDecoration(
+                                                                 // color: ConstColor.primaryColor,
+                                                                   borderRadius: BorderRadius.circular(5)
+                                                               ),
+                                                               child: Column(
+                                                                 mainAxisAlignment:
+                                                                 MainAxisAlignment
+                                                                     .center,
+                                                                 children: [
+                                                                   Flexible(
+                                                                     flex: 10,
+                                                                     fit: FlexFit.tight,
+                                                                     child: GestureDetector(
+                                                                       onTap: () {
+                                                                       },
+                                                                       child: Container(
+                                                                           width: deviceWidth * 0.33,
+                                                                           margin: EdgeInsets.only(bottom: 5),
+                                                                           decoration: BoxDecoration(
+                                                                             color: ConstColor.highLightBooking,
+                                                                             borderRadius: BorderRadius.only(
+                                                                                 bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)
+                                                                             ),
+                                                                           ),
+                                                                           child: Center(
+                                                                             child: StreamBuilder(
+                                                                               stream: bookSlotController
+                                                                                   .dbRefUser
+                                                                                   .child(userId
+                                                                                   .toString())
+                                                                                   .onValue,
+                                                                               builder: (context,
+                                                                                   snapshot) {
+                                                                                 if (!snapshot
+                                                                                     .hasData) {
+                                                                                   return Text(
+                                                                                     bookedSlotIsYour
+                                                                                         ? "Your Booking"
+                                                                                         : "Other",
+                                                                                     textAlign:
+                                                                                     TextAlign.center,
+                                                                                     style: ConstFontStyle()
+                                                                                         .titleText1,
+                                                                                   );
+                                                                                 } else {
+                                                                                   Map? userDetails = snapshot
+                                                                                       .data!
+                                                                                       .snapshot
+                                                                                       .value as Map?;
+                                                                                   // print("userName : $userName");
+                                                                                   String
+                                                                                   userName =
+                                                                                   userDetails!['UserName']
+                                                                                       .toString();
+                                                                                   print("userName00011 : $userName");
+                                                                                   return Text(
+                                                                                     bookedSlotIsYour
+                                                                                         ? "Your Booking"
+                                                                                         : userName,
+                                                                                     textAlign:
+                                                                                     TextAlign.center,
+                                                                                     style: ConstFontStyle()
+                                                                                         .titleText1,
+                                                                                   );
+                                                                                 }
+                                                                               },
+                                                                             ),
+                                                                             // Text(
+                                                                             //   // time.toString(),
+                                                                             //   "Children",
+                                                                             //   style:  ConstFontStyle().titleText1,),
+                                                                           )
+                                                                       ),
+                                                                     ),
+                                                                   ),
+                                                                   Flexible(
+                                                                     flex: 1,
+                                                                     fit: FlexFit.tight,
+                                                                     child: Container(
+                                                                         child: fullWidthPath
+                                                                     ),
+                                                                   ),
+                                                                   Flexible(
+                                                                     flex: 10,
+                                                                     fit: FlexFit.tight,
+                                                                     child: GestureDetector(
+                                                                       onTap: () {
+                                                                         bookSlotController.selectedSlotIndex.value =
+                                                                             index;
+                                                                         bookSlotController.selectedSlotTime =
+                                                                             halfHourSlotTime;
+                                                                         bookSlotController.selectedCourtId =
+                                                                             courtId;
+                                                                         bookSlotController.selectedIsCompleted =
+                                                                             isCompletedOneHourSlot;
+                                                                         print("halfHourSlotTime : $halfHourSlotTime");
+                                                                         setState(() {});
+                                                                       },
+                                                                       child: Container(
+                                                                         color: Colors.transparent,
+                                                                       ),
+                                                                     ),
+                                                                   ),
+                                                                 ],
+                                                               ),
+                                                             ),
+                                                           );
+                                                         } else {
+                                                           return Container();
+                                                         }
+                                                       } else {
+                                                         return Container();
+                                                       }
+                                                     } else {
+                                                       // bool isSelected = false;
+                                                       // bool isSelectedSlotOneHour = false;
+                                                       // bool isSelectedSlotHalfHour = false;
+                                                       // bool isSelectedSlotFirstHalf = false;
+                                                       // bool isSelectedSlotSecondHalf = false;
+                                                       //
+                                                       // // isSelected = bookSlotController
+                                                       // //     .selectedSlotIndex
+                                                       // //     .value !=
+                                                       // //     index;
+                                                       //
+                                                       // if(bookSlotController.selectedSlotTime != null) {
+                                                       //   if(bookSlotController.selectedCourtId == courtId) {
+                                                       //     isSelected = slotTime == bookSlotController.selectedSlotTime;
+                                                       //     if(isSelected) {
+                                                       //       isSelectedSlotOneHour = slotTime == bookSlotController.selectedSlotTime;
+                                                       //     } else {
+                                                       //       List<String> times = bookSlotController.selectedSlotTime!.split(" - ");
+                                                       //       String fromTime = times[0];
+                                                       //       String toTime = times[1];
+                                                       //
+                                                       //       String fromIn24Hours = convertTo24HourFormat(fromTime);
+                                                       //       String toIn24Hours = convertTo24HourFormat(toTime);
+                                                       //       // print("fromIn24Hours : $fromIn24Hours");
+                                                       //
+                                                       //       List<String> checkFromTime = fromIn24Hours.split(':');
+                                                       //       List<String> checkFromTime2 = toIn24Hours.split(':');
+                                                       //
+                                                       //       DateTime fromTimeInDT = DateTime(
+                                                       //         year,
+                                                       //         month,
+                                                       //         day,
+                                                       //         int.parse(checkFromTime[0]),
+                                                       //         int.parse(checkFromTime[1]),
+                                                       //       );
+                                                       //       DateTime toTimeInDT = DateTime(
+                                                       //         year,
+                                                       //         month,
+                                                       //         day,
+                                                       //         int.parse(checkFromTime2[0]),
+                                                       //         int.parse(checkFromTime2[1]),
+                                                       //       );
+                                                       //       // print("fromTimeInDT $fromTimeInDT");
+                                                       //
+                                                       //       bool isFromTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: fromTimeInDT);
+                                                       //       bool istoTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: toTimeInDT);
+                                                       //       print("isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
+                                                       //       print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
+                                                       //
+                                                       //       if(isFromTimeBetweenInSlot) {
+                                                       //         isSelected = true;
+                                                       //         isSelectedSlotHalfHour = true;
+                                                       //         isSelectedSlotFirstHalf = true;
+                                                       //         // bookedTime = bookedSlotTime;
+                                                       //       } else if(istoTimeBetweenInSlot) {
+                                                       //         isSelected = true;
+                                                       //         isSelectedSlotHalfHour = true;
+                                                       //         isSelectedSlotSecondHalf = true;
+                                                       //       }
+                                                       //     }
+                                                       //   } else {
+                                                       //
+                                                       //   }
+                                                       // }
+                                                       return Container(
+                                                         // height: 120,
+                                                         // width: 150,
+                                                         // padding: EdgeInsets.symmetric(horizontal: 5,vertical: 3),
+                                                         decoration:
+                                                         BoxDecoration(
+                                                           // color: Colors.green,
+                                                           color: Colors
+                                                               .transparent,
+                                                           border: Border(
+                                                             bottom:
+                                                             BorderSide(
+                                                               width: 1.0,
+                                                               color: ConstColor
+                                                                   .lineColor,
+                                                             ),
+                                                             // Top border
+                                                             right: BorderSide(
+                                                               width: 1.0,
+                                                               color: ConstColor
+                                                                   .lineColor,
+                                                             ), // Right border
+                                                           ),
+                                                         ),
+                                                         child: Builder(
+                                                           builder: (context) {
+                                                             if(isSelected) {
+                                                               if(isSelectedSlotOneHour) {
+                                                                 return Center(
+                                                                   child:
+                                                                   Container(
+                                                                     height:
+                                                                     deviceHeight *
+                                                                         0.09,
+                                                                     width:
+                                                                     deviceWidth *
+                                                                         0.33,
+                                                                     padding: EdgeInsets.symmetric(
+                                                                         vertical:
+                                                                         2,
+                                                                         horizontal:
+                                                                         3),
+                                                                     decoration: BoxDecoration(
+                                                                         color: isCompletedOneHourSlot
+                                                                             ? ConstColor
+                                                                             .greyTextColor
+                                                                             : ConstColor
+                                                                             .primaryColor,
+                                                                         borderRadius:
+                                                                         BorderRadius.circular(5)),
+                                                                     child:
+                                                                     Column(
+                                                                       mainAxisAlignment:
+                                                                       MainAxisAlignment
+                                                                           .center,
+                                                                       crossAxisAlignment:
+                                                                       CrossAxisAlignment
+                                                                           .center,
+                                                                       children: [
+                                                                         Text(
+                                                                             slotTime,
+                                                                             style:
+                                                                             ConstFontStyle().titleText1,
+                                                                             textAlign: TextAlign.center),
+                                                                       ],
+                                                                     ),
+                                                                   ),
+                                                                 );
+                                                               } else if(isSelectedSlotHalfHour) {
+                                                                 if(isSelectedSlotFirstHalf) {
+                                                                   return Container(
+                                                                     decoration: BoxDecoration(
+                                                                       color: Colors.transparent,
+                                                                       // border: Border(
+                                                                       //   bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
+                                                                       //   right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
+                                                                       // ),
+                                                                     ),
+                                                                     child: Container(
+                                                                       height: deviceHeight * 0.09,
+                                                                       width: deviceWidth * 0.33,
+                                                                       decoration: BoxDecoration(
+                                                                         // color: ConstColor.primaryColor,
+                                                                           borderRadius: BorderRadius.circular(5)
+                                                                       ),
+                                                                       child: Column(
+                                                                         mainAxisAlignment:
+                                                                         MainAxisAlignment
+                                                                             .center,
+                                                                         children: [
+                                                                           Flexible(
+                                                                             flex: 10,
+                                                                             fit: FlexFit.tight,
+                                                                             child: GestureDetector(
+                                                                               onTap: () {
+
+                                                                               },
+                                                                               child: Container(
+                                                                                 color: Colors.transparent,
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                           Flexible(
+                                                                             flex: 1,
+                                                                             fit: FlexFit.tight,
+                                                                             child: Container(
+                                                                                 child: fullWidthPath),
+                                                                           ),
+                                                                           Flexible(
+                                                                             flex: 10,
+                                                                             fit: FlexFit.tight,
+                                                                             child: Container(
+                                                                               width: deviceWidth * 0.33,
+                                                                               decoration: BoxDecoration(
+                                                                                 color: isCompletedHalfHourSlot
+                                                                                     ? ConstColor
+                                                                                     .greyTextColor
+                                                                                     : ConstColor
+                                                                                     .primaryColor,
+                                                                                 borderRadius: BorderRadius.only(
+                                                                                     topLeft: Radius.circular(5), topRight: Radius.circular(5)
+                                                                                 ),
+                                                                               ),
+                                                                               child: Center(
+                                                                                 child: Text(
+                                                                                   bookSlotController.selectedSlotTime.toString(),
+                                                                                   style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12),
+                                                                                 ),
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                         ],
+                                                                       ),
+                                                                     ),
+                                                                   );
+                                                                 } else if(isSelectedSlotSecondHalf) {
+                                                                   return Container(
+                                                                     decoration: BoxDecoration(
+                                                                       color: Colors.transparent,
+                                                                       // border: Border(
+                                                                       //   bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
+                                                                       //   right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
+                                                                       // ),
+                                                                     ),
+
+                                                                     child: Container(
+                                                                       height: deviceHeight * 0.09,
+                                                                       width: deviceWidth * 0.33,
+                                                                       decoration: BoxDecoration(
+                                                                         // color: ConstColor.primaryColor,
+                                                                           borderRadius: BorderRadius.circular(5)
+                                                                       ),
+                                                                       child: Column(
+                                                                         mainAxisAlignment:
+                                                                         MainAxisAlignment
+                                                                             .center,
+                                                                         children: [
+                                                                           Flexible(
+                                                                             flex: 10,
+                                                                             fit: FlexFit.tight,
+                                                                             child: GestureDetector(
+                                                                               onTap: () {
+
+                                                                               },
+                                                                               child: Container(
+                                                                                   width: deviceWidth * 0.33,
+                                                                                   margin: EdgeInsets.only(bottom: 5),
+                                                                                   decoration: BoxDecoration(
+                                                                                     color: isCompletedHalfHourSlot
+                                                                                         ? ConstColor
+                                                                                         .greyTextColor
+                                                                                         : ConstColor
+                                                                                         .primaryColor,
+                                                                                     borderRadius: BorderRadius.only(
+                                                                                         bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)
+                                                                                     ),
+                                                                                   ),
+                                                                                   child: Center(
+                                                                                     child: Text(
+                                                                                       isCompletedHalfHourSlot
+                                                                                           ? "Completed" : "Available",
+                                                                                       // bookSlotController.selectedSlotTime.toString(),
+                                                                                       style:  ConstFontStyle().titleText1!.copyWith(fontSize: 14),
+                                                                                     ),
+                                                                                   )
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                           Flexible(
+                                                                             flex: 1,
+                                                                             fit: FlexFit.tight,
+                                                                             child: Container(
+                                                                                 child: fullWidthPath
+                                                                             ),
+                                                                           ),
+                                                                           Flexible(
+                                                                             flex: 10,
+                                                                             fit: FlexFit.tight,
+                                                                             child: GestureDetector(
+                                                                               onTap: () {
+                                                                                 // print(slotTime);
+                                                                                 //
+                                                                                 // print(courtId);
+                                                                                 // bookSlotController.selectedSlotIndex.value = index;
+                                                                                 // bookSlotController.selectedSlotTime = slotTime ;
+                                                                                 // bookSlotController.selectedCourtId = courtId;
+                                                                                 // bookSlotController.selectedisCompletedOneHourSlot = isCompletedOneHourSlot;
+                                                                                 // setState(() {
+                                                                                 // });
+                                                                               },
+                                                                               child: Container(
+                                                                                 color: Colors.transparent,
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                         ],
+                                                                       ),
+                                                                     ),
+                                                                   );
+                                                                 } else {
+                                                                   return Container();
+                                                                 }
+                                                               }  else {
+                                                                 return Container();
+                                                               }
+                                                             } else {
+                                                               return
+                                                                 // Container();
+                                                                 Container(
+                                                                 height:
+                                                                 deviceHeight *
+                                                                     0.09,
+                                                                 width:
+                                                                 deviceWidth *
+                                                                     0.33,
+                                                                 decoration:
+                                                                 BoxDecoration(
+                                                                   // color: ConstColor.highLightBooking,
+                                                                     borderRadius:
+                                                                     BorderRadius.circular(5)),
+                                                                 child: Column(
+                                                                   mainAxisAlignment:
+                                                                   MainAxisAlignment
+                                                                       .center,
+                                                                   children: [
+                                                                     Flexible(
+                                                                       flex:
+                                                                       10,
+                                                                       fit: FlexFit
+                                                                           .tight,
+                                                                       child:
+                                                                       GestureDetector(
+                                                                         onTap:
+                                                                             () {
+                                                                           print(slotTime);
+
+                                                                           print(courtId);
+                                                                           bookSlotController.selectedSlotIndex.value =
+                                                                               index;
+                                                                           bookSlotController.selectedSlotTime =
+                                                                               slotTime;
+                                                                           bookSlotController.selectedCourtId =
+                                                                               courtId;
+                                                                           bookSlotController.selectedIsCompleted =
+                                                                               isCompletedOneHourSlot;
+                                                                           setState(() {});
+                                                                         },
+                                                                         child:
+                                                                         Container(
+                                                                           color:
+                                                                           Colors.transparent,
+                                                                         ),
+                                                                       ),
+                                                                     ),
+                                                                     Flexible(
+                                                                       flex: 1,
+                                                                       fit: FlexFit
+                                                                           .tight,
+                                                                       child: Container(
+                                                                           child:
+                                                                           fullWidthPath),
+                                                                     ),
+                                                                     Flexible(
+                                                                       flex:
+                                                                       10,
+                                                                       fit: FlexFit
+                                                                           .tight,
+                                                                       child:
+                                                                       GestureDetector(
+                                                                         onTap:
+                                                                             () {
+                                                                           // print(courtId);
+                                                                           bookSlotController.selectedSlotIndex.value =
+                                                                               index;
+                                                                           bookSlotController.selectedSlotTime =
+                                                                               halfHourSlotTime;
+                                                                           bookSlotController.selectedCourtId =
+                                                                               courtId;
+                                                                           bookSlotController.selectedIsCompleted =
+                                                                               isCompletedOneHourSlot;
+                                                                           print("halfHourSlotTime : $halfHourSlotTime");
+                                                                           setState(() {});
+                                                                         },
+                                                                         child:
+                                                                         Container(
+                                                                           color:
+                                                                           Colors.transparent,
+                                                                         ),
+                                                                       ),
+                                                                     ),
+                                                                   ],
+                                                                 ),
+                                                               );
+                                                             }
+                                                           },
+                                                         ),
+                                                       );
+                                                     }
                                                    },
-                                                   child: Container(
-                                                     // height: 120,
-                                                     // width: 150,
-                                                     // padding: EdgeInsets.symmetric(horizontal: 5,vertical: 3),
-                                                     decoration: BoxDecoration(
-                                                       // color: Colors.green,
-                                                       color: Colors.transparent,
-                                                       border: Border(
-                                                         bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
-                                                         right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
-                                                       ),
-                                                     ),
-                                                     child: bookSlotController.selectedSlotIndex.value != index ?
-                                                     // SizedBox(),
-                                                     Container(
-                                                       height: deviceHeight * 0.09,
-                                                       width: deviceWidth * 0.33,
-                                                       decoration: BoxDecoration(
-                                                           // color: ConstColor.highLightBooking,
-                                                           borderRadius: BorderRadius.circular(5)
-                                                       ),
-                                                       child: Column(
-                                                       mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      Flexible(
-                                                                        flex: 10,
-                                                                         fit: FlexFit.tight,
-                                                                        child: GestureDetector(
-                                                                          onTap: () {
-                                                                            print(slotTime);
-
-                                                                            print(courtId);
-                                                                            bookSlotController.selectedSlotIndex.value = index;
-                                                                            bookSlotController.selectedSlotTime = slotTime ;
-                                                                            bookSlotController.selectedCourtId = courtId;
-                                                                            bookSlotController.selectedIsCompleted = isCompleted;
-                                                                            setState(() {
-                                                                            });
-                                                                          },
-                                                                          child: Container(
-                                                                            color: Colors.transparent,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      Flexible(
-                                                                          flex: 1,
-                                                                          fit: FlexFit.tight,                                                                        child: Container(
-                                                                          child: fullWidthPath),
-                                                                      ),
-                                                                      Flexible(
-                                                                        flex: 10,
-                                                                        fit: FlexFit.tight,
-                                                                        child: GestureDetector(
-                                                                          onTap: () {
-                                                                            print(courtId);
-                                                                            bookSlotController.selectedSlotIndex.value = index;
-                                                                            bookSlotController.selectedSlotTime = halfHourSlotTime ;
-                                                                            bookSlotController.selectedCourtId = courtId;
-                                                                            bookSlotController.selectedIsCompleted = isCompleted;
-                                                                            print("halfHourSlotTime : $halfHourSlotTime");
-                                                                            setState(() {
-                                                                            });
-                                                                          },
-                                                                          child: Container(
-                                                                            color: Colors.transparent,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                     )
-                                                              : Center(
-                                                       child:  Container(
-                                                         height: deviceHeight * 0.09,
-                                                         width: deviceWidth * 0.33,
-                                                         padding: EdgeInsets.symmetric(vertical: 2,horizontal: 3),
-                                                         decoration: BoxDecoration(
-                                                             color: isCompleted ? ConstColor.greyTextColor : ConstColor.primaryColor,
-                                                             borderRadius: BorderRadius.circular(5)
-                                                         ),
-                                                         child: Column(
-                                                           mainAxisAlignment: MainAxisAlignment.center,
-                                                           crossAxisAlignment: CrossAxisAlignment.center,
-                                                           children: [
-                                                             Text(
-                                                                 slotTime,
-                                                                 style:  ConstFontStyle().titleText1,textAlign:  TextAlign.center),
-                                                           ],
-                                                         ),
-                                                       ),
-                                                     ),
-                                                   ),
                                                  );
-                                               }
+                                              }
                                              },
                                            );
                                          }
@@ -566,7 +1830,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: List.generate(bookSlotController.next7Days.length,
                             (index) {
                           var item = bookSlotController.next7Days[index];
-                          print("index : ${bookSlotController.next7Days[index]}");
+                          // print("index : ${bookSlotController.next7Days[index]}");
 
                           int date = int.parse(item.day.toString());
                           String dateText = index == 0
@@ -584,13 +1848,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 return SizedBox();
                               } else {
                                 Map? bookingData = snapshot.data!.snapshot.value as Map?;
-                                print("bookingData00001 : $bookingData");
+                                // print("bookingData00001 : $bookingData");
 
                                 int availableSlot = 30;
                                 if(bookingData != null) {
                                   availableSlot = 30 - bookingData!.length;
                                 }
-                                print('Number of availableSlot : $availableSlot');
+                                // print('Number of availableSlot : $availableSlot');
 
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 5.0),
@@ -883,7 +2147,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //                                       itemBuilder: (context, index) {
 //                                         int timeIndex = index ~/ 2;
 //                                         String slotTime = bookSlotController.slotList[timeIndex];
-//                                         bool isCompleted = false;
+//                                         bool isCompletedOneHourSlot = false;
 //
 //                                         DateTime currentTime = DateTime.now();
 //                                         List<String> dateComponents = bookSlotController.selectedDate!.toString().substring(0, 10).split("-");
@@ -896,15 +2160,15 @@ class _HomeScreenState extends State<HomeScreen> {
 //                                         String toTime = convertTo24HourFormat(endTime);
 //                                         print("toTime000 : $toTime");
 //
-//                                         List<String> timeHours = toTime.split(':');
-//                                         DateTime targetTime = DateTime(
+//                                         List<String> timeHoursTo = toTime.split(':');
+//                                         DateTime slotToTime = DateTime(
 //                                           year,
 //                                           month,
 //                                           day,
-//                                           int.parse(timeHours[0]),
-//                                           int.parse(timeHours[1]),
+//                                           int.parse(timeHoursTo[0]),
+//                                           int.parse(timeHoursTo[1]),
 //                                         );
-//                                         isCompleted = currentTime.isAfter(targetTime);
+//                                         isCompletedOneHourSlot = currentTime.isAfter(slotToTime);
 //
 //
 //                                         String courtId = index % 2 == 0 ? 'EC'  : 'WC';
@@ -919,11 +2183,11 @@ class _HomeScreenState extends State<HomeScreen> {
 //                                               var slot = practiseData['EC']['slotList']["slot${i.toString()}"];
 //                                               // print("sloti+++" + slot.toString());
 //
-//                                               String isPractiseSlotTime = slot['from'] +" - "+ slot['to'];
-//                                               // print("isPractiseSlotTime : $isPractiseSlotTime");
+//                                               String practiseSlotTime = slot['from'] +" - "+ slot['to'];
+//                                               // print("practiseSlotTime : $practiseSlotTime");
 //                                               // print("slotTime : $slotTime");
 //
-//                                               bool match = slotTime == isPractiseSlotTime;
+//                                               bool match = slotTime == practiseSlotTime;
 //                                               if(match) {
 //                                                 isPractiseSlot = true;
 //                                               }
@@ -934,8 +2198,8 @@ class _HomeScreenState extends State<HomeScreen> {
 //                                           if(practiseData['WC']['slotList'].length != 0) {
 //                                             for(int i=1; i <= practiseData['WC']['slotList'].length; i++) {
 //                                               var slot = practiseData['WC']['slotList']["slot${i.toString()}"];
-//                                               String isPractiseSlotTime = slot['from'] +" - "+ slot['to'];
-//                                               bool match = slotTime == isPractiseSlotTime;
+//                                               String practiseSlotTime = slot['from'] +" - "+ slot['to'];
+//                                               bool match = slotTime == practiseSlotTime;
 //                                               if(match) {
 //                                                 isPractiseSlot = true;
 //                                               }
@@ -1000,15 +2264,15 @@ class _HomeScreenState extends State<HomeScreen> {
 //                                                     // print("toTime000 : $toTime");
 //                                                     //
 //                                                     // List<String> timeParts = toTime.split(':');
-//                                                     // DateTime targetTime = DateTime(
+//                                                     // DateTime slotToTime = DateTime(
 //                                                     //   year,
 //                                                     //   month,
 //                                                     //   day,
 //                                                     //   int.parse(timeParts[0]),
 //                                                     //   int.parse(timeParts[1]),
 //                                                     // );
-//                                                     // isCompleted = currentTime.isAfter(targetTime);
-//                                                     // print("isCompleted000 : $isCompleted");
+//                                                     // isCompletedOneHourSlot = currentTime.isAfter(slotToTime);
+//                                                     // print("isCompletedOneHourSlot000 : $isCompletedOneHourSlot");
 //                                                     // if() {
 //                                                     //
 //                                                     // }
@@ -1053,7 +2317,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //                                                         mainAxisAlignment: MainAxisAlignment.center,
 //                                                         crossAxisAlignment: CrossAxisAlignment.center,
 //                                                         children: [
-//                                                           Text(isCompleted ? "Completed" : slotTime, style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),textAlign:  TextAlign.center),
+//                                                           Text(isCompletedOneHourSlot ? "Completed" : slotTime, style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),textAlign:  TextAlign.center),
 //                                                           SizedBox(height: 3,),
 //                                                           StreamBuilder(
 //                                                             stream: bookSlotController.dbRefUser.child(userId.toString()).onValue,
@@ -1070,7 +2334,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //                                                               }
 //                                                             },
 //                                                           ),
-//                                                           // Text(isCompleted ? "Completed" : "" ,textAlign:  TextAlign.center, style:  ConstFontStyle().titleText1,),
+//                                                           // Text(isCompletedOneHourSlot ? "Completed" : "" ,textAlign:  TextAlign.center, style:  ConstFontStyle().titleText1,),
 //                                                         ],
 //                                                       ),
 //                                                     ),
@@ -1132,7 +2396,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //                                                                 bookSlotController.selectedSlotIndex.value = index;
 //                                                                 bookSlotController.selectedSlotTime = slotTime ;
 //                                                                 bookSlotController.selectedCourtId = courtId;
-//                                                                 bookSlotController.selectedIsCompleted = isCompleted;
+//                                                                 bookSlotController.selectedisCompletedOneHourSlot = isCompletedOneHourSlot;
 //                                                                 setState(() {
 //                                                                 });
 //                                                               },
@@ -1166,7 +2430,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //                                                         width: deviceWidth * 0.33,
 //                                                         padding: EdgeInsets.symmetric(vertical: 2,horizontal: 3),
 //                                                         decoration: BoxDecoration(
-//                                                             color: isCompleted ? ConstColor.greyTextColor : ConstColor.primaryColor,
+//                                                             color: isCompletedOneHourSlot ? ConstColor.greyTextColor : ConstColor.primaryColor,
 //                                                             borderRadius: BorderRadius.circular(5)
 //                                                         ),
 //                                                         child: Column(
@@ -1210,7 +2474,7 @@ class _HomeScreenState extends State<HomeScreen> {
 //                         }  else {
 //                           if(bookSlotController.selectedSlotTime == null) {
 //                             Utils().snackBar(message: "Please select slot for booking.");
-//                           } else if(bookSlotController.selectedIsCompleted) {
+//                           } else if(bookSlotController.selectedisCompletedOneHourSlot) {
 //                             Utils().snackBar(message: "Slot is completed. Please choose available slot.");
 //                           }  else {
 //                             bookSlotController.checkUserAbelToBook(context: context);
