@@ -59,6 +59,7 @@ class ConstFontStyle{
   final TextStyle titleText1 = TextStyle(
       fontFamily: ConstFont.popinsRegular,
       fontSize: 14,
+      overflow: TextOverflow.ellipsis,
       color: ConstColor.white
   );
 

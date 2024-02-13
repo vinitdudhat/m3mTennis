@@ -235,7 +235,7 @@ class _MyBookingScreenState extends State<MyBookingScreen> {
                           Get.offAll(() => HomeScreen());
                         },
                         child: Text(
-                        "Book your upcoming golf slot for play.",
+                        "Book your spot for the game.",
                         style:
                         // ConstFontStyle().titleText,
                         ConstFontStyle().titleText.copyWith(

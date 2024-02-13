@@ -72,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   )),
             ),
             Padding(
-              padding: EdgeInsets.only(top: deviceHeight * 0.02),
+              padding: EdgeInsets.only(top: deviceHeight * 0.04),
               child: RoundButtonWithIcon(
                 onTap: () {
                   Get.to(() => MobileNumScreen());
@@ -81,16 +81,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 image: ConstAsset.mobileIcon,
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: deviceHeight * 0.02),
-              child: RoundButtonWithIcon(
-                onTap: () {
-                  loginController.signInWithGoogle();
-                },
-                title: 'Login with e-mail',
-                image: ConstAsset.emailIcon,
-              ),
-            ),
+            // Padding(
+            //   padding: EdgeInsets.only(top: deviceHeight * 0.02),
+            //   child: RoundButtonWithIcon(
+            //     onTap: () {
+            //       loginController.signInWithGoogle();
+            //     },
+            //     title: 'Login with e-mail',
+            //     image: ConstAsset.emailIcon,
+            //   ),
+            // ),
           ],
         ),
       ),

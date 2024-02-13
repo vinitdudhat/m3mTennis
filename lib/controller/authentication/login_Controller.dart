@@ -16,6 +16,7 @@ class LoginController extends GetxController {
   TextEditingController mobileNumberController1 = TextEditingController();
   TextEditingController otpController = TextEditingController();
   RxBool isLoading = false.obs;
+  RxBool isLoading1 = false.obs;
   RxString userName = ''.obs;
   RxString email = ''.obs;
   RxString photo = ''.obs;
@@ -69,7 +70,7 @@ class LoginController extends GetxController {
 
   void checkValidOtp() async {
     print(otpController.text);
-    isLoading.value = true;
+    isLoading1.value = true;
 
     try {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
@@ -88,7 +89,7 @@ class LoginController extends GetxController {
 
       checkAlreadyAccount(uid!);
     } catch (e) {
-      isLoading.value = false;
+      isLoading1.value = false;
     }
   }
 
@@ -109,7 +110,7 @@ class LoginController extends GetxController {
       });
 
       if (isAlreadyAccount) {
-        isLoading.value = false;
+        isLoading1.value = false;
       } else {
         _dbRef.child(uid!).update({
           "CountryCode": 'IN',
@@ -117,10 +118,11 @@ class LoginController extends GetxController {
           "MobileNo": mobileNumberController1.text,
           "createdAt": getCurrentTime(),
           "UserName": "",
+          "Email": "",
           "ProfilePic": null,
           'userId': uid,
         });
-        isLoading.value = false;
+        isLoading1.value = false;
       }
       mobileNumberController1.clear();
       otpController.clear();
@@ -134,10 +136,11 @@ class LoginController extends GetxController {
         "MobileNo": mobileNumberController1.text,
         "createdAt": getCurrentTime(),
         "UserName": "",
+        "Email": "",
         "ProfilePic": null,
         'userId': uid,
       });
-      isLoading.value = false;
+      isLoading1.value = false;
       mobileNumberController1.clear();
       otpController.clear();
 

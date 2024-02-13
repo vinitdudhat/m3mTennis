@@ -238,7 +238,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           return  Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: deviceWidth * 0.02,
-                                vertical: deviceHeight * 0.01),
+                                vertical: deviceHeight * 0.04),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -348,10 +348,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     
-                    Visibility(
-                      visible: email != null,
-                      child:
-                                      Column(
+                    // Visibility(
+                    //   visible: email != null,
+                    //   child:
+                      Column(
                         children: [
                           Padding(
                             padding: EdgeInsets.only(
@@ -369,7 +369,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       .copyWith(color: ConstColor.greyTextColor),
                                 ),
                                 Text(
-                                  email ?? "",
+                                  email ?? "m3mtennis@gmail.com",
                                   style: ConstFontStyle()
                                       .mainTextStyle
                                       .copyWith(color: ConstColor.greyTextColor),
@@ -385,7 +385,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ],
                       ),
-                    ),
+                    // ),
                     Padding(
                       padding: EdgeInsets.only(
                           right: deviceWidth * 0.04,

@@ -374,9 +374,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         FirebaseDatabase.instance.ref().child('Users').child(userId.toString());
 
     if (image != null) {
-      bool isValidImageSize = validateImgeSize(image!);
+      // bool isValidImageSize = validateImgeSize(image!);
 
-      if (isValidImageSize) {
+      // if (isValidImageSize) {
         setState(() {
           isProfileImageUpdate = true;
         });
@@ -415,7 +415,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
             isProfileImageUpdate = false;
           });
         });
-      }
+      // }
     }
   }
 

@@ -22,6 +22,6 @@ class ConstColor {
 
   static const Color errorColor = Colors.red;
   static const Color highLightBooking = Color(0xff572222);
-  static const Color childrenBooking = Color(0xff6478D3);
+  // static const Color childrenBooking = Color(0xff6478D3);
 
 }

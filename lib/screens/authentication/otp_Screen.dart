@@ -145,9 +145,9 @@ class _OtpScreenState extends State<OtpScreen> {
                   () => Padding(
                     padding: EdgeInsets.only(top: deviceHeight * 0.06),
                     child: RoundButton(
-                      loading: loginController.isLoading.value,
+                      loading: loginController.isLoading1.value,
                       title: 'Verify',
-                      onTap: loginController.isLoading.value
+                      onTap: loginController.isLoading1.value
                           ? () => null
                           : () {
                         if (loginController.formKey1.currentState!
@@ -163,11 +163,17 @@ class _OtpScreenState extends State<OtpScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Re-send code in ",
-                        style: ConstFontStyle().buttonTextStyle,
+                      InkWell(
+                        onTap : (){
+                          loginController.sendOtp(loginController.mobileNumberController1.text);
+                          print("Re-send code");
+                        },
+                        child: Text(
+                          "Re-send code ",
+                          style: ConstFontStyle().buttonTextStyle,
+                        ),
                       ),
-                      Countdown(
+                      /*Countdown(
                         build: (BuildContext context, double time) =>
                             Text(time.toString(),style : ConstFontStyle().buttonTextStyle),
                         interval: Duration(milliseconds: 100),
@@ -176,7 +182,7 @@ class _OtpScreenState extends State<OtpScreen> {
                           print('Timer is done!');
                         },
                         seconds: 60,
-                      ),
+                      ),*/
                     ],
                   ),
                 )

@@ -79,23 +79,28 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
              ),
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.04),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: ConstColor.primaryColor,
-                      radius: 15,
-                      child: Icon(
-                        Icons.add,
-                        color: ConstColor.backGroundColor,
+                child: GestureDetector(
+                  onTap: (){
+                    openWhatsApp();
+                  },
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: ConstColor.primaryColor,
+                        radius: 15,
+                        child: Icon(
+                          Icons.add,
+                          color: ConstColor.backGroundColor,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "   You can invite up to 3 members",
-                      style: ConstFontStyle().mainTextStyle.copyWith(
-                          color: ConstColor.greyTextColor,
-                          fontWeight: FontWeight.w300),
-                    ),
-                  ],
+                      Text(
+                        "   You can invite up to 3 members",
+                        style: ConstFontStyle().mainTextStyle.copyWith(
+                            color: ConstColor.greyTextColor,
+                            fontWeight: FontWeight.w300),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Padding(
