@@ -8,6 +8,7 @@ import 'package:m3m_tennis/screens/authentication/sucess_Screen.dart';
 import 'package:m3m_tennis/screens/booking/bookingCriteria_screen.dart';
 import 'package:m3m_tennis/screens/booking/confirmBooking_screen.dart';
 import 'package:m3m_tennis/screens/booking/myBooking%20_screen.dart';
+import 'package:m3m_tennis/screens/dashboard/home_Screen.dart';
 import 'package:m3m_tennis/screens/splash_screen.dart';
 
 
@@ -71,9 +72,7 @@ class _MyAppState extends State<MyApp> {
           NotificationDetails(
             android: AndroidNotificationDetails(channel.id, channel.name,
                 channelDescription: channel.description,
-                // fullScreenIntent: true,
                 importance: Importance.high,
-                // channel.description,
                 channelShowBadge: true,
                 color: Colors.blue,
                 playSound: true,
@@ -95,11 +94,6 @@ class _MyAppState extends State<MyApp> {
       ),
       // home: HomeScreen(),
       home: SplashScreen(),
-      // home: SuccessScreen(),
-      // home: BookingCriteriaScreen(),
-      // home: MyBookingScreen(),
-      // home: ConfirmBookingScreen(),
-      // LoginScreen(),
     );
   }
 }

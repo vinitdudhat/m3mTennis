@@ -25,16 +25,6 @@ class BookSlotController extends GetxController {
   String selectedCourtId = "WC";
   bool selectedIsCompleted = false;
 
-  // List timeList = [6,7,8, 9, 10,11,12];
-  // List slotList = [
-  //   "06:00 AM - 07:00 AM",
-  //   "07:00 AM - 08:00 AM",
-  //   "08:00 AM - 09:00 AM",
-  //   "09:00 AM - 10:00 AM",
-  //   "10:00 AM - 11:00 AM",
-  //   "11:00 AM - 12:00 AM",
-  //   ];
-
   List timeList = [6,7,8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23];
   List slotList = [
     "06:00 AM - 07:00 AM",
@@ -55,30 +45,7 @@ class BookSlotController extends GetxController {
     "09:00 PM - 10:00 PM",
     "10:00 PM - 11:00 PM",
   ];
-  
-  List bookedSlotList = [];
-
-
-  // List timeList = [6,7,8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23];
-  // List slotList = [
-  //   "06:00 AM - 07:00 AM",
-  //   "07:00 AM - 08:00 AM",
-  //   "08:00 AM - 09:00 AM",
-  //   "09:00 AM - 10:00 AM",
-  //   "10:00 AM - 11:00 AM",
-  //   "11:00 AM - 12:00 AM",
-  //   "12:00 AM - 01:00 PM",
-  //   "01:00 PM - 02:00 PM",
-  //   "02:00 PM - 03:00 PM",
-  //   "03:00 PM - 04:00 PM",
-  //   "04:00 PM - 05:00 PM",
-  //   "05:00 PM - 06:00 PM",
-  //   "06:00 PM - 07:00 PM",
-  //   "07:00 PM - 08:00 PM",
-  //   "08:00 PM - 09:00 PM",
-  //   "09:00 PM - 10:00 PM",
-  //   "10:00 PM - 11:00 PM",
-  // ];
+  List bookedSlotTimeList = [];
 
   String? currentDate;
   DateTime? selectedDate;
@@ -108,21 +75,13 @@ class BookSlotController extends GetxController {
     _dbRef.child(bookingId).set({
       "BookingId": bookingId,
       "userId": auth.currentUser?.uid,
-      // "user": {
-      //   "userId": auth.currentUser?.uid,
-      //   "nAMe": auth.currentUser?.displayNAMe.toString(),
-      // },
       "date":
-      // "2024-02-10",
       selectedDate!.toString().substring(0, 10),
       "from": fromTime,
       "to": toTime,
       "courtId": selectedCourtId,
-      // "slotTime" : selectedSlotTime,
       "createdAt": currentTime,
     });
-
-    // _dbRefUser.child().
     Get.back();
     Get.to(() => ConfirmBookingScreen(courtId: courtId, date: date, slot: slot, bookingId: bookingId,userName: userName,));
     Utils().snackBar(message: "Your Booking Is Confirmed");
@@ -148,10 +107,7 @@ class BookSlotController extends GetxController {
   }
 
   checkUserAbelToBook({required BuildContext context}) async {
-    // final _dbref = FirebaseDatabase.instance.ref().child('_dbRef');
     DataSnapshot snapshot = await _dbRef.orderByChild('userId').equalTo(auth.currentUser?.uid).get();
-    // print(snapshot.value == null);
-
     if(snapshot.value != null) {
       Map bookingsData = snapshot.value as Map;
       print(bookingsData);
@@ -247,7 +203,18 @@ class BookSlotController extends GetxController {
     }
   }
 
-  // checkUserAbelToSelectSlot({required BuildContext context,required String targetedSlot}) async {
+  bool checkUserAbelToSelectSlot({required Map targetedValue}) {
+    bool isContains = bookedSlotTimeList.any((map) => map.toString() == targetedValue.toString());
+
+    if(isContains) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  // checkUserAbelToSelectSlot({required BuildContext context, String targetedSlot = '10:30 AM - 11:30 AM'}) async {
+  //
   //   // final _dbref = FirebaseDatabase.instance.ref().child('_dbRef');
   //   DataSnapshot snapshot = await _dbRef.orderByChild('date').equalTo(selectedDate!.toString().substring(0, 10)).get();
   //
@@ -260,12 +227,11 @@ class BookSlotController extends GetxController {
   //
   //     bookingsData.forEach((key, value) {
   //       String slotTime = value['from'] +" - "+ value['to'];
-  //
-  //       if(slotTime == ) {
-  //
-  //        } else {
-  //
-  //        }
+  //       // if(slotTime == ) {
+  //       //
+  //       //  } else {
+  //       //
+  //       //  }
   //     });
   //   } else {
   //
@@ -290,9 +256,9 @@ class BookSlotController extends GetxController {
   //   });
   // }
 
-  
-  
-  
+
+
+
 
   void confirmationBottomSheet(
       {required BuildContext context, required String courtId, required String date, required String slot}) {

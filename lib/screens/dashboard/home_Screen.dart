@@ -85,6 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
              var userBookingsData = bookingData!['User_Bookings'];
              print("userBookingsData : $userBookingsData");
 
+             bookSlotController.bookedSlotTimeList.clear();
+
              return Stack(
                children: [
                  SingleChildScrollView(
@@ -189,14 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                      ),
                                    ),
                                    Container(
-                                     // padding: EdgeInsets.symmetric(vertical: 10),
-                                     // height: deviceHeight,
-                                     // height: deviceHeight * 0.95,
                                      height: deviceHeight * 1.9,
-                                     // height: deviceHeight * 1.08,
-                                     // height: deviceHeight * 0.7,
                                      width: deviceWidth * 0.8,
-                                     // color: Colors.amber,
                                      child:  GridView.builder(
                                        controller: _scrollController,
                                        scrollDirection: Axis.vertical,
@@ -211,6 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                        cacheExtent: 9999,
                                        itemCount:  bookSlotController.slotList.length * 2,
                                        itemBuilder: (context, index) {
+                                         print("dfgdgfdagfdf");
                                          int timeIndex = index ~/ 2;
                                          String slotTime = bookSlotController.slotList[timeIndex];
                                          String halfHourSlotTime = adjustTimeRange(slotTime);
@@ -311,6 +308,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                  isPractiseSlot = true;
                                                  isPractiseSlotOneHour = true;
                                                  practiseSlotTime = practiseSlot;
+                                                 bookSlotController.bookedSlotTimeList.add(
+                                                     {courtId: practiseSlot});
+                                                 // bookSlotController.bookedSlotTimeList.add(practiseSlot);
                                                } else {
                                                  String fromIn24Hours = convertTo24HourFormat(slot['from']);
                                                  String toIn24Hours = convertTo24HourFormat(slot['to']);
@@ -375,6 +375,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                  isPractiseSlot = true;
                                                  isPractiseSlotOneHour = true;
                                                  practiseSlotTime = practiseSlot;
+                                                 bookSlotController.bookedSlotTimeList.add(
+                                                     {courtId : practiseSlot});
                                                } else {
                                                  String fromIn24Hours = convertTo24HourFormat(slot['from']);
                                                  String toIn24Hours = convertTo24HourFormat(slot['to']);
@@ -733,12 +735,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                                        bool match = slotTime == bookedSlotTime;
                                                        // bool matchIsHalfHour = slotTime == bookedSlotTime || slotTime == halfHourSlotTime;
-                                                       print("match $match");
+                                                       // print("match $match");
                                                        if(match) {
                                                          userId = value['userId'];
                                                          isBookedSlot = true;
                                                          isBookedSlotOneHour = true;
                                                          bookedTime = bookedSlotTime;
+
+                                                         bool isContains = bookSlotController.bookedSlotTimeList.any((map) => map.toString() == {courtId: bookedSlotTime}.toString());
+
+                                                         if(!isContains) {
+                                                           bookSlotController.bookedSlotTimeList.add(
+                                                               {courtId: bookedSlotTime});
+                                                         }
+
                                                          bookedSlotIsYour = bookSlotController.auth.currentUser?.uid == value['userId'];
                                                          // isSelectedSlot = true;
                                                        } else {
@@ -769,8 +779,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                                          bool isFromTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: fromTimeInDT);
                                                          bool istoTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: toTimeInDT);
-                                                         print("isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
-                                                         print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
+                                                         // print("isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
+                                                         // print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
 
                                                          if(isFromTimeBetweenInSlot) {
                                                            bookedSlotIsYour = bookSlotController.auth.currentUser?.uid == value['userId'];
@@ -1472,16 +1482,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                      fit: FlexFit.tight,
                                                                      child: GestureDetector(
                                                                        onTap: () {
-                                                                         bookSlotController.selectedSlotIndex.value =
-                                                                             index;
-                                                                         bookSlotController.selectedSlotTime =
-                                                                             halfHourSlotTime;
-                                                                         bookSlotController.selectedCourtId =
-                                                                             courtId;
-                                                                         bookSlotController.selectedIsCompleted =
-                                                                             isCompletedOneHourSlot;
-                                                                         print("halfHourSlotTime : $halfHourSlotTime");
-                                                                         setState(() {});
+                                                                         String targetedSlot =  bookSlotController.slotList[timeIndex+1];
+                                                                         bool isAbelToSelect = bookSlotController.checkUserAbelToSelectSlot(targetedValue: {courtId : targetedSlot});
+
+                                                                         if(isAbelToSelect) {
+                                                                           print(courtId);
+                                                                           bookSlotController.selectedSlotIndex.value =
+                                                                               index;
+                                                                           bookSlotController.selectedSlotTime =
+                                                                               halfHourSlotTime;
+                                                                           bookSlotController.selectedCourtId =
+                                                                               courtId;
+                                                                           bookSlotController.selectedIsCompleted =
+                                                                               isCompletedOneHourSlot;
+                                                                           setState(() {});
+                                                                         } else {
+                                                                           Utils().snackBar(message: "Slot is not available, please select other slot.");
+                                                                         }
                                                                        },
                                                                        child: Container(
                                                                          color: Colors.transparent,
@@ -1774,16 +1791,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                              fit: FlexFit.tight,
                                                                              child: GestureDetector(
                                                                                onTap: () {
-                                                                                 bookSlotController.selectedSlotIndex.value =
-                                                                                     index;
-                                                                                 bookSlotController.selectedSlotTime =
-                                                                                     halfHourSlotTime;
-                                                                                 bookSlotController.selectedCourtId =
-                                                                                     courtId;
-                                                                                 bookSlotController.selectedIsCompleted =
-                                                                                     isCompletedOneHourSlot;
-                                                                                 print("halfHourSlotTime : $halfHourSlotTime");
-                                                                                 setState(() {});
+                                                                                 String targetedSlot =  bookSlotController.slotList[timeIndex+1];
+                                                                                 bool isAbelToSelect = bookSlotController.checkUserAbelToSelectSlot(targetedValue: {courtId : targetedSlot});
+
+                                                                                 if(isAbelToSelect) {
+                                                                                   print(courtId);
+                                                                                   bookSlotController.selectedSlotIndex.value =
+                                                                                       index;
+                                                                                   bookSlotController.selectedSlotTime =
+                                                                                       halfHourSlotTime;
+                                                                                   bookSlotController.selectedCourtId =
+                                                                                       courtId;
+                                                                                   bookSlotController.selectedIsCompleted =
+                                                                                       isCompletedOneHourSlot;
+                                                                                   setState(() {});
+                                                                                 } else {
+                                                                                   Utils().snackBar(message: "Slot is not available, please select other slot.");
+                                                                                 }
                                                                                },
                                                                                child: Container(
                                                                                  color: Colors.transparent,
@@ -1810,7 +1834,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                  width:
                                                                  deviceWidth *
                                                                      0.33,
-                                                                 decoration:
+                                                                 decoration :
                                                                  BoxDecoration(
                                                                    // color: ConstColor.highLightBooking,
                                                                      borderRadius:
@@ -1830,7 +1854,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                          onTap:
                                                                              () {
                                                                            print(slotTime);
-
                                                                            print(courtId);
                                                                            bookSlotController.selectedSlotIndex.value =
                                                                                index;
@@ -1842,8 +1865,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                                isCompletedOneHourSlot;
                                                                            setState(() {});
                                                                          },
-                                                                         child:
-                                                                         Container(
+                                                                         child: Container(
                                                                            color:
                                                                            Colors.transparent,
                                                                          ),
@@ -1864,20 +1886,30 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                            .tight,
                                                                        child:
                                                                        GestureDetector(
-                                                                         onTap:
-                                                                             () {
-                                                                           // print(courtId);
-                                                                           bookSlotController.selectedSlotIndex.value =
-                                                                               index;
+                                                                         onTap: () {
+                                                                           String targetedSlot =  bookSlotController.slotList[timeIndex+1];
+                                                                           // // print("halfHourSlotTime : $halfHourSlotTime");
+                                                                           // // print("slotTime : $slotTime");
+                                                                           // print("targetedSlot : $targetedSlot");
+                                                                           // print("courtId : $courtId");
+                                                                           bool isAbelToSelect = bookSlotController.checkUserAbelToSelectSlot(targetedValue: {courtId : targetedSlot});
+                                                                           // print("isAbelToSelect : $isAbelToSelect");
 
-                                                                           bookSlotController.selectedSlotTime =
-                                                                               halfHourSlotTime;
-                                                                           bookSlotController.selectedCourtId =
-                                                                               courtId;
-                                                                           bookSlotController.selectedIsCompleted =
-                                                                               isCompletedOneHourSlot;
-                                                                           print("halfHourSlotTime : $halfHourSlotTime");
-                                                                           setState(() {});
+                                                                           if(isAbelToSelect) {
+                                                                             print(courtId);
+                                                                             bookSlotController.selectedSlotIndex.value =
+                                                                                 index;
+
+                                                                             bookSlotController.selectedSlotTime =
+                                                                                 halfHourSlotTime;
+                                                                             bookSlotController.selectedCourtId =
+                                                                                 courtId;
+                                                                             bookSlotController.selectedIsCompleted =
+                                                                                 isCompletedOneHourSlot;
+                                                                             setState(() {});
+                                                                           } else {
+                                                                             Utils().snackBar(message: "Slot is not available, please select other slot.");
+                                                                           }
                                                                          },
                                                                          child:
                                                                          Container(
@@ -1920,30 +1952,20 @@ class _HomeScreenState extends State<HomeScreen> {
                      onPressed: () async {
                       // bookSlotController.confirmBookingSlot(context);
 
-                       if(await bookSlotController.checkUserNameExist()) {
-                         Utils().snackBar(message: "Please add your name first.");
-                         Get.to(() => ProfileScreen());
-                       }  else {
-                         if(bookSlotController.selectedSlotTime == null) {
-                           Utils().snackBar(message: "Please select slot for booking.");
-                         } else if(bookSlotController.selectedIsCompleted) {
-                           Utils().snackBar(message: "Slot is completed. Please choose available slot.");
-                         }  else {
-                           bookSlotController.checkUserAbelToBook(context: context);
-                         }
-                       }
+                       print("bookSlotController.bookedSlotTimeList $bookSlotController.bookedSlotTimeList");
 
-                       // int courtId = bookSlotController.selectedCourtId == 'WC' ? 2 : 1;
-                       //
-                       // DateTime dateTime =
-                       // DateTime.parse(bookSlotController.selectedDate!.toString().substring(0, 10));
-                       // String formattedDate = DateFormat('dd MMM yyyy').format(dateTime);
-                       //
-                       // bookSlotController.confirmationBottomSheet(
-                       //     context: context,
-                       //     courtId: courtId,
-                       //     slot: bookSlotController.selectedSlotTime!,
-                       //     date: formattedDate);
+                       // if(await bookSlotController.checkUserNameExist()) {
+                       //   Utils().snackBar(message: "Please add your name first.");
+                       //   Get.to(() => ProfileScreen());
+                       // }  else {
+                       //   if(bookSlotController.selectedSlotTime == null) {
+                       //     Utils().snackBar(message: "Please select slot for booking.");
+                       //   } else if(bookSlotController.selectedIsCompleted) {
+                       //     Utils().snackBar(message: "Slot is completed. Please choose available slot.");
+                       //   }  else {
+                       //     bookSlotController.checkUserAbelToBook(context: context);
+                       //   }
+                       // }
                      },
                      style: ElevatedButton.styleFrom(
                        shape: CircleBorder(),
