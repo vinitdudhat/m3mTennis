@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +8,7 @@ import 'package:m3m_tennis/comman/const_fonts.dart';
 import 'package:m3m_tennis/controller/authentication/login_Controller.dart';
 import 'package:get/get.dart';
 import 'package:m3m_tennis/controller/authentication/profile_controller.dart';
+import 'package:m3m_tennis/repository/const_pref_key.dart';
 import 'package:m3m_tennis/screens/authentication/login_Screen.dart';
 import 'package:m3m_tennis/screens/profile/updateProfile_Screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,24 +25,33 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-
   ProfileController profileController = Get.put(ProfileController());
   final dbref = FirebaseDatabase.instance.ref('Users');
   final FirebaseAuth auth = FirebaseAuth.instance;
   final dbrefBooking = FirebaseDatabase.instance.ref('Booking');
+  TextEditingController email = TextEditingController();
 
   String? mobileNumber;
-  String? email = '';
+  // String? email = '';
   String? userName = '';
   String? profilePhoto;
   String? memberSince;
   String? flatNumber;
 
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    getSharedPref();
+  }
+
+  getSharedPref() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool isNotificationOn = prefs.getBool(SharedPreferenKey.isNotificationOn)!;
+
+    if (isNotificationOn != null) {
+      profileController.toggleValue.value = isNotificationOn;
+    }
   }
 
   @override
@@ -88,24 +99,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             mobileNumber = userDetails?['MobileNo'];
             print("mobileNumber : $mobileNumber");
-            email = userDetails!['Email'];
+            email.text =
+                userDetails!['Email'] == '' || userDetails!['Email'] == null
+                    ? ''
+                    : userDetails!['Email'];
             userName = userDetails['UserName'];
-            if(userName == "") {
+            if (userName == "") {
               userName = null;
             }
 
             DateTime dateTime = DateTime.parse(userDetails['createdAt']);
             memberSince = DateFormat('MMM yyyy').format(dateTime);
-            flatNumber =  userDetails['FlatNo'];
+            flatNumber = userDetails['FlatNo'];
 
             if (userDetails['ProfilePic'] != null) {
               profilePhoto = userDetails['ProfilePic'].toString();
             }
 
             return Obx(
-                  ()=> SingleChildScrollView(
-                    child: Column(
-                                    children: [
+              () => SingleChildScrollView(
+                child: Column(
+                  children: [
                     // Padding(
                     //   padding: EdgeInsets.only(top: deviceHeight * 0.02),
                     //   child: Center(
@@ -113,8 +127,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     //       alignment: Alignment.bottomRight,
                     //       children: [
                     //         // Container(
-                     //         // padding:
-                       //       //     EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    //         // padding:
+                    //       //     EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     //         //   child: CircleAvatar(
                     //         //     backgroundColor: Colors.transparent,
                     //         //     radius: 65,
@@ -141,59 +155,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     //     ),
                     //   ),
                     // ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 10),
-                                        child: Stack(
-                                          alignment: Alignment.bottomRight,
-                                          children: [
-                                            Container(
-                                        padding:
-                                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                              decoration: BoxDecoration(
-                                                  color: Colors.transparent,
-                                                  shape: BoxShape.circle
-                                              ),
-                                              child: ClipOval(
-                                                child: profilePhoto != null ? Image(
-                                                  image: NetworkImage(profilePhoto!),
-                                                  width: 100,
-                                                  height: 100,
-                                                  fit: BoxFit.cover,
-                                                  loadingBuilder: (context, child, loadingProgress) {
-                                                    if(loadingProgress == null) return child ;
-                                                    return Container(
-                                                        width: 100,
-                                                        height: 100,
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.white,
-                                                            shape: BoxShape.circle
-                                                        ),
-                                                        child: Center(child: CircularProgressIndicator()));
-                                                  },
-                                                ) : Image.asset(ConstAsset.avatar,
-                                                  width: 100,
-                                                  height: 100,
-                                                  fit: BoxFit.cover,),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              left: 50,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                },
-                                                child: Center(
-                                                  child: Icon(
-                                                    Icons.verified,
-                                                    color: ConstColor.primaryColor,
-                                                  ),
-                                                ),
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Stack(
+                        alignment: Alignment.bottomRight,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                shape: BoxShape.circle),
+                            child: ClipOval(
+                              child: profilePhoto != null
+                                  ? Image(
+                                      image: NetworkImage(profilePhoto!),
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return Container(
+                                            width: 100,
+                                            height: 100,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                shape: BoxShape.circle),
+                                            child: Center(
+                                                child:
+                                                    CircularProgressIndicator()));
+                                      },
+                                    )
+                                  : Image.asset(
+                                      ConstAsset.avatar,
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                          ),
+                          Positioned(
+                            left: 50,
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: Center(
+                                child: Icon(
+                                  Icons.verified,
+                                  color: ConstColor.primaryColor,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
 
-                                      Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: deviceHeight * 0.015),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -202,10 +221,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             userName ?? "M3M Tennis",
                             style: ConstFontStyle().mainTextStyle2,
                           ),
-                          SizedBox(width: 10,),
+                          SizedBox(
+                            width: 10,
+                          ),
                           GestureDetector(
                             onTap: () {
-                              Get.to(() => UpdateProfileScreen(userName: userName == null ? "" : userName!,flat: flatNumber == null ? "" : flatNumber!, profileImage: profilePhoto, mobile: mobileNumber == null ? "" : mobileNumber,email: email == null ? "" : email,));
+                              Get.to(() => UpdateProfileScreen(
+                                    userName: userName == null ? "" : userName!,
+                                    flat: flatNumber == null ? "" : flatNumber!,
+                                    profileImage: profilePhoto,
+                                    mobile: mobileNumber == null
+                                        ? ""
+                                        : mobileNumber,
+                                  ));
                             },
                             child: Icon(
                               Icons.edit_outlined,
@@ -222,20 +250,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           .copyWith(color: ConstColor.greyTextColor),
                     ),
                     StreamBuilder(
-                      stream: dbrefBooking.child('User_Bookings').orderByChild('userId').equalTo(userId.toString()).onValue,
+                      stream: dbrefBooking
+                          .child('User_Bookings')
+                          .orderByChild('userId')
+                          .equalTo(userId.toString())
+                          .onValue,
                       builder: (context, snapshot) {
-                        if(!snapshot.hasData) {
+                        if (!snapshot.hasData) {
                           return Container();
                         } else {
                           Map? bookData = snapshot.data!.snapshot.value as Map?;
                           print("bookData : $bookData");
-                    
+
                           int totalBooking = 0;
-                          if(bookData != null) {
+                          if (bookData != null) {
                             totalBooking = bookData!.length;
                           }
-                    
-                          return  Padding(
+
+                          return Padding(
                             padding: EdgeInsets.symmetric(
                                 horizontal: deviceWidth * 0.02,
                                 vertical: deviceHeight * 0.04),
@@ -245,10 +277,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Column(
                                   children: [
                                     Text(
-                                    totalBooking.toString(),
+                                      totalBooking.toString(),
                                       style: ConstFontStyle()
                                           .mainTextStyle
-                                          .copyWith(color: ConstColor.greyTextColor),
+                                          .copyWith(
+                                              color: ConstColor.greyTextColor),
                                     ),
                                     Text(
                                       "Bookings",
@@ -262,7 +295,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: Text(
                                     "|",
                                     style: TextStyle(
-                                        fontSize: 30, color: ConstColor.greyTextColor),
+                                        fontSize: 30,
+                                        color: ConstColor.greyTextColor),
                                   ),
                                 ),
                                 Column(
@@ -271,7 +305,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       "${totalBooking} hrs",
                                       style: ConstFontStyle()
                                           .mainTextStyle
-                                          .copyWith(color: ConstColor.greyTextColor),
+                                          .copyWith(
+                                              color: ConstColor.greyTextColor),
                                     ),
                                     Text(
                                       "Played",
@@ -285,7 +320,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: Text(
                                     "|",
                                     style: TextStyle(
-                                        fontSize: 30, color: ConstColor.greyTextColor),
+                                        fontSize: 30,
+                                        color: ConstColor.greyTextColor),
                                   ),
                                 ),
                                 Column(
@@ -295,7 +331,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       // "Jun 2023",
                                       style: ConstFontStyle()
                                           .mainTextStyle
-                                          .copyWith(color: ConstColor.greyTextColor),
+                                          .copyWith(
+                                              color: ConstColor.greyTextColor),
                                     ),
                                     Text(
                                       "Member Since",
@@ -311,8 +348,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Visibility(
                       visible: mobileNumber != null,
-                      child:
-                                      Column(
+                      child: Column(
                         children: [
                           Padding(
                             padding: EdgeInsets.only(
@@ -327,19 +363,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   "Phone Number",
                                   style: ConstFontStyle()
                                       .mainTextStyle
-                                      .copyWith(color: ConstColor.greyTextColor),
+                                      .copyWith(
+                                          color: ConstColor.greyTextColor),
                                 ),
                                 Text(
                                   mobileNumber ?? "",
                                   style: ConstFontStyle()
                                       .mainTextStyle
-                                      .copyWith(color: ConstColor.greyTextColor),
+                                      .copyWith(
+                                          color: ConstColor.greyTextColor),
                                 )
                               ],
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: deviceWidth * 0.04),
                             child: Divider(
                               color: ConstColor.greyTextColor,
                             ),
@@ -347,44 +386,88 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ],
                       ),
                     ),
-                    
+
                     // Visibility(
                     //   visible: email != null,
                     //   child:
-                      Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                                right: deviceWidth * 0.04,
-                                left: deviceWidth * 0.04,
-                                top: deviceHeight * 0.03,
-                                bottom: deviceWidth * 0.015),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Email",
-                                  style: ConstFontStyle()
-                                      .mainTextStyle
-                                      .copyWith(color: ConstColor.greyTextColor),
+
+                    Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: deviceWidth * 0.03,
+                              vertical: deviceHeight * 0.01),
+                          child: TextFormField(
+                            controller: email,
+                            style: TextStyle(color: ConstColor.greyTextColor),
+                            onChanged: (value) {
+                              var userId = auth.currentUser?.uid;
+                              final _dbref = FirebaseDatabase.instance
+                                  .ref()
+                                  .child('Users')
+                                  .child(userId.toString());
+                              _dbref
+                                  .update({
+                                    'Email': email.text,
+                                  })
+                                  .then((value) {})
+                                  .onError((error, stackTrace) {});
+                            },
+                            decoration: InputDecoration(
+                                hintText: 'Enter Email',
+                                labelStyle: ConstFontStyle()
+                                    .lableTextStyle
+                                    .copyWith(color: ConstColor.greyTextColor),
+                                hintStyle: ConstFontStyle()
+                                    .lableTextStyle
+                                    .copyWith(color: ConstColor.greyTextColor),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10.0), // Adjust vertical padding
+                                alignLabelWithHint: true,
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: ConstColor.greyTextColor,
+                                  ),
                                 ),
-                                Text(
-                                  email ?? "m3mtennis@gmail.com",
-                                  style: ConstFontStyle()
-                                      .mainTextStyle
-                                      .copyWith(color: ConstColor.greyTextColor),
-                                )
-                              ],
-                            ),
+                                prefixIcon: Icon(
+                                  Icons.email_outlined,
+                                  color: ConstColor.greyTextColor,
+                                )),
                           ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
-                            child: Divider(
-                              color: ConstColor.greyTextColor,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                        // Padding(
+                        //   padding: EdgeInsets.only(
+                        //       right: deviceWidth * 0.04,
+                        //       left: deviceWidth * 0.04,
+                        //       top: deviceHeight * 0.03,
+                        //       bottom: deviceWidth * 0.015),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     children: [
+                        //       Text(
+                        //         "Email",
+                        //         style: ConstFontStyle()
+                        //             .mainTextStyle
+                        //             .copyWith(color: ConstColor.greyTextColor),
+                        //       ),
+                        //       Text(
+                        //         email ?? "m3mtennis@gmail.com",
+                        //         style: ConstFontStyle()
+                        //             .mainTextStyle
+                        //             .copyWith(color: ConstColor.greyTextColor),
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
+                        // Padding(
+                        //   padding: EdgeInsets.symmetric(
+                        //       horizontal: deviceWidth * 0.04),
+                        //   child: Divider(
+                        //     color: ConstColor.greyTextColor,
+                        //   ),
+                        // ),
+                      ],
+                    ),
                     // ),
                     Padding(
                       padding: EdgeInsets.only(
@@ -404,17 +487,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Switch(
                             value: profileController.toggleValue.value,
                             activeColor: ConstColor.primaryColor,
-                            onChanged: (value) {
+                            onChanged: (value) async {
+                              print(value);
                               // setState(() {
-                                profileController.toggleValue.value = value;
-                              // });
+
+                              profileController.toggleValue.value = value;
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              prefs.setBool(
+                                  SharedPreferenKey.isNotificationOn, value);
+
+                              if (value) {
+                                FirebaseMessaging.instance
+                                    .subscribeToTopic("All");
+                              } else {
+                                FirebaseMessaging.instance
+                                    .unsubscribeFromTopic("All");
+                              }
                             },
                           ),
                         ],
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
                       child: Divider(
                         color: ConstColor.greyTextColor,
                       ),
@@ -448,14 +545,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: deviceWidth * 0.04),
                       child: Divider(
                         color: ConstColor.greyTextColor,
                       ),
                     ),
-                                    ],
-                                  ),
-                  ),
+                  ],
+                ),
+              ),
             );
           }
         },

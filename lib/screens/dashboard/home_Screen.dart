@@ -114,12 +114,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                child: Column(
                                  children: [
                                    Container(
-                                     height: deviceHeight * 0.067,
+                                     height: deviceHeight * 0.064,
                                      width: deviceWidth *0.2,
+                                     // height: deviceHeight * 0.067,
+                                     // width: deviceWidth *0.2,
                                    ),
                                    Container(
-                                     height: deviceHeight * 1.9,
+                                     // height: deviceHeight * 1.9,
+                                     // width: deviceWidth * 0.2,
+                                     height: deviceHeight * 1.99,
                                      width: deviceWidth * 0.2,
+                                     // color: Colors.red,
                                      child:
                                      ListView.builder(
                                        controller: _scrollController,
@@ -129,8 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                          var value = bookSlotController.timeList[index];
                                          return
                                            Padding(
-                                           padding: EdgeInsets.only(bottom:deviceHeight * 0.08705),
-
+                                           padding: EdgeInsets.only(bottom:deviceHeight * 0.089),
                                            child:  Center(
                                                child: Text(convertTo12HourFormat(value),style: ConstFontStyle().titleText1!.copyWith(fontSize: 12))),
                                          );
@@ -158,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                      width: deviceWidth * 0.8,
                                      decoration: BoxDecoration(
                                        color: ConstColor.backGroundColor,
+                                       // color: Colors.yellow,
                                        border: Border(
                                            bottom: BorderSide(width: 1.0, color:ConstColor.lineColor,), // Top border
                                          ),
@@ -193,6 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                    Container(
                                      height: deviceHeight * 1.9,
                                      width: deviceWidth * 0.8,
+                                     // color: Colors.white,
                                      child:  GridView.builder(
                                        controller: _scrollController,
                                        scrollDirection: Axis.vertical,
@@ -550,7 +556,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         ),
                                                       ),
                                                     );
-                                                  } else if(isPractiseSlotFirstHalf) {
+                                                  }
+                                                  else if(isPractiseSlotFirstHalf) {
                                                     return Container(
                                                       decoration: BoxDecoration(
                                                         color: Colors.transparent,
@@ -620,7 +627,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         ),
                                                       ),
                                                     );
-                                                  } else if(isPractiseSlotSecondHalf) {
+                                                  }
+                                                  else if(isPractiseSlotSecondHalf) {
                                                     return Container(
                                                       decoration: BoxDecoration(
                                                         color: Colors.transparent,
@@ -629,7 +637,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           right: BorderSide(width: 1.0, color: ConstColor.lineColor,), // Right border
                                                         ),
                                                       ),
-
                                                       child: Container(
                                                         height: deviceHeight * 0.09,
                                                         width: deviceWidth * 0.33,
@@ -699,7 +706,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         ),
                                                       ),
                                                     );
-                                                  } else {
+                                                  }
+                                                  else {
                                                     return Container();
                                                   }
                                                 } else {
@@ -1104,10 +1112,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                                topLeft: Radius.circular(5), topRight: Radius.circular(5)
                                                                            ),
                                                                          ),
-                                                                         child: Center(
+                                                                         child: Padding(
+                                                                           padding:  EdgeInsets.only(top: deviceHeight * 0.01),
                                                                            child: Text(
                                                                              bookedTime.toString(),
-                                                                             style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),),
+                                                                             style:  ConstFontStyle().titleText1!.copyWith(fontSize: 10,),),
                                                                          ),
                                                                        ),
                                                                      ),
@@ -1133,9 +1142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                    borderRadius: BorderRadius.circular(5)
                                                                ),
                                                                child: Column(
-                                                                 mainAxisAlignment:
-                                                                 MainAxisAlignment
-                                                                     .center,
+                                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                                  children: [
                                                                    Flexible(
                                                                      flex: 10,
@@ -1157,7 +1164,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                                  bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)
                                                                              ),
                                                                            ),
-                                                                           child: Center(
+                                                                           child: Padding(
+                                                                             padding:  EdgeInsets.only(top: deviceHeight * 0.01),
                                                                              child: Text(
                                                                                isCompletedHalfHourSlot
                                                                                    ? "Completed" : "Available",
@@ -1185,10 +1193,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                              topLeft: Radius.circular(5), topRight: Radius.circular(5)
                                                                          ),
                                                                        ),
-                                                                       child: Center(
+                                                                       child: Padding(
+                                                                         padding:  EdgeInsets.only(top: deviceHeight * 0.01),
                                                                          child: Text(
                                                                            bookedTime.toString(),
-                                                                           style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),
+                                                                           style:  ConstFontStyle().titleText1!.copyWith(fontSize: 10,),
                                                                          ),
                                                                        ),
                                                                      ),
@@ -1247,10 +1256,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                              topLeft: Radius.circular(5), topRight: Radius.circular(5)
                                                                          ),
                                                                        ),
-                                                                       child: Center(
+                                                                       child: Padding(
+                                                                         padding:  EdgeInsets.only(top: deviceHeight * 0.01),
                                                                          child: Text(
                                                                            bookedTime.toString(),
-                                                                           style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),
+                                                                           style:  ConstFontStyle().titleText1!.copyWith(fontSize: 10,),
                                                                          ),
                                                                        ),
                                                                      ),
@@ -1596,19 +1606,146 @@ class _HomeScreenState extends State<HomeScreen> {
                                                              ), // Right border
                                                            ),
                                                          ),
+
                                                          child: Builder(
                                                            builder: (context) {
                                                              if(isSelected) {
                                                                if(isSelectedSlotOneHour) {
-                                                                 return Center(
-                                                                   child:
-                                                                   Container(
+                                                                 return
+                                                                 //   Container(
+                                                                 //   height:
+                                                                 //   deviceHeight *
+                                                                 //       0.09,
+                                                                 //   width:
+                                                                 //   deviceWidth *
+                                                                 //       0.33,
+                                                                 //   decoration :
+                                                                 //   BoxDecoration(
+                                                                 //     // color: ConstColor.highLightBooking,
+                                                                 //       borderRadius:
+                                                                 //       BorderRadius.circular(5)),
+                                                                 //   child: Column(
+                                                                 //     mainAxisAlignment:
+                                                                 //     MainAxisAlignment
+                                                                 //         .center,
+                                                                 //     children: [
+                                                                 //       Flexible(
+                                                                 //         flex:
+                                                                 //         10,
+                                                                 //         fit: FlexFit
+                                                                 //             .tight,
+                                                                 //         child:
+                                                                 //         GestureDetector(
+                                                                 //           onTap:
+                                                                 //               () {
+                                                                 //             print(slotTime);
+                                                                 //             print(courtId);
+                                                                 //             bookSlotController.selectedSlotIndex.value =
+                                                                 //                 index;
+                                                                 //             bookSlotController.selectedSlotTime =
+                                                                 //                 slotTime;
+                                                                 //             bookSlotController.selectedCourtId =
+                                                                 //                 courtId;
+                                                                 //             bookSlotController.selectedIsCompleted =
+                                                                 //                 isCompletedOneHourSlot;
+                                                                 //             setState(() {});
+                                                                 //           },
+                                                                 //           child: Container(
+                                                                 //             decoration: BoxDecoration(
+                                                                 //               color: isCompletedOneHourSlot
+                                                                 //                   ? ConstColor
+                                                                 //                   .greyTextColor
+                                                                 //                   : ConstColor
+                                                                 //                   .primaryColor,
+                                                                 //               borderRadius: BorderRadius.only(
+                                                                 //                   topLeft: Radius.circular(5), topRight: Radius.circular(5)
+                                                                 //               ),
+                                                                 //             ),
+                                                                 //             margin: EdgeInsets.only(top: 5,right: 10,left: 10),
+                                                                 //           ),
+                                                                 //         ),
+                                                                 //       ),
+                                                                 //       Flexible(
+                                                                 //         flex: 1,
+                                                                 //         fit: FlexFit
+                                                                 //             .tight,
+                                                                 //         child: Container(
+                                                                 //             child:
+                                                                 //             fullWidthPath),
+                                                                 //       ),
+                                                                 //       Flexible(
+                                                                 //         flex:
+                                                                 //         10,
+                                                                 //         fit: FlexFit
+                                                                 //             .tight,
+                                                                 //         child: Container(
+                                                                 //           decoration: BoxDecoration(
+                                                                 //             color: isCompletedOneHourSlot
+                                                                 //                 ? ConstColor
+                                                                 //                 .greyTextColor
+                                                                 //                 : ConstColor
+                                                                 //                 .primaryColor,
+                                                                 //             borderRadius: BorderRadius.only(
+                                                                 //                 bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)
+                                                                 //             ),
+                                                                 //           ),
+                                                                 //           margin: EdgeInsets.only(bottom: 5,right: 10,left: 10),
+                                                                 //         ),
+                                                                 //         // GestureDetector(
+                                                                 //         //   onTap: () {
+                                                                 //         //     String targetedSlot =  bookSlotController.slotList[timeIndex+1];
+                                                                 //         //     // // print("halfHourSlotTime : $halfHourSlotTime");
+                                                                 //         //     // // print("slotTime : $slotTime");
+                                                                 //         //     // print("targetedSlot : $targetedSlot");
+                                                                 //         //     // print("courtId : $courtId");
+                                                                 //         //     bool isAbelToSelect = bookSlotController.checkUserAbelToSelectSlot(targetedValue: {courtId : targetedSlot});
+                                                                 //         //     // print("isAbelToSelect : $isAbelToSelect");
+                                                                 //         //
+                                                                 //         //     if(isAbelToSelect) {
+                                                                 //         //       print(courtId);
+                                                                 //         //       bookSlotController.selectedSlotIndex.value =
+                                                                 //         //           index;
+                                                                 //         //
+                                                                 //         //       bookSlotController.selectedSlotTime =
+                                                                 //         //           halfHourSlotTime;
+                                                                 //         //       bookSlotController.selectedCourtId =
+                                                                 //         //           courtId;
+                                                                 //         //       bookSlotController.selectedIsCompleted =
+                                                                 //         //           isCompletedOneHourSlot;
+                                                                 //         //       setState(() {});
+                                                                 //         //     } else {
+                                                                 //         //       Utils().snackBar(message: "Slot is not available, please select other slot.");
+                                                                 //         //     }
+                                                                 //         //   },
+                                                                 //         //   child:
+                                                                 //         //   Container(
+                                                                 //         //       // decoration: BoxDecoration(
+                                                                 //         //       //     color: isCompletedOneHourSlot
+                                                                 //         //       //         ? ConstColor
+                                                                 //         //       //         .greyTextColor
+                                                                 //         //       //         : ConstColor
+                                                                 //         //       //         .primaryColor,
+                                                                 //         //       //     borderRadius: BorderRadius.only(
+                                                                 //         //       //         topLeft: Radius.circular(5), topRight: Radius.circular(5)
+                                                                 //         //       //     ),
+                                                                 //         //       //     // borderRadius:
+                                                                 //         //       //     // BorderRadius.circular(5)
+                                                                 //         //       // ),
+                                                                 //         //     margin: EdgeInsets.only(bottom: 5,right: 10,left: 10),
+                                                                 //         //   ),
+                                                                 //         // ),
+                                                                 //       ),
+                                                                 //     ],
+                                                                 //   ),
+                                                                 // );
+                                                                   Center(
+                                                                   child: Container(
                                                                      height:
                                                                      deviceHeight *
-                                                                         0.09,
+                                                                         0.096,
                                                                      width:
                                                                      deviceWidth *
-                                                                         0.33,
+                                                                         0.34,
                                                                      padding: EdgeInsets.symmetric(
                                                                          vertical:
                                                                          2,
@@ -1621,7 +1758,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                              : ConstColor
                                                                              .primaryColor,
                                                                          borderRadius:
-                                                                         BorderRadius.circular(5)),
+                                                                         BorderRadius.circular(5)
+                                                                     ),
                                                                      child:
                                                                      Column(
                                                                        mainAxisAlignment:
@@ -1631,11 +1769,98 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                        CrossAxisAlignment
                                                                            .center,
                                                                        children: [
-                                                                         Text(
-                                                                             slotTime,
-                                                                             style:
-                                                                             ConstFontStyle().titleText1,
-                                                                             textAlign: TextAlign.center),
+                                                                         GestureDetector(
+                                                                           onTap: () {
+                                                                             // print(slotTime);
+                                                                             //
+                                                                             // print(courtId);
+                                                                             // bookSlotController.selectedSlotIndex.value =
+                                                                             //     index;
+                                                                             // bookSlotController.selectedSlotTime =
+                                                                             //     slotTime;
+                                                                             // bookSlotController.selectedCourtId =
+                                                                             //     courtId;
+                                                                             // bookSlotController.selectedIsCompleted =
+                                                                             //     isCompletedOneHourSlot;
+                                                                             // setState(() {});
+                                                                           },
+                                                                           child: Container(
+                                                                             width: deviceWidth * 0.33,
+                                                                             height:
+                                                                             deviceHeight *
+                                                                                 0.043,
+                                                                             decoration: BoxDecoration(
+                                                                               color: isCompletedOneHourSlot
+                                                                                   ? ConstColor
+                                                                                   .greyTextColor
+                                                                                   : ConstColor
+                                                                                   .primaryColor,
+                                                                               borderRadius: BorderRadius.only(
+                                                                                   topLeft: Radius.circular(5), topRight: Radius.circular(5)
+                                                                               ),
+                                                                               // BorderRadius.circular(5)
+                                                                             ),
+                                                                             child: Center(
+                                                                               child: Text(
+                                                                                 bookSlotController.selectedSlotTime.toString(),
+                                                                                 style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12),
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                         ),
+                                                                         Flexible(
+                                                                           flex: 1,
+                                                                           fit: FlexFit.tight,
+                                                                           child: Container(
+                                                                               child: fullWidthPath),
+                                                                         ),
+                                                                         GestureDetector(
+                                                                           onTap: () {
+                                                                             String targetedSlot =  bookSlotController.slotList[timeIndex+1];
+                                                                             bool isAbelToSelect = bookSlotController.checkUserAbelToSelectSlot(targetedValue: {courtId : targetedSlot});
+
+                                                                             if(isAbelToSelect) {
+                                                                               print(courtId);
+                                                                               bookSlotController.selectedSlotIndex.value =
+                                                                                   index;
+                                                                               bookSlotController.selectedSlotTime =
+                                                                                   halfHourSlotTime;
+                                                                               bookSlotController.selectedCourtId =
+                                                                                   courtId;
+                                                                               bookSlotController.selectedIsCompleted =
+                                                                                   isCompletedOneHourSlot;
+                                                                               setState(() {});
+                                                                             } else {
+                                                                               Utils().snackBar(message: "Slot is not available, please select other slot.");
+                                                                             }
+                                                                           },
+                                                                           child: Container(
+                                                                             width: deviceWidth * 0.33,
+                                                                             height:
+                                                                             deviceHeight *
+                                                                                 0.047,
+                                                                             decoration: BoxDecoration(
+                                                                               color: isCompletedOneHourSlot
+                                                                                   ? ConstColor
+                                                                                   .greyTextColor
+                                                                                   : ConstColor
+                                                                                   .primaryColor,
+                                                                               borderRadius: BorderRadius.only(
+                                                                                   bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5)
+                                                                               ),
+                                                                               // BorderRadius.circular(5)
+                                                                             ),
+                                                                             child: Padding(
+                                                                               padding:  EdgeInsets.only(top: deviceHeight * 0.01),
+                                                                               child: Text(
+                                                                                 isCompletedHalfHourSlot
+                                                                                     ? "Completed" : "Available",
+                                                                                 // bookSlotController.selectedSlotTime.toString(),
+                                                                                 style:  ConstFontStyle().titleText1!.copyWith(fontSize: 14),
+                                                                               ),
+                                                                             ),
+                                                                           ),
+                                                                         ),
                                                                        ],
                                                                      ),
                                                                    ),
@@ -1760,7 +1985,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                                          bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)
                                                                                      ),
                                                                                    ),
-                                                                                   child: Center(
+                                                                                   child: Padding(
+                                                                                     padding:  EdgeInsets.only(top: deviceHeight * 0.01),
                                                                                      child: Text(
                                                                                        isCompletedHalfHourSlot
                                                                                            ? "Completed" : "Available",
@@ -1945,20 +2171,30 @@ class _HomeScreenState extends State<HomeScreen> {
                       // bookSlotController.confirmBookingSlot(context);
 
                        // print("bookSlotController.bookedSlotTimeList $bookSlotController.bookedSlotTimeList");
+                       // bookSlotController.checkSelectedSlotWithIn24Hours();
 
-                       if(await bookSlotController.checkUserNameExist()) {
-                         Utils().snackBar(message: "Please add your name first.");
-                         Get.to(() => ProfileScreen());
-                       }  else {
-                         if(bookSlotController.selectedSlotTime == null) {
-                           Utils().snackBar(message: "Please select slot for booking.");
-                         } else if(bookSlotController.selectedIsCompleted) {
-                           Utils().snackBar(message: "Slot is completed. Please choose available slot.");
-                         }  else {
-                           bookSlotController.checkUserAbelToBook(context: context);
-                         }
-                       }
-                     },
+                       if (await bookSlotController.checkUserNameExist()) {
+                          Utils()
+                              .snackBar(message: "Please add your name first.");
+                          Get.to(() => ProfileScreen());
+                        } else {
+                          if (bookSlotController.selectedSlotTime == null) {
+                            Utils().snackBar(
+                                message: "Please select slot for booking.");
+                          } else if (bookSlotController.selectedIsCompleted) {
+                            Utils().snackBar(
+                                message:
+                                    "Slot is completed. Please choose available slot.");
+                          } else if (!bookSlotController.checkSelectedSlotWithIn24Hours()) {
+                            Utils().snackBar(
+                                message:
+                                    "You can book this slot only 24 hours ago.");
+                          } else {
+                            bookSlotController.checkUserAbelToBook(
+                                context: context);
+                          }
+                        }
+                      },
                      style: ElevatedButton.styleFrom(
                        shape: CircleBorder(),
                        padding: EdgeInsets.all(20),

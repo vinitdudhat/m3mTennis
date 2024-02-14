@@ -1,15 +1,12 @@
 import 'package:dotted_border/dotted_border.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:m3m_tennis/comman/confirmationCard.dart';
 import 'package:m3m_tennis/comman/constColor.dart';
 import 'package:m3m_tennis/comman/constFontStyle.dart';
 import 'package:m3m_tennis/comman/snackbar.dart';
-import 'package:m3m_tennis/screens/booking/myBooking%20_screen.dart';
 import 'package:m3m_tennis/widget/button_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../controller/booking/mybooking_Controller.dart';
 import '../../widget/textformField_widget.dart';
 
@@ -20,7 +17,13 @@ class ConfirmBookingScreen extends StatefulWidget {
   final String slot;
   final String bookingId;
 
-  const ConfirmBookingScreen({super.key, required this.courtId, required this.date, required this.slot, required this.bookingId, required this.userName});
+  const ConfirmBookingScreen(
+      {super.key,
+      required this.courtId,
+      required this.date,
+      required this.slot,
+      required this.bookingId,
+      required this.userName});
 
   @override
   State<ConfirmBookingScreen> createState() => _ConfirmBookingScreenState();
@@ -72,15 +75,18 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                   style: ConstFontStyle().mainTextStyle2,
                 )),
               ),
-             Padding(
-               padding: EdgeInsets.only(top: deviceHeight * 0.01),
-               child: CommonConfirmationCard(courtNumber: widget.courtId,date: widget.date,time: widget.slot),
-               // CommonConfirmationCard(courtNumber: "Court #1",date: "13 Jan 2024",time: "11 - 12 am"),
-             ),
+              Padding(
+                padding: EdgeInsets.only(top: deviceHeight * 0.01),
+                child: CommonConfirmationCard(
+                    courtNumber: widget.courtId,
+                    date: widget.date,
+                    time: widget.slot),
+                // CommonConfirmationCard(courtNumber: "Court #1",date: "13 Jan 2024",time: "11 - 12 am"),
+              ),
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.04),
                 child: GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     openWhatsApp();
                   },
                   child: Row(
@@ -124,7 +130,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                             width: deviceWidth * 0.7,
                             // color: Colors.grey,
                             child: Text(
-                            widget.userName,
+                              widget.userName,
                               // "Aditi Sharma Aditi Sharma Aditi Sharma Aditi Sharma Aditi Sharma Aditi Sharma",
                               style: ConstFontStyle().buttonTextStyle,
                               maxLines: 1,
@@ -143,8 +149,6 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                   ),
                 ),
               ),
-
-
               Padding(
                 padding: EdgeInsets.only(
                     top: deviceHeight * 0.015,
@@ -155,13 +159,15 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                   hintText: "Member1",
                   controller: myBookingController.member1,
                   suffix: InkWell(
-                    onTap: (){
+                    onTap: () {
                       myBookingController.member1.clear();
                     },
-                    child: Text("Remove",style: ConstFontStyle().mainTextStyle.copyWith(
-                        color: ConstColor.primaryColor,
-                        fontWeight: FontWeight.w400
-                    ),),
+                    child: Text(
+                      "Remove",
+                      style: ConstFontStyle().mainTextStyle.copyWith(
+                          color: ConstColor.primaryColor,
+                          fontWeight: FontWeight.w400),
+                    ),
                   ),
                 ),
               ),
@@ -183,13 +189,15 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                   hintText: "Member2",
                   controller: myBookingController.member2,
                   suffix: InkWell(
-                    onTap: (){
+                    onTap: () {
                       myBookingController.member2.clear();
                     },
-                    child: Text("Remove",style: ConstFontStyle().mainTextStyle.copyWith(
-                        color: ConstColor.primaryColor,
-                        fontWeight: FontWeight.w400
-                    ),),
+                    child: Text(
+                      "Remove",
+                      style: ConstFontStyle().mainTextStyle.copyWith(
+                          color: ConstColor.primaryColor,
+                          fontWeight: FontWeight.w400),
+                    ),
                   ),
                 ),
               ),
@@ -203,35 +211,37 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                   hintText: "Member3",
                   controller: myBookingController.member3,
                   suffix: InkWell(
-                    onTap: (){
+                    onTap: () {
                       myBookingController.member3.clear();
                     },
-                    child: Text("Remove",style: ConstFontStyle().mainTextStyle.copyWith(
-                        color: ConstColor.primaryColor,
-                        fontWeight: FontWeight.w400
-                    ),),
+                    child: Text(
+                      "Remove",
+                      style: ConstFontStyle().mainTextStyle.copyWith(
+                          color: ConstColor.primaryColor,
+                          fontWeight: FontWeight.w400),
+                    ),
                   ),
                 ),
               ),
-
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.04),
                 child: RoundButton(
                   title: 'Add',
                   onTap: () {
-                    if(myBookingController.member1.text.isNotEmpty) {
-                      myBookingController.addMemberInBooking(bookingId: widget.bookingId);
+                    if (myBookingController.member1.text.isNotEmpty) {
+                      myBookingController.addMemberInBooking(
+                          bookingId: widget.bookingId);
                     } else {
-                      Utils().snackBar(message: "Please enter at least 1 member name.");
+                      Utils().snackBar(
+                          message: "Please enter at least 1 member name.");
                     }
                   },
                 ),
               ),
-
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.03),
                 child: GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     openWhatsApp();
                     // Get.to(()=> MyBookingScreen());
                   },
@@ -254,11 +264,13 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
       ),
     );
   }
-  openWhatsApp() async{
-    var androidUrl = "whatsapp://send?phone&text=Hi, You are Invited to play Badminton.";
-    try{
+
+  openWhatsApp() async {
+    var androidUrl =
+        "whatsapp://send?phone&text=Hi, You are Invited to play Badminton.";
+    try {
       await launchUrl(Uri.parse(androidUrl));
-    } on Exception{
+    } on Exception {
       print('WhatsApp is not installed.');
     }
   }

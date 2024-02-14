@@ -25,6 +25,8 @@ class BookSlotController extends GetxController {
   String selectedCourtId = "WC";
   bool selectedIsCompleted = false;
 
+  RxBool isBookingLoading = false.obs;
+
   List timeList = [6,7,8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23];
   List slotList = [
     "06:00 AM - 07:00 AM",
@@ -104,6 +106,35 @@ class BookSlotController extends GetxController {
       print("username1 : ${bookingsData['UserName']}");
       return false;
     }
+  }
+
+  bool checkSelectedSlotWithIn24Hours() {
+    print(selectedSlotTime);
+    print(selectedDate);
+
+    List<String> dateComponents = selectedDate!.toString().substring(0, 10).split("-");
+    int year = int.parse(dateComponents[0]);
+    int month = int.parse(dateComponents[1]);
+    int day = int.parse(dateComponents[2]);
+    List<String> timeParts = selectedSlotTime!.split(' - ');
+    String startTime = timeParts[0];
+    String fromTime = convertTo24HourFormat(startTime);
+    List<String> timeHoursFrom = fromTime.split(':');
+    DateTime slotFromTime = DateTime(
+      year,
+      month,
+      day,
+      int.parse(timeHoursFrom[0]),
+      int.parse(timeHoursFrom[1]),
+    );
+
+    DateTime currentTime = DateTime.now();
+    DateTime after24Hours = currentTime.add(Duration(hours: 24));
+
+    bool isSelectedSlotWithIn24Hours = after24Hours.isAfter(slotFromTime);
+    print("isSelectedSlotWithIn24Hours : $isSelectedSlotWithIn24Hours");
+
+    return isSelectedSlotWithIn24Hours;
   }
 
   checkUserAbelToBook({required BuildContext context}) async {

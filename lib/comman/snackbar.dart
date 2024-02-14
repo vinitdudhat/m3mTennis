@@ -8,15 +8,6 @@ import 'package:m3m_tennis/comman/constFontStyle.dart';
 class Utils{
 
   void snackBar({String title = '', required String message}){
-    // Get.snackbar(
-    //     title, message,
-    //     reverseAnimationCurve: Curves.bounceIn,
-    //     forwardAnimationCurve: Curves.bounceInOut,
-    //     snackPosition: SnackPosition.TOP,
-    //     duration: const Duration(seconds: 2),
-    //     colorText: Colors.white,
-    //     backgroundColor: ConstColor.primaryColor);
-
     Get.snackbar(
       // message,
       '',
@@ -30,7 +21,7 @@ class Utils{
       // borderWidth: 1.5,
       padding: const EdgeInsets.all(10),
       margin: const EdgeInsets.only(bottom: 20, left: 20, right: 20,top: 25),
-      duration: Duration(seconds: 1),
+      duration: Duration(milliseconds: 1600),
     );
   }
 

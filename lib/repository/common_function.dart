@@ -20,6 +20,16 @@ String adjustTimeRange(String originalTimeRange) {
   return adjustTimeRange;
 }
 
+
+convertSlotStringIntoTime() {
+
+}
+
+// isCompletedSlot({required String slotTime}){
+//   List<String> timeParts = slotTime.split(' - ');
+//
+// }
+
 String adjustTime(String originalTime) {
   List<String> parts = originalTime.split(' ');
   List<String> timeParts = parts[0].split(':');

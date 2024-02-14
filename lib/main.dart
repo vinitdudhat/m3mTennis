@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:m3m_tennis/repository/const_pref_key.dart';
 import 'package:m3m_tennis/screens/authentication/login_Screen.dart';
 import 'package:m3m_tennis/screens/authentication/sucess_Screen.dart';
 import 'package:m3m_tennis/screens/booking/bookingCriteria_screen.dart';
@@ -10,6 +11,7 @@ import 'package:m3m_tennis/screens/booking/confirmBooking_screen.dart';
 import 'package:m3m_tennis/screens/booking/myBooking%20_screen.dart';
 import 'package:m3m_tennis/screens/dashboard/home_Screen.dart';
 import 'package:m3m_tennis/screens/splash_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -32,7 +34,19 @@ const AndroidNotificationChannel channel = AndroidNotificationChannel(
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseMessaging.instance.subscribeToTopic("All");
+
+  final prefs = await SharedPreferences.getInstance();
+  bool? isNotificationOn = prefs.getBool(SharedPreferenKey.isNotificationOn);
+
+  if(isNotificationOn == null) {
+    prefs.setBool(SharedPreferenKey.isNotificationOn, true);
+    FirebaseMessaging.instance.subscribeToTopic("All");
+  } else if(isNotificationOn) {
+    FirebaseMessaging.instance.subscribeToTopic("All");
+  } else {
+    FirebaseMessaging.instance.unsubscribeFromTopic("All");
+  }
+
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<

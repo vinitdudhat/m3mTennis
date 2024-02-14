@@ -98,18 +98,6 @@ class _MobileNumScreenState extends State<MobileNumScreen> {
                   );
                 },
               ),
-              Padding(
-                padding: EdgeInsets.only(top: deviceHeight * 0.06),
-                child: GestureDetector(
-                  onTap: () {
-
-                  },
-                  child: Text(
-                    "Login With e-mail",
-                    style: ConstFontStyle().buttonTextStyle,
-                  ),
-                ),
-              )
             ],
           ),
         ),

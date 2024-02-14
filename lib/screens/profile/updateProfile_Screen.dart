@@ -21,14 +21,15 @@ class UpdateProfileScreen extends StatefulWidget {
   final String flat;
   final String? profileImage;
   final String? mobile;
-  final String? email;
+  // final String? email;
   UpdateProfileScreen(
       {super.key,
       required this.userName,
       required this.flat,
       required this.profileImage,
       required this.mobile,
-      required this.email});
+      // required this.email
+      });
 
   @override
   State<UpdateProfileScreen> createState() => _UpdateProfileScreenState();
@@ -54,7 +55,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     flat.text = widget.flat;
     netProfileImage = widget.profileImage;
     mobile.text = widget.mobile!;
-    email.text = widget.email!;
+    // email.text = widget.email!;
     super.initState();
   }
 
@@ -201,88 +202,90 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                   ),
                 ),
 
-                widget.mobile == "" ?
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: deviceWidth * 0.03,
-                      vertical: deviceHeight * 0.01),
-                  child: TextFormField(
-                    controller: mobile,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                    style: TextStyle(color: ConstColor.greyTextColor),
-                    decoration: InputDecoration(
-                        hintText: 'Enter Mobile No.',
-                        labelStyle: ConstFontStyle()
-                            .lableTextStyle
-                            .copyWith(color: ConstColor.greyTextColor),
-                        hintStyle: ConstFontStyle()
-                            .lableTextStyle
-                            .copyWith(color: ConstColor.greyTextColor),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 15.0), // Adjust vertical padding
-                        alignLabelWithHint: true,
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: ConstColor.greyTextColor,
-                          ),
+                widget.mobile == ""
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: deviceWidth * 0.03,
+                            vertical: deviceHeight * 0.01),
+                        child: TextFormField(
+                          controller: mobile,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(10),
+                          ],
+                          style: TextStyle(color: ConstColor.greyTextColor),
+                          decoration: InputDecoration(
+                              hintText: 'Enter Mobile No.',
+                              labelStyle: ConstFontStyle()
+                                  .lableTextStyle
+                                  .copyWith(color: ConstColor.greyTextColor),
+                              hintStyle: ConstFontStyle()
+                                  .lableTextStyle
+                                  .copyWith(color: ConstColor.greyTextColor),
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 15.0), // Adjust vertical padding
+                              alignLabelWithHint: true,
+                              focusedBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: ConstColor.greyTextColor,
+                                ),
+                              ),
+                              prefixIcon: Icon(
+                                Icons.phone_android_rounded,
+                                color: ConstColor.greyTextColor,
+                              )),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Please enter your Mobile No.";
+                            }
+                          },
                         ),
-                        prefixIcon: Icon(
-                          Icons.phone_android_rounded,
-                          color: ConstColor.greyTextColor,
-                        )),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Please enter your Mobile No.";
-                      }
-                    },
-                  ),
-                ) : SizedBox(),
+                      )
+                    : SizedBox(),
 
-                widget.email == "" ?
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: deviceWidth * 0.03,
-                      vertical: deviceHeight * 0.01),
-                  child: TextFormField(
-                    controller: email,
-                    style: TextStyle(color: ConstColor.greyTextColor),
-                    decoration: InputDecoration(
-                        hintText: 'Enter Email',
-                        labelStyle: ConstFontStyle()
-                            .lableTextStyle
-                            .copyWith(color: ConstColor.greyTextColor),
-                        hintStyle: ConstFontStyle()
-                            .lableTextStyle
-                            .copyWith(color: ConstColor.greyTextColor),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 15.0), // Adjust vertical padding
-                        alignLabelWithHint: true,
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: ConstColor.greyTextColor,
-                          ),
-                        ),
-                        prefixIcon: Icon(
-                          Icons.email_outlined,
-                          color: ConstColor.greyTextColor,
-                        )),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Please enter your Email";
-                      }
-                    },
-                  ),
-                ) :SizedBox(),
+                // widget.email == "" ?
+                // Padding(
+                //   padding: EdgeInsets.symmetric(
+                //       horizontal: deviceWidth * 0.03,
+                //       vertical: deviceHeight * 0.01),
+                //   child: TextFormField(
+                //     controller: email,
+                //     style: TextStyle(color: ConstColor.greyTextColor),
+                //     decoration: InputDecoration(
+                //         hintText: 'Enter Email',
+                //         labelStyle: ConstFontStyle()
+                //             .lableTextStyle
+                //             .copyWith(color: ConstColor.greyTextColor),
+                //         hintStyle: ConstFontStyle()
+                //             .lableTextStyle
+                //             .copyWith(color: ConstColor.greyTextColor),
+                //         contentPadding: EdgeInsets.symmetric(
+                //             vertical: 15.0), // Adjust vertical padding
+                //         alignLabelWithHint: true,
+                //         focusedBorder: UnderlineInputBorder(
+                //           borderSide: BorderSide(
+                //             color: ConstColor.greyTextColor,
+                //           ),
+                //         ),
+                //         prefixIcon: Icon(
+                //           Icons.email_outlined,
+                //           color: ConstColor.greyTextColor,
+                //         )),
+                //     validator: (value) {
+                //       if (value!.isEmpty) {
+                //         return "Please enter your Email";
+                //       }
+                //     },
+                //   ),
+                // ) /*:SizedBox()*/,
                 Padding(
                   padding: EdgeInsets.only(top: deviceHeight * 0.03),
                   child: RoundButton(
                       title: "Save",
                       onTap: () {
                         if (formKey.currentState!.validate()) {
-                          updateProfileDetails(username.text, flat.text,mobile.text,email.text);
+                          updateProfileDetails(username.text, flat.text,
+                              mobile.text, email.text);
                         }
                       }),
                 ),
@@ -297,8 +300,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   updateProfileDetails(
     String name,
     String flatno,
-      String mobile,
-      String email,
+    String mobile,
+    String email,
   ) {
     var userId = auth.currentUser?.uid;
     final _dbref =
@@ -377,44 +380,44 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       // bool isValidImageSize = validateImgeSize(image!);
 
       // if (isValidImageSize) {
-        setState(() {
-          isProfileImageUpdate = true;
-        });
+      setState(() {
+        isProfileImageUpdate = true;
+      });
 
-        File profileImage = image!;
-        firebase_storage.Reference storageRef =
-            firebase_storage.FirebaseStorage.instance.ref('/Users/${userId}');
-        firebase_storage.UploadTask uploadeTask =
-            storageRef.putFile(profileImage!);
-        print("uploadeTask : $uploadeTask");
+      File profileImage = image!;
+      firebase_storage.Reference storageRef =
+          firebase_storage.FirebaseStorage.instance.ref('/Users/${userId}');
+      firebase_storage.UploadTask uploadeTask =
+          storageRef.putFile(profileImage!);
+      print("uploadeTask : $uploadeTask");
 
-        Future.value(uploadeTask).then((value) async {
-          var newUrl = await storageRef.getDownloadURL();
+      Future.value(uploadeTask).then((value) async {
+        var newUrl = await storageRef.getDownloadURL();
 
-          _dbref.update({
-            'ProfilePic': newUrl,
-          }).then((value) {
-            // Get.back();
-            setState(() {
-              netProfileImage = newUrl.toString();
-              isProfileImageUpdate = false;
-            });
-            Utils().snackBar(message: "Updated successfully");
-          }).onError((error, stackTrace) {
-            setState(() {
-              isProfileImageUpdate = false;
-            });
-            print("error in update profile");
-            Utils().snackBar(message: "Error in Update Profile");
+        _dbref.update({
+          'ProfilePic': newUrl,
+        }).then((value) {
+          // Get.back();
+          setState(() {
+            netProfileImage = newUrl.toString();
+            isProfileImageUpdate = false;
           });
+          Utils().snackBar(message: "Updated successfully");
         }).onError((error, stackTrace) {
-          Utils().snackBar(
-            message: "Profile not updated",
-          );
           setState(() {
             isProfileImageUpdate = false;
           });
+          print("error in update profile");
+          Utils().snackBar(message: "Error in Update Profile");
         });
+      }).onError((error, stackTrace) {
+        Utils().snackBar(
+          message: "Profile not updated",
+        );
+        setState(() {
+          isProfileImageUpdate = false;
+        });
+      });
       // }
     }
   }

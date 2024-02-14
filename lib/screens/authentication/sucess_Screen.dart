@@ -72,7 +72,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
                     Countdown(
                       build: (BuildContext context, double time) =>
                           Text(time.toString(),style : ConstFontStyle().buttonTextStyle),
-                      interval: Duration(milliseconds: 100),
+                      interval: Duration(seconds: 3),
                       onFinished: () {
                         Get.offAll(() => HomeScreen());
                         print('Timer is done!');
