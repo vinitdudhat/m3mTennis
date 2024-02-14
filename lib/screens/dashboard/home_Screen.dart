@@ -453,14 +453,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           children: [
                                                             Text(
                                                             practiseSlotTime.toString(),
-                                                           style:  ConstFontStyle().titleText1!.copyWith(fontSize: 12,),
+                                                           textAlign: TextAlign.left,
+                                                           style:  ConstFontStyle().titleText1!.copyWith(fontSize: 10,),
                                                             ),
-                                                            Text(
-                                                              // time.toString(),
-                                                              "Kids Coaching Slot",
-                                                              style:  ConstFontStyle().titleText1..copyWith(
-                                                                  fontSize: 10
-                                                              ),),
+                                                            Padding(
+                                                              padding: EdgeInsets.only(top: deviceHeight * 0.01),
+                                                              child: Text(
+                                                                // time.toString(),
+                                                                "Kids Coaching Slot",
+                                                                  textAlign: TextAlign.left,
+                                                                style:  ConstFontStyle().smallText),
+                                                            ),
                                                           ],
                                                         ),
                                                       ),
@@ -511,12 +514,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                           bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)
                                                                       ),
                                                                     ),
-                                                                    child: Center(
+                                                                    child: Padding(
+                                                                      padding: EdgeInsets.only(top: deviceHeight * 0.01),
                                                                       child: Text(
                                                                         "Kids Coaching Slot",
-                                                                        style:  ConstFontStyle().titleText1..copyWith(
-                                                                            fontSize: 10
-                                                                        ),),
+                                                                        textAlign: TextAlign.left,
+                                                                        style:  ConstFontStyle().smallText),
                                                                     )
                                                                 ),
                                                               ),
@@ -665,12 +668,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                           bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)
                                                                       ),
                                                                     ),
-                                                                    child: Center(
+                                                                    child: Padding(
+                                                                      padding: EdgeInsets.only(top: deviceHeight * 0.01),
                                                                       child: Text(
                                                                         "Kids Coaching Slot",
-                                                                        style:  ConstFontStyle().titleText1.copyWith(
-                                                                          fontSize: 10
-                                                                        ),),
+                                                                          textAlign: TextAlign.left,
+                                                                        style:  ConstFontStyle().smallText),
                                                                     )
                                                                 ),
                                                               ),

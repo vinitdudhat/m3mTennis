@@ -56,6 +56,12 @@ class ConstFontStyle{
       color: ConstColor.white
   );
 
+  final TextStyle smallText = TextStyle(
+      fontFamily: ConstFont.popinsRegular,
+      fontSize: 10,
+      color: ConstColor.white
+  );
+
   final TextStyle titleText1 = TextStyle(
       fontFamily: ConstFont.popinsRegular,
       fontSize: 14,
