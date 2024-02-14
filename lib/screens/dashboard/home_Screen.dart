@@ -120,8 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                      // width: deviceWidth *0.2,
                                    ),
                                    Container(
-                                     // height: deviceHeight * 1.9,
-                                     // width: deviceWidth * 0.2,
+                                     // height: deviceHeight * 2.1,
                                      height: deviceHeight * 1.99,
                                      width: deviceWidth * 0.2,
                                      // color: Colors.red,
@@ -196,6 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                      ),
                                    ),
                                    Container(
+                                     // height: deviceHeight * 2.1,
                                      height: deviceHeight * 1.9,
                                      width: deviceWidth * 0.8,
                                      // color: Colors.white,
@@ -213,40 +213,38 @@ class _HomeScreenState extends State<HomeScreen> {
                                        cacheExtent: 9999,
                                        itemCount:  bookSlotController.slotList.length * 2,
                                        itemBuilder: (context, index) {
-                                         print("dfgdgfdagfdf");
+                                         // print("dfgdgfdagfdf ${index}");
                                          int timeIndex = index ~/ 2;
+                                         // print(index);
+                                         // print("timeIndex : $timeIndex");
+
                                          String slotTime = bookSlotController.slotList[timeIndex];
                                          String halfHourSlotTime = adjustTimeRange(slotTime);
+
+                                         // if(timeIndex > bookSlotController.slotList.length) {
+                                         //
+                                         // }
+
+                                         // String nextSecondHalfSlotTime = bookSlotController.slotList[timeIndex + 2];
                                          // print("halfHourSlotTime :$index : $halfHourSlotTime");
+                                         // print("slotTime :$index : $slotTime");
+                                         // print("nextSecondHalfSlotTime :$index : $nextSecondHalfSlotTime");
+
                                          bool isCompletedOneHourSlot = false;
                                          bool isCompletedHalfHourSlot = false;
 
                                          DateTime currentTime = DateTime.now();
                                          print("currentTime :: $currentTime");
 
+
                                          List<String> dateComponents = bookSlotController.selectedDate!.toString().substring(0, 10).split("-");
                                          int year = int.parse(dateComponents[0]);
                                          int month = int.parse(dateComponents[1]);
                                          int day = int.parse(dateComponents[2]);
 
-                                         List<String> timeParts = slotTime.split(' - ');
-                                         List<String> timeParts1 = halfHourSlotTime.split(' - ');
-
-                                         String startTime = timeParts[0];
-                                         String endTime = timeParts[1];
-                                         String fromTime = convertTo24HourFormat(startTime);
-                                         String toTime = convertTo24HourFormat(endTime);
-                                         // print("toTime000 : $toTime");
-                                         
-                                         String startTime1 = timeParts1[0];
-                                         String endTime1 = timeParts1[1];
-                                         String fromTime1 = convertTo24HourFormat(startTime1);
-                                         String toTime1 = convertTo24HourFormat(endTime1);
-                                         
-                                         
-                                         List<String> timeHoursFrom = fromTime.split(':');
-                                         List<String> timeHoursTo = toTime.split(':');
-
+                                         List timeHoursList = convertSlotToTimeHoursFrom(slotTime: slotTime,year: year,month: month,day: day);
+                                         List<String> timeHoursFrom = timeHoursList[0];
+                                         List<String> timeHoursTo = timeHoursList[1];
                                          DateTime slotFromTime = DateTime(
                                            year,
                                            month,
@@ -255,20 +253,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                            int.parse(timeHoursFrom[1]),
                                          );
                                          DateTime slotToTime = DateTime(
-                                         year,
-                                         month,
-                                         day,
-                                         int.parse(timeHoursTo[0]),
-                                         int.parse(timeHoursTo[1]),
+                                           year,
+                                           month,
+                                           day,
+                                           int.parse(timeHoursTo[0]),
+                                           int.parse(timeHoursTo[1]),
                                          );
-                                         // print("slotFromTime : $slotFromTime");
-                                         // print("slotToTime : $slotToTime");
 
-                                         isCompletedOneHourSlot = currentTime.isAfter(slotFromTime);
-                                         print("isCompletedOneHourSlot : $isCompletedOneHourSlot");
-
-                                         List<String> timeHoursFrom1 = fromTime1.split(':');
-                                         List<String> timeHoursTo1 = toTime1.split(':');
+                                         List timeHoursList1 = convertSlotToTimeHoursFrom(slotTime: halfHourSlotTime,year: year,month: month,day: day);
+                                         List<String> timeHoursFrom1 = timeHoursList1[0];
+                                         List<String> timeHoursTo1 = timeHoursList1[1];
                                          DateTime slotFromTime1 = DateTime(
                                            year,
                                            month,
@@ -283,6 +277,83 @@ class _HomeScreenState extends State<HomeScreen> {
                                            int.parse(timeHoursTo1[0]),
                                            int.parse(timeHoursTo1[1]),
                                          );
+
+
+                                         // List timeHoursList1 = convertSlotToTimeHoursFrom(slotTime: halfHourSlotTime,year: year,month: month,day: day);
+                                         // List<String> timeHoursFrom1 = timeHoursList1[0];
+                                         // List<String> timeHoursTo1 = timeHoursList1[1];
+                                         // DateTime slotFromTime1 = DateTime(
+                                         //   year,
+                                         //   month,
+                                         //   day,
+                                         //   int.parse(timeHoursFrom1[0]),
+                                         //   int.parse(timeHoursFrom1[1]),
+                                         // );
+                                         // DateTime slotToTime1 = DateTime(
+                                         //   year,
+                                         //   month,
+                                         //   day,
+                                         //   int.parse(timeHoursTo1[0]),
+                                         //   int.parse(timeHoursTo1[1]),
+                                         // );
+
+
+
+
+                                         // List<String> timeParts = slotTime.split(' - ');
+                                         // List<String> timeParts1 = halfHourSlotTime.split(' - ');
+
+                                         // String startTime = timeParts[0];
+                                         // String endTime = timeParts[1];
+                                         // String fromTime = convertTo24HourFormat(startTime);
+                                         // String toTime = convertTo24HourFormat(endTime);
+                                         // print("toTime000 : $toTime");
+                                         
+                                         // String startTime1 = timeParts1[0];
+                                         // String endTime1 = timeParts1[1];
+                                         // String fromTime1 = convertTo24HourFormat(startTime1);
+                                         // String toTime1 = convertTo24HourFormat(endTime1);
+                                         
+                                         
+                                         // List<String> timeHoursFrom = fromTime.split(':');
+                                         // List<String> timeHoursTo = toTime.split(':');
+
+                                         // DateTime slotFromTime = DateTime(
+                                         //   year,
+                                         //   month,
+                                         //   day,
+                                         //   int.parse(timeHoursFrom[0]),
+                                         //   int.parse(timeHoursFrom[1]),
+                                         // );
+                                         // DateTime slotToTime = DateTime(
+                                         // year,
+                                         // month,
+                                         // day,
+                                         // int.parse(timeHoursTo[0]),
+                                         // int.parse(timeHoursTo[1]),
+                                         // );
+                                         // print("slotFromTime : $slotFromTime");
+                                         // print("slotToTime : $slotToTime");
+
+                                         isCompletedOneHourSlot = currentTime.isAfter(slotFromTime);
+                                         print("isCompletedOneHourSlot : $isCompletedOneHourSlot");
+
+                                         // List<String> timeHoursFrom1 = fromTime1.split(':');
+                                         // List<String> timeHoursTo1 = toTime1.split(':');
+                                         // DateTime slotFromTime1 = DateTime(
+                                         //   year,
+                                         //   month,
+                                         //   day,
+                                         //   int.parse(timeHoursFrom1[0]),
+                                         //   int.parse(timeHoursFrom1[1]),
+                                         // );
+                                         // DateTime slotToTime1 = DateTime(
+                                         //   year,
+                                         //   month,
+                                         //   day,
+                                         //   int.parse(timeHoursTo1[0]),
+                                         //   int.parse(timeHoursTo1[1]),
+                                         // );
                                          // print("slotFromTime : $slotFromTime");
                                          // print("slotToTime : $slotToTime");
                                          isCompletedHalfHourSlot = currentTime.isAfter(slotFromTime1);
@@ -1521,70 +1592,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                          return Container();
                                                        }
                                                      } else {
-                                                       // bool isSelected = false;
-                                                       // bool isSelectedSlotOneHour = false;
-                                                       // bool isSelectedSlotHalfHour = false;
-                                                       // bool isSelectedSlotFirstHalf = false;
-                                                       // bool isSelectedSlotSecondHalf = false;
-                                                       //
-                                                       // // isSelected = bookSlotController
-                                                       // //     .selectedSlotIndex
-                                                       // //     .value !=
-                                                       // //     index;
-                                                       //
-                                                       // if(bookSlotController.selectedSlotTime != null) {
-                                                       //   if(bookSlotController.selectedCourtId == courtId) {
-                                                       //     isSelected = slotTime == bookSlotController.selectedSlotTime;
-                                                       //     if(isSelected) {
-                                                       //       isSelectedSlotOneHour = slotTime == bookSlotController.selectedSlotTime;
-                                                       //     } else {
-                                                       //       List<String> times = bookSlotController.selectedSlotTime!.split(" - ");
-                                                       //       String fromTime = times[0];
-                                                       //       String toTime = times[1];
-                                                       //
-                                                       //       String fromIn24Hours = convertTo24HourFormat(fromTime);
-                                                       //       String toIn24Hours = convertTo24HourFormat(toTime);
-                                                       //       // print("fromIn24Hours : $fromIn24Hours");
-                                                       //
-                                                       //       List<String> checkFromTime = fromIn24Hours.split(':');
-                                                       //       List<String> checkFromTime2 = toIn24Hours.split(':');
-                                                       //
-                                                       //       DateTime fromTimeInDT = DateTime(
-                                                       //         year,
-                                                       //         month,
-                                                       //         day,
-                                                       //         int.parse(checkFromTime[0]),
-                                                       //         int.parse(checkFromTime[1]),
-                                                       //       );
-                                                       //       DateTime toTimeInDT = DateTime(
-                                                       //         year,
-                                                       //         month,
-                                                       //         day,
-                                                       //         int.parse(checkFromTime2[0]),
-                                                       //         int.parse(checkFromTime2[1]),
-                                                       //       );
-                                                       //       // print("fromTimeInDT $fromTimeInDT");
-                                                       //
-                                                       //       bool isFromTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: fromTimeInDT);
-                                                       //       bool istoTimeBetweenInSlot = isBetweenInTimeRange(timeSlot: [slotFromTime,slotToTime],checkTime: toTimeInDT);
-                                                       //       print("isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
-                                                       //       print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
-                                                       //
-                                                       //       if(isFromTimeBetweenInSlot) {
-                                                       //         isSelected = true;
-                                                       //         isSelectedSlotHalfHour = true;
-                                                       //         isSelectedSlotFirstHalf = true;
-                                                       //         // bookedTime = bookedSlotTime;
-                                                       //       } else if(istoTimeBetweenInSlot) {
-                                                       //         isSelected = true;
-                                                       //         isSelectedSlotHalfHour = true;
-                                                       //         isSelectedSlotSecondHalf = true;
-                                                       //       }
-                                                       //     }
-                                                       //   } else {
-                                                       //
-                                                       //   }
-                                                       // }
                                                        return Container(
                                                          // height: 120,
                                                          // width: 150,
@@ -1973,7 +1980,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                              fit: FlexFit.tight,
                                                                              child: GestureDetector(
                                                                                onTap: () {
-
+                                                                                 print(slotTime);
+                                                                                 print(courtId);
+                                                                                 bookSlotController.selectedSlotIndex.value =
+                                                                                     index;
+                                                                                 bookSlotController.selectedSlotTime =
+                                                                                     slotTime;
+                                                                                 bookSlotController.selectedCourtId =
+                                                                                     courtId;
+                                                                                 bookSlotController.selectedIsCompleted =
+                                                                                     isCompletedOneHourSlot;
+                                                                                 setState(() {});
                                                                                },
                                                                                child: Container(
                                                                                    width: deviceWidth * 0.33,
