@@ -46,6 +46,7 @@ class BookSlotController extends GetxController {
     "08:00 PM - 09:00 PM",
     "09:00 PM - 10:00 PM",
     "10:00 PM - 11:00 PM",
+    // "11:00 PM - 12:00 PM",
   ];
   List bookedSlotTimeList = [];
 

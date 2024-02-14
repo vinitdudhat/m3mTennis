@@ -20,10 +20,30 @@ String adjustTimeRange(String originalTimeRange) {
   return adjustTimeRange;
 }
 
+List<List<String>> convertSlotToTimeHoursFrom({required String slotTime,required int year,month,day}) {
+  List<String> timeParts = slotTime.split(' - ');
+  String startTime = timeParts[0];
+  String endTime = timeParts[1];
+  String fromTime = convertTo24HourFormat(startTime);
+  String toTime = convertTo24HourFormat(endTime);
 
-convertSlotStringIntoTime() {
+  List<String> timeHoursFrom = fromTime.split(':');
+  List<String> timeHoursTo = toTime.split(':');
 
+  return [timeHoursFrom,timeHoursTo];
 }
+
+// DateTime convertSlotStringIntoTime({required String slotTime,required int year,month,day,List<String> timeInHoursMinutes}) {
+//   DateTime slotFromTime = DateTime(
+//     year,
+//     month,
+//     day,
+//     int.parse(timeHoursFrom[0]),
+//     int.parse(timeHoursFrom[1]),
+//   );
+//
+//   return slotFromTime;
+// }
 
 // isCompletedSlot({required String slotTime}){
 //   List<String> timeParts = slotTime.split(' - ');
