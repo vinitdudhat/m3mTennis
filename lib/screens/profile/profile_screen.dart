@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:m3m_tennis/comman/const_fonts.dart';
+import 'package:m3m_tennis/comman/snackbar.dart';
 import 'package:m3m_tennis/controller/authentication/login_Controller.dart';
 import 'package:get/get.dart';
 import 'package:m3m_tennis/controller/authentication/profile_controller.dart';
@@ -15,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../comman/constAsset.dart';
 import '../../comman/constColor.dart';
 import '../../comman/constFontStyle.dart';
+import '../../comman/constValidation.dart';
 import '../booking/bookingCriteria_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -29,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final dbref = FirebaseDatabase.instance.ref('Users');
   final FirebaseAuth auth = FirebaseAuth.instance;
   final dbrefBooking = FirebaseDatabase.instance.ref('Booking');
-  TextEditingController email = TextEditingController();
+  TextEditingController emailController = TextEditingController();
 
   String? mobileNumber;
   // String? email = '';
@@ -99,7 +101,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             mobileNumber = userDetails?['MobileNo'];
             print("mobileNumber : $mobileNumber");
-            email.text =
+            emailController.text =
                 userDetails!['Email'] == '' || userDetails!['Email'] == null
                     ? ''
                     : userDetails!['Email'];
@@ -393,12 +395,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     Column(
                       children: [
-                        Padding(
+                        /*Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: deviceWidth * 0.03,
                               vertical: deviceHeight * 0.01),
                           child: TextFormField(
-                            controller: email,
+                            controller: emailController,
                             style: TextStyle(color: ConstColor.greyTextColor),
                             onChanged: (value) {
                               var userId = auth.currentUser?.uid;
@@ -408,7 +410,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   .child(userId.toString());
                               _dbref
                                   .update({
-                                    'Email': email.text,
+                                    'Email': emailController.text,
                                   })
                                   .then((value) {})
                                   .onError((error, stackTrace) {});
@@ -434,38 +436,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   color: ConstColor.greyTextColor,
                                 )),
                           ),
+                        ),*/
+                        Padding(
+                          padding: EdgeInsets.only(
+                              right: deviceWidth * 0.04,
+                              left: deviceWidth * 0.04,
+                              top: deviceHeight * 0.03,
+                              bottom: deviceWidth * 0.015),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Email",
+                                style: ConstFontStyle()
+                                    .mainTextStyle
+                                    .copyWith(color: ConstColor.greyTextColor),
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    emailController.text ??
+                                        "m3mtennis@gmail.com",
+                                    style: ConstFontStyle()
+                                        .mainTextStyle
+                                        .copyWith(
+                                            color: ConstColor.greyTextColor),
+                                  ),
+                                  SizedBox(
+                                    width: deviceWidth * 0.02,
+                                  ),
+                                  InkWell(
+                                      onTap: () {
+                                        showCustomDialog(context);
+                                      },
+                                      child: Icon(
+                                        Icons.edit_outlined,
+                                        color: ConstColor.primaryColor,
+                                      )),
+                                ],
+                              )
+                            ],
+                          ),
                         ),
-                        // Padding(
-                        //   padding: EdgeInsets.only(
-                        //       right: deviceWidth * 0.04,
-                        //       left: deviceWidth * 0.04,
-                        //       top: deviceHeight * 0.03,
-                        //       bottom: deviceWidth * 0.015),
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //     children: [
-                        //       Text(
-                        //         "Email",
-                        //         style: ConstFontStyle()
-                        //             .mainTextStyle
-                        //             .copyWith(color: ConstColor.greyTextColor),
-                        //       ),
-                        //       Text(
-                        //         email ?? "m3mtennis@gmail.com",
-                        //         style: ConstFontStyle()
-                        //             .mainTextStyle
-                        //             .copyWith(color: ConstColor.greyTextColor),
-                        //       )
-                        //     ],
-                        //   ),
-                        // ),
-                        // Padding(
-                        //   padding: EdgeInsets.symmetric(
-                        //       horizontal: deviceWidth * 0.04),
-                        //   child: Divider(
-                        //     color: ConstColor.greyTextColor,
-                        //   ),
-                        // ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: deviceWidth * 0.04),
+                          child: Divider(
+                            color: ConstColor.greyTextColor,
+                          ),
+                        ),
                       ],
                     ),
                     // ),
@@ -489,8 +508,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             activeColor: ConstColor.primaryColor,
                             onChanged: (value) async {
                               print(value);
-                              // setState(() {
-
                               profileController.toggleValue.value = value;
                               final prefs =
                                   await SharedPreferences.getInstance();
@@ -558,6 +575,119 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }
         },
       ),
+    );
+  }
+
+  void showCustomDialog(context) {
+    var deviceHeight = MediaQuery.of(context).size.height;
+    var deviceWidth = MediaQuery.of(context).size.width;
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          child: Container(
+            height: deviceHeight * 0.23,
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: deviceHeight * 0.003),
+            decoration: BoxDecoration(
+              color: ConstColor.backGroundColor,
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(top: deviceHeight * 0.02,right: deviceWidth * 0.02),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: InkWell(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: Icon(Icons.close,color: ConstColor.greyTextColor,)),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: deviceWidth * 0.03,
+                      vertical: deviceHeight * 0.01),
+                  child: TextFormField(
+                    controller: emailController,
+                    style: TextStyle(color: ConstColor.greyTextColor),
+                    decoration: InputDecoration(
+                        hintText: 'Enter Email',
+                        labelStyle: ConstFontStyle()
+                            .lableTextStyle
+                            .copyWith(color: ConstColor.greyTextColor),
+                        hintStyle: ConstFontStyle()
+                            .lableTextStyle
+                            .copyWith(color: ConstColor.greyTextColor),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0),
+                        alignLabelWithHint: true,
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            color: ConstColor.greyTextColor,
+                          ),
+                        ),
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          color: ConstColor.greyTextColor,
+                        )),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: deviceHeight * 0.02),
+                  child: InkWell(
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                      if (emailController.text.isEmpty) {
+                        Utils().snackBar(message: "Please enter email");
+                      } else if (!constValidation()
+                          .validateEmail(emailController.text)) {
+                        Utils().snackBar(message: "Please enter valid email");
+                      } else {
+                        Navigator.pop(context);
+                        var userId = auth.currentUser?.uid;
+                        final _dbref = FirebaseDatabase.instance
+                            .ref()
+                            .child('Users')
+                            .child(userId.toString());
+                        _dbref
+                            .update({
+                              'Email': emailController.text,
+                            })
+                            .then((value) {})
+                            .onError((error, stackTrace) {});
+                        Utils().snackBar(message: "Email Address is Updated.");
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      height: deviceHeight * 0.05,
+                      width: deviceWidth * 0.3,
+                      decoration: BoxDecoration(
+                          color: ConstColor.primaryColor,
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Center(
+                          child: Text(
+                        "Update",
+                        style: ConstFontStyle().mainTextStyle.copyWith(
+                              color: ConstColor.black,
+                            ),
+                      )),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
