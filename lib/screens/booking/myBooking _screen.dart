@@ -160,188 +160,354 @@ class _MyBookingScreenState extends State<MyBookingScreen> {
                         });
                       }
 
-                      return Column(
-                        children: [
-                          myBookingController.isActive.value == 1 ?
-
-                          Container(
-                            height: deviceHeight * 0.79,
-                            width: deviceWidth,
-                            padding: EdgeInsets.only(top: 10),
-                            child: upcomingBooking.length == 0 ?
-                      Center(
-                      child: GestureDetector(
-                        onTap: () {
-                          Get.offAll(() => HomeScreen());
-                        },
-                        child: Text(
-                          "Book your 1st slot.",
-                          style:
-                          // ConstFontStyle().titleText,
-                            ConstFontStyle().titleText.copyWith(
-                                color: ConstColor.greyTextColor)
+                      return Container(
+                        height: deviceHeight * 0.61,
+                        width: deviceWidth,
+                        // color: Colors.red,
+                        padding: EdgeInsets.only(top: 5),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              myBookingController.isActive.value == 1 ?
+                              completedBooking.length == 0 ? Container(
+                                  height: deviceHeight * 0.55,
+                                  width: deviceWidth,
+                                  color: Colors.red,
+                                  padding: EdgeInsets.only(top: 10),
+                                  child: Center(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Get.offAll(() => HomeScreen());
+                                      },
+                                      child: Text(
+                                          "Book your 1st slot.",
+                                          style:
+                                          // ConstFontStyle().titleText,
+                                          ConstFontStyle().titleText.copyWith(
+                                              color: ConstColor.greyTextColor)
+                                      ),
+                                    ),
+                                  )
+                              ) : Column(
+                                  children: List.generate(
+                                      completedBooking.length,
+                                          (index) {
+                                        var item = completedBooking[index];
+                                        // int courtId = item['courtId'] == 'EC' ? 1 : 2 ;
+                                        String courtId = item['courtId'] == 'EC' ? "East Court" : "West Court" ;
+                          
+                                        String formattedDate = convertToShowingDateFormat(item['date']);
+                                        String slotTime = item['from'] + " - " + item['to'];
+                                        String bookingId = item['BookingId'];
+                                        String bookedOn = convertToShowingDateFormat(item['createdAt']);
+                                        List memberList = [];
+                                        List inviteMemberKeyList = [];
+                                        Map? memberMap = item['memberList'];
+                                        // print("memberMap : $memberMap");
+                          
+                                        if(memberMap != null) {
+                                          // memberList = memberMap.to
+                                          memberList.addAll(memberMap.values);
+                                          inviteMemberKeyList.addAll(memberMap.keys);
+                                        }
+                                        // print("memberList : $memberList");
+                                        // print("inviteMemberKeyList : $inviteMemberKeyList");
+                          
+                                        return BookingStatusCard(courtNo: "$courtId",
+                                            cDate: formattedDate,
+                                            cTime: slotTime,
+                                            inviteMemberList: memberList,
+                                            inviteMemberKeyList: inviteMemberKeyList,
+                                            bookingId: bookingId,bookingDate: bookedOn);
+                                      }
+                                  ),
+                              ) : SizedBox(),
+                          
+                              myBookingController.isActive.value == 2 ?
+                              upcomingBooking.length == 0 ? Container(
+                                  height: deviceHeight * 0.55,
+                                  width: deviceWidth,
+                                  // color: Colors.red,
+                                  padding: EdgeInsets.only(top: 10),
+                                  child: Center(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Get.offAll(() => HomeScreen());
+                                      },
+                                      child: Text(
+                                        "Book your slot for the game.",
+                                        style:
+                                        // ConstFontStyle().titleText,
+                                        ConstFontStyle().titleText.copyWith(
+                                            color: ConstColor.greyTextColor),
+                                      ),
+                                    ),
+                                  )
+                              ) : Column(
+                                children: List.generate(
+                                  upcomingBooking.length,
+                                        (index) {
+                                          var item = upcomingBooking[index];
+                                          // int courtId = item['courtId'] == 'EC' ? 1 : 2 ;
+                                          String courtId = item['courtId'] == 'EC' ? "East Court" : "West Court" ;
+                          
+                                          String formattedDate = convertToShowingDateFormat(item['date']);
+                                          String slotTime = item['from'] + " - " + item['to'];
+                                          String bookingId = item['BookingId'];
+                                          String bookedOn = convertToShowingDateFormat(item['createdAt']);
+                          
+                                          List memberList = [];
+                                          List inviteMemberKeyList = [];
+                                          Map? memberMap = item['memberList'];
+                                          print("memberMap : $memberMap");
+                          
+                                          if(memberMap != null) {
+                                            // memberList = memberMap.to
+                                            memberList.addAll(memberMap.values);
+                                            inviteMemberKeyList.addAll(memberMap.keys);
+                                          }
+                                          print("memberList : $memberList");
+                                          print("inviteMemberKeyList : $inviteMemberKeyList");
+                          
+                                          return BookingStatusCard(courtNo: courtId,
+                                            cDate: formattedDate,
+                                            cTime: slotTime,
+                                            inviteMemberList: memberList,
+                                            inviteMemberKeyList: inviteMemberKeyList,
+                                            bookingId: bookingId,bookingDate: bookedOn,isUpcoming: true,
+                                            onTap: () => myBookingController.cancelBottomSheet(context: context,bookingId: bookingId, slotTime: slotTime),
+                                          );
+                                    }
+                                ),
+                              ) : SizedBox()
+                          
+                          
+                          
+                                              //       Container(
+                                              //         height: deviceHeight * 0.55,
+                                              //         width: deviceWidth,
+                                              //         color: Colors.red,
+                                              //         padding: EdgeInsets.only(top: 10),
+                                              //         child: upcomingBooking.length == 0 ?
+                                              //   Center(
+                                              //   child: GestureDetector(
+                                              //     onTap: () {
+                                              //       Get.offAll(() => HomeScreen());
+                                              //     },
+                                              //     child: Text(
+                                              //       "Book your 1st slot.",
+                                              //       style:
+                                              //       // ConstFontStyle().titleText,
+                                              //         ConstFontStyle().titleText.copyWith(
+                                              //             color: ConstColor.greyTextColor)
+                                              //     ),
+                                              //   ),
+                                              // )
+                                              //     :
+                                              //         ListView.builder(
+                                              //           itemCount: completedBooking.length,
+                                              //           // physics: NeverScrollableScrollPhysics(),
+                                              //           itemBuilder: (context, index) {
+                                              //             var item = completedBooking[index];
+                                              //             // int courtId = item['courtId'] == 'EC' ? 1 : 2 ;
+                                              //             String courtId = item['courtId'] == 'EC' ? "East Court" : "West Court" ;
+                                              //
+                                              //             String formattedDate = convertToShowingDateFormat(item['date']);
+                                              //             String slotTime = item['from'] + " - " + item['to'];
+                                              //             String bookingId = item['BookingId'];
+                                              //             String bookedOn = convertToShowingDateFormat(item['createdAt']);
+                                              //             List memberList = [];
+                                              //             List inviteMemberKeyList = [];
+                                              //             Map? memberMap = item['memberList'];
+                                              //             // print("memberMap : $memberMap");
+                                              //
+                                              //             if(memberMap != null) {
+                                              //               // memberList = memberMap.to
+                                              //               memberList.addAll(memberMap.values);
+                                              //               inviteMemberKeyList.addAll(memberMap.keys);
+                                              //             }
+                                              //             // print("memberList : $memberList");
+                                              //             // print("inviteMemberKeyList : $inviteMemberKeyList");
+                                              //
+                                              //             return BookingStatusCard(courtNo: "$courtId",
+                                              //                 cDate: formattedDate,
+                                              //                 cTime: slotTime,
+                                              //                 inviteMemberList: memberList,
+                                              //                 inviteMemberKeyList: inviteMemberKeyList,
+                                              //                 bookingId: bookingId,bookingDate: bookedOn);
+                                              //           },
+                                              //         ),
+                                              //       )
+                              // Padding(
+                              //   padding: EdgeInsets.only(top: deviceHeight * 0.01),
+                              //   child: BookingStatusCard(courtNo: "Court #1", cDate: "12 Mar 2024", cTime: "10 - 12 pm",inviteMember: "vinay",bookingId: "DFHdhb",bookingDate: "25 Dec 2024"),
+                              // )
+                              //     : SizedBox(),
+                          
+                                              //       myBookingController.isActive.value == 2 ?
+                                              //       Container(
+                                              //         height: deviceHeight * 0.79,
+                                              //         width: deviceWidth,
+                                              //         padding: EdgeInsets.only(top: 10),
+                                              //         child: upcomingBooking.length == 0 ?
+                                              // Center(
+                                              //   child: GestureDetector(
+                                              //     onTap: () {
+                                              //       Get.offAll(() => HomeScreen());
+                                              //     },
+                                              //     child: Text(
+                                              //     "Book your spot for the game.",
+                                              //     style:
+                                              //     // ConstFontStyle().titleText,
+                                              //     ConstFontStyle().titleText.copyWith(
+                                              //         color: ConstColor.greyTextColor),
+                                              //     ),
+                                              //   ),
+                                              // )
+                                              //             : ListView.builder(
+                                              //           itemCount: upcomingBooking.length,
+                                              //           // physics: NeverScrollableScrollPhysics(),
+                                              //           itemBuilder: (context, index) {
+                                              //             var item = upcomingBooking[index];
+                                              //             // int courtId = item['courtId'] == 'EC' ? 1 : 2 ;
+                                              //             String courtId = item['courtId'] == 'EC' ? "East Court" : "West Court" ;
+                                              //
+                                              //             String formattedDate = convertToShowingDateFormat(item['date']);
+                                              //             String slotTime = item['from'] + " - " + item['to'];
+                                              //             String bookingId = item['BookingId'];
+                                              //             String bookedOn = convertToShowingDateFormat(item['createdAt']);
+                                              //
+                                              //             List memberList = [];
+                                              //             List inviteMemberKeyList = [];
+                                              //             Map? memberMap = item['memberList'];
+                                              //             print("memberMap : $memberMap");
+                                              //
+                                              //             if(memberMap != null) {
+                                              //               // memberList = memberMap.to
+                                              //               memberList.addAll(memberMap.values);
+                                              //               inviteMemberKeyList.addAll(memberMap.keys);
+                                              //             }
+                                              //             print("memberList : $memberList");
+                                              //             print("inviteMemberKeyList : $inviteMemberKeyList");
+                                              //
+                                              //             return BookingStatusCard(courtNo: courtId,
+                                              //                 cDate: formattedDate,
+                                              //                 cTime: slotTime,
+                                              //                 inviteMemberList: memberList,
+                                              //                 inviteMemberKeyList: inviteMemberKeyList,
+                                              //                 bookingId: bookingId,bookingDate: bookedOn,isUpcoming: true,
+                                              //               onTap: () => myBookingController.cancelBottomSheet(context: context,bookingId: bookingId, slotTime: slotTime),
+                                              //             );
+                                              //           },
+                                              //         ),
+                                              //       )
+                                              //       // Padding(
+                                              //       //   padding: EdgeInsets.only(top: deviceHeight * 0.01),
+                                              //       //   child: BookingStatusCard(courtNo: "Court #1", cDate: "12 Mar 2024", cTime: "10 - 12 pm",inviteMember: "vinay",bookingId: "DFHdhb",bookingDate: "25 Dec 2024"),
+                                              //       // )
+                                              //           : SizedBox(),
+                            ],
+                          ),
                         ),
-                      ),
-                    )
-                        : ListView.builder(
-                              itemCount: completedBooking.length,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                var item = completedBooking[index];
-                                // int courtId = item['courtId'] == 'EC' ? 1 : 2 ;
-                                String courtId = item['courtId'] == 'EC' ? "East Court" : "West Court" ;
-
-                                String formattedDate = convertToShowingDateFormat(item['date']);
-                                String slotTime = item['from'] + " - " + item['to'];
-                                String bookingId = item['BookingId'];
-                                String bookedOn = convertToShowingDateFormat(item['createdAt']);
-                                List memberList = [];
-                                List inviteMemberKeyList = [];
-                                Map? memberMap = item['memberList'];
-                                // print("memberMap : $memberMap");
-
-                                if(memberMap != null) {
-                                  // memberList = memberMap.to
-                                  memberList.addAll(memberMap.values);
-                                  inviteMemberKeyList.addAll(memberMap.keys);
-                                }
-                                // print("memberList : $memberList");
-                                // print("inviteMemberKeyList : $inviteMemberKeyList");
-
-                                return BookingStatusCard(courtNo: "$courtId",
-                                    cDate: formattedDate,
-                                    cTime: slotTime,
-                                    inviteMemberList: memberList,
-                                    inviteMemberKeyList: inviteMemberKeyList,
-                                    bookingId: bookingId,bookingDate: bookedOn);
-                              },
-                            ),
-                          )
-                          // Padding(
-                          //   padding: EdgeInsets.only(top: deviceHeight * 0.01),
-                          //   child: BookingStatusCard(courtNo: "Court #1", cDate: "12 Mar 2024", cTime: "10 - 12 pm",inviteMember: "vinay",bookingId: "DFHdhb",bookingDate: "25 Dec 2024"),
-                          // )
-                              : SizedBox(),
-
-                          myBookingController.isActive.value == 2 ?
-                          Container(
-                            height: deviceHeight * 0.79,
-                            width: deviceWidth,
-                            padding: EdgeInsets.only(top: 10),
-                            child: upcomingBooking.length == 0 ?
-                    Center(
-                      child: GestureDetector(
-                        onTap: () {
-                          Get.offAll(() => HomeScreen());
-                        },
-                        child: Text(
-                        "Book your spot for the game.",
-                        style:
-                        // ConstFontStyle().titleText,
-                        ConstFontStyle().titleText.copyWith(
-                            color: ConstColor.greyTextColor),
-                        ),
-                      ),
-                    )
-                                : ListView.builder(
-                              itemCount: upcomingBooking.length,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemBuilder: (context, index) {
-                                var item = upcomingBooking[index];
-                                // int courtId = item['courtId'] == 'EC' ? 1 : 2 ;
-                                String courtId = item['courtId'] == 'EC' ? "East Court" : "West Court" ;
-
-                                String formattedDate = convertToShowingDateFormat(item['date']);
-                                String slotTime = item['from'] + " - " + item['to'];
-                                String bookingId = item['BookingId'];
-                                String bookedOn = convertToShowingDateFormat(item['createdAt']);
-
-                                List memberList = [];
-                                List inviteMemberKeyList = [];
-                                Map? memberMap = item['memberList'];
-                                print("memberMap : $memberMap");
-
-                                if(memberMap != null) {
-                                  // memberList = memberMap.to
-                                  memberList.addAll(memberMap.values);
-                                  inviteMemberKeyList.addAll(memberMap.keys);
-                                }
-                                print("memberList : $memberList");
-                                print("inviteMemberKeyList : $inviteMemberKeyList");
-
-                                return BookingStatusCard(courtNo: courtId,
-                                    cDate: formattedDate,
-                                    cTime: slotTime,
-                                    inviteMemberList: memberList,
-                                    inviteMemberKeyList: inviteMemberKeyList,
-                                    bookingId: bookingId,bookingDate: bookedOn,isUpcoming: true,
-                                  onTap: () => myBookingController.cancelBottomSheet(context: context,bookingId: bookingId, slotTime: slotTime),
-                                );
-                              },
-                            ),
-                          )
-                          // Padding(
-                          //   padding: EdgeInsets.only(top: deviceHeight * 0.01),
-                          //   child: BookingStatusCard(courtNo: "Court #1", cDate: "12 Mar 2024", cTime: "10 - 12 pm",inviteMember: "vinay",bookingId: "DFHdhb",bookingDate: "25 Dec 2024"),
-                          // )
-                              : SizedBox(),
-                        ],
                       );
                     }
                   },
                 ),
 
-              // myBookingController.isActive.value == 2 ?
-              // StreamBuilder(
-              //   stream: myBookingController.dbref.child('User_Bookings').orderByChild('userId').equalTo(myBookingController.auth.currentUser?.uid).onValue,
-              //   builder: (context, snapshot) {
-              //     if(!snapshot.hasData) {
-              //       return Container();
-              //     } else {
-              //
-              //
-              //       return Container(
-              //         height: deviceHeight * 0.79,
-              //         width: deviceWidth,
-              //         padding: EdgeInsets.only(top: 10),
-              //         child: ListView.builder(
-              //           itemCount: upcomingBooking.length,
-              //           physics: NeverScrollableScrollPhysics(),
-              //           itemBuilder: (context, index) {
-              //             var item = upcomingBooking[index];
-              //             int courtId = item['courtId'] == 'EC' ? 1 : 2 ;
-              //
-              //             DateTime dateTime =
-              //             DateTime.parse(item['date']);
-              //             String formattedDate = DateFormat('dd MMM yyyy').format(dateTime);
-              //             String slotTime = item['from'] + " - " + item['to'];
-              //
-              //             return BookingStatusCard(courtNo: "Court #$courtId", cDate: formattedDate, cTime: slotTime,inviteMember: "vinay",bookingId: "DFHdhb",bookingDate: "25 Dec 2024");
-              //           },
-              //         ),
-              //       );
-              //     }
-              //   },
-              // ) : Container()
+                Padding(
+                  padding: const EdgeInsets.only(top: 10,bottom: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height  * 0.165,
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                        decoration: BoxDecoration(
+                            color: ConstColor.btnBackGroundColor,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                                color:Color(0xffD6D1D3)
+                            )
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "App Designed by",
+                              style: ConstFontStyle().mainTextStyle!.copyWith(color: Color(0xffD6D1D3)),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: 2,
+                            ),
+                            Text(
+                              "PATHOS",
+                              style: ConstFontStyle().titleText1!.copyWith(fontWeight: FontWeight.w700),
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              "DESIGN",
+                              style: ConstFontStyle().titleText1!.copyWith(fontWeight: FontWeight.w500),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: deviceHeight * 0.014,
+                            ),
+                            Text(
+                              "www.PathosDesign.in",
+                              style: ConstFontStyle()
+                                  .mainTextStyle
+                                  .copyWith(color: ConstColor.primaryColor),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height  * 0.165,
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                        decoration: BoxDecoration(
+                            color: ConstColor.btnBackGroundColor,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                                color:Color(0xffD6D1D3)
+                            )
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "App Developed by",
+                              style: ConstFontStyle().mainTextStyle!.copyWith(color: Color(0xffD6D1D3)),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: 2,
+                            ),
+                            Text(
+                              "ATTENTION",
+                              style: ConstFontStyle().titleText1!.copyWith(fontWeight: FontWeight.w700),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: deviceHeight * 0.041,
+                            ),
+                            Text(
+                              "www.Attention.sh",
+                              style: ConstFontStyle()
+                                  .mainTextStyle
+                                  .copyWith(color: ConstColor.primaryColor),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
-
-                // SingleChildScrollView(
-                //   child: Column(
-                //     children: List.generate(
-                //     2, (index) => BookingStatusCard(courtNo: "Court #2", cDate: "18 jan 2024", cTime: "10 - 12 pm",inviteMember: "vinay",bookingId: "DFHdhb",bookingDate: "25 Dec 2024"),
-                //     )
-                //   ),
-                // ),
-
-                // Padding(
-                //   padding: EdgeInsets.only(top: deviceHeight * 0.01),
-                //   child: BookingStatusCard(courtNo: "Court #2", cDate: "18 jan 2024", cTime: "10 - 12 pm",inviteMember: "vinay",bookingId: "DFHdhb",bookingDate: "25 Dec 2024"),) : SizedBox(),
-                //
-                // myBookingController.isActive.value == 2 ?
-                // Padding(
-                //   padding: EdgeInsets.only(top: deviceHeight * 0.01),
-                //   child: BookingStatusCard(courtNo: "Court #1", cDate: "22 Fab 2024", cTime: "10 - 12 pm",inviteMember: "vinay",bookingId: "DFHdhb",bookingDate: "25 Dec 2024"),
-                // ) : SizedBox(),
               ],
             ),
           )
@@ -349,4 +515,6 @@ class _MyBookingScreenState extends State<MyBookingScreen> {
       ),
     );
   }
+
 }
+

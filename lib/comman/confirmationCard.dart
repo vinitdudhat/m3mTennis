@@ -8,7 +8,7 @@ class CommonConfirmationCard extends StatefulWidget {
   String courtNumber;
   String date;
   String time;
-  CommonConfirmationCard({super.key,required this.courtNumber,required this.date , required this.time});
+  CommonConfirmationCard({super.key,required this.courtNumber,required this.date , required this.time, });
 
   @override
   State<CommonConfirmationCard> createState() => _CommonConfirmationCardState();
@@ -56,7 +56,7 @@ class _CommonConfirmationCardState extends State<CommonConfirmationCard> {
                           style: ConstFontStyle()
                               .mainTextStyle
                               .copyWith(
-                              color: ConstColor.primaryColor)),
+                              color:  ConstColor.primaryColor)),
                     ),
                   ),
                 ),

@@ -39,8 +39,8 @@ class MyBookingController extends GetxController{
     dbref.child("User_Bookings").child(bookingId).update({
       "memberList" : textMap,
     }).then((value) {
-      Get.back();
-      Get.back();
+      // Get.back();
+      // Get.back();
       Utils().snackBar(message: "Members added successfully");
     });
   }
@@ -66,7 +66,7 @@ class MyBookingController extends GetxController{
                 top: Radius.circular(15),
               )),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -96,10 +96,10 @@ class MyBookingController extends GetxController{
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.height * 0.12),
+                        bottom: MediaQuery.of(context).size.height * 0.11),
                     child: Container(
                       width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("Please confirm do you want to cancel your tennis court booking at $slotTime.",
+                      child: Text("Do you want to cancel your tennis court booking at $slotTime.",
                           textAlign: TextAlign.start,
                           style: ConstFontStyle().buttonTextStyle),
                     ),
@@ -119,16 +119,19 @@ class MyBookingController extends GetxController{
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25)),
                             child: Container(
-                              height:
-                              MediaQuery.of(context).size.height * 0.044,
+                              height: MediaQuery.of(context).size.height  * 0.044,
                               width: MediaQuery.of(context).size.width * 0.27,
                               decoration: BoxDecoration(
-                                // color: Color(0xffD6D1D3),
-                                  border: Border.all(color: Color(0xffD6D1D3)),
-                                  borderRadius: BorderRadius.circular(25)),
+                                  color: ConstColor.btnBackGroundColor,
+                                  borderRadius: BorderRadius.circular(25),
+                                  border: Border.all(
+                                      color: Color(0xffD6D1D3))),
                               child: Center(
-                                child: Text('Cancel',
-                                    style: ConstFontStyle().mainTextStyle),
+                                child: Text(
+                                  "Cancel",
+                                  style: ConstFontStyle().mainTextStyle!.copyWith(color: Color(0xffD6D1D3)),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ),
                           ),

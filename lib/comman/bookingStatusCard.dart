@@ -78,12 +78,15 @@ class _BookingStatusCardState extends State<BookingStatusCard> {
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(color: ConstColor.primaryColor)),
+                          border: Border.all(color:
+                              // Color(0xff#41474C)
+                          ConstColor.greyTextColor
+                          )),
                       child: Center(
                         child: Text(widget.cTime,
                             style: ConstFontStyle()
                                 .mainTextStyle
-                                .copyWith(color: ConstColor.primaryColor)),
+                                .copyWith(color: ConstColor.greyTextColor)),
                       ),
                     ),
                   ),

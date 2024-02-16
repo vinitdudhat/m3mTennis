@@ -340,7 +340,7 @@ class BookSlotController extends GetxController {
                       ],
                     ),
                   ),
-                  CommonConfirmationCard(courtNumber: courtId,date: date,time: slot),
+                  CommonConfirmationCard(courtNumber: courtId,date: date,time: slot,),
                   Padding(
                     padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).size.height * 0.02),
@@ -366,16 +366,19 @@ class BookSlotController extends GetxController {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25)),
                             child: Container(
-                              height:
-                              MediaQuery.of(context).size.height * 0.044,
+                              height: MediaQuery.of(context).size.height  * 0.044,
                               width: MediaQuery.of(context).size.width * 0.27,
                               decoration: BoxDecoration(
-                                // color: Color(0xffD6D1D3),
-                                  border: Border.all(color: Color(0xffD6D1D3)),
-                                  borderRadius: BorderRadius.circular(25)),
+                                  color: ConstColor.btnBackGroundColor,
+                                  borderRadius: BorderRadius.circular(25),
+                                  border: Border.all(
+                                      color: Color(0xffD6D1D3))),
                               child: Center(
-                                child: Text('Cancel',
-                                    style: ConstFontStyle().mainTextStyle),
+                                child: Text(
+                                  "Cancel",
+                                  style: ConstFontStyle().mainTextStyle!.copyWith(color: Color(0xffD6D1D3)),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ),
                           ),

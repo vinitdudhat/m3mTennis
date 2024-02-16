@@ -1,3 +1,4 @@
+import 'package:device_preview/device_preview.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +59,16 @@ void main() async {
     sound: true,
   );
 
+  // runApp(
+  //   DevicePreview(
+  //     enabled: true,
+  //     tools: [
+  //       ...DevicePreview.defaultTools,
+  //       // const CustomPlugin(),
+  //     ],
+  //     builder: (context) => const MyApp(),
+  //   ),
+  // );
   runApp(const MyApp());
 }
 

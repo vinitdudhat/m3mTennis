@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class ConstColor {
 
   static const Color primaryColor = Color(0xff58E967);
+  static  Color highlightBooking = Color(0xff398343);
   static const Color backGroundColor = Color(0xff131313);
 
   static const Color black = Colors.black;

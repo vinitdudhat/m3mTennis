@@ -88,53 +88,127 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: deviceHeight * 0.02),
-                  child: Center(
-                    child: Stack(
-                      alignment: Alignment.bottomRight,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 13),
-                          child: CircleAvatar(
-                            radius: 55,
-                            backgroundColor: isProfileImageUpdate
-                                ? ConstColor.greyTextColor
-                                : Colors.transparent,
-                            child: ClipOval(
-                              child: isProfileImageUpdate
-                                  ? Center(child: CircularProgressIndicator())
-                                  : netProfileImage != null
-                                      ? Image.network(
-                                          netProfileImage!,
-                                        )
-                                      : Image.asset(ConstAsset.avatar),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          left: deviceWidth * 0.14,
-                          child: GestureDetector(
-                            onTap: () {
-                              showDailog(context);
-                            },
-                            child: CircleAvatar(
-                              radius: 15,
-                              backgroundColor: ConstColor.white,
+                  padding: EdgeInsets.only(top: 15),
+                  child: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            shape: BoxShape.circle),
+                        child:  ClipOval(
+                          child: isProfileImageUpdate
+                              ? Container(
+                              width: 110,
+                              height: 110,
+                              decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  shape: BoxShape.circle),
                               child: Center(
-                                child: Icon(
-                                  Icons.edit,
-                                  color: ConstColor.primaryColor,
-                                  size: 20,
-                                ),
+                                  child:
+                                  CircularProgressIndicator()))
+                              : netProfileImage != null
+                              ? Image(
+                            image: NetworkImage(netProfileImage!),
+                            width: 110,
+                            height: 110,
+                            fit: BoxFit.cover,
+                            loadingBuilder:
+                                (context, child, loadingProgress) {
+                              if (loadingProgress == null)
+                                return child;
+                              return Container(
+                                  width: 110,
+                                  height: 110,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      shape: BoxShape.circle),
+                                  child: Center(
+                                      child:
+                                      CircularProgressIndicator()));
+                            },
+                          )
+                              : Image.asset(
+                            ConstAsset.avatar,
+                            width: 110,
+                            height: 110,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      ),
+                      Positioned(
+                        // top: ,
+                        left: deviceWidth * 0.14,
+                        child: GestureDetector(
+                          onTap: () {
+                            showDailog(context);
+                          },
+                          child: CircleAvatar(
+                            radius: 15,
+                            backgroundColor: ConstColor.white,
+                            child: Center(
+                              child: Icon(
+                                Icons.edit,
+                                color: ConstColor.primaryColor,
+                                size: 20,
                               ),
                             ),
                           ),
-                        )
-                      ],
-                    ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
+                // Padding(
+                //   padding: EdgeInsets.only(top: deviceHeight * 0.02),
+                //   child: Center(
+                //     child: Stack(
+                //       alignment: Alignment.bottomRight,
+                //       children: [
+                //         Container(
+                //           padding: EdgeInsets.symmetric(
+                //               horizontal: 10, vertical: 13),
+                //           child: CircleAvatar(
+                //             radius: 55,
+                //             backgroundColor: isProfileImageUpdate
+                //                 ? ConstColor.greyTextColor
+                //                 : Colors.transparent,
+                //             child: ClipOval(
+                //               child: isProfileImageUpdate
+                //                   ? Center(child: CircularProgressIndicator())
+                //                   : netProfileImage != null
+                //                       ? Image.network(
+                //                           netProfileImage!,
+                //                         )
+                //                       : Image.asset(ConstAsset.avatar),
+                //             ),
+                //           ),
+                //         ),
+                //         Positioned(
+                //           left: deviceWidth * 0.14,
+                //           child: GestureDetector(
+                //             onTap: () {
+                //               showDailog(context);
+                //             },
+                //             child: CircleAvatar(
+                //               radius: 15,
+                //               backgroundColor: ConstColor.white,
+                //               child: Center(
+                //                 child: Icon(
+                //                   Icons.edit,
+                //                   color: ConstColor.primaryColor,
+                //                   size: 20,
+                //                 ),
+                //               ),
+                //             ),
+                //           ),
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                // ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: deviceWidth * 0.03),
                   child: TextFormField(
