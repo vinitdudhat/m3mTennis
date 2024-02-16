@@ -10,10 +10,10 @@ class Utils{
   void snackBar({String title = '', required String message}){
     Get.snackbar('',
       '',
-      titleText: Text(message, style: ConstFontStyle().buttonTextStyle!.copyWith(color: ConstColor.primaryColor,fontWeight: FontWeight.w500),),
+      titleText: Text(message, style: ConstFontStyle().buttonTextStyle!.copyWith(color: Colors.black,fontWeight: FontWeight.w500),),
       messageText: Container(),
       // Text(message, style: ConstFontStyle().buttonTextStyle,),
-      colorText: ConstColor.backGroundColor,
+      colorText: Colors.black,
       snackPosition: SnackPosition.TOP,
       // borderRadius: BorderRadius.circular(15),
       animationDuration: Duration(seconds: 1),

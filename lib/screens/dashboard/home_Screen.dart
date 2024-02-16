@@ -511,12 +511,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ),
                                                           //vinit
                                                           Center(
-                                                            child: Flexible(
-                                                              flex: 1,
-                                                              fit: FlexFit.tight,
-                                                              child: Container(
-                                                                  child: fullWidthPath),
-                                                            ),
+                                                            child: Container(
+                                                                child: fullWidthPath),
                                                           ),
                                                           Align(
                                                               alignment: Alignment.topLeft,
@@ -592,12 +588,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               ),
                                                             ),
                                                           ),
-                                                          Flexible(
-                                                            flex: 1,
-                                                            fit: FlexFit.tight,
-                                                            child: Container(
-                                                                child: fullWidthPath),
-                                                          ),
+                                                          Container(
+                                                              child: fullWidthPath),
                                                           Flexible(
                                                             flex: 10,
                                                             fit: FlexFit.tight,
@@ -726,7 +718,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             fit: FlexFit.tight,
                                                             child: GestureDetector(
                                                               onTap: () {
-
                                                               },
                                                               child: Container(
                                                                   width: deviceWidth * 0.33,
@@ -750,12 +741,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               ),
                                                             ),
                                                           ),
-                                                          Flexible(
-                                                            flex: 1,
-                                                            fit: FlexFit.tight,
-                                                            child: Container(
-                                                                child: fullWidthPath
-                                                            ),
+                                                          Container(
+                                                              child: fullWidthPath
                                                           ),
                                                           Flexible(
                                                             flex: 10,
