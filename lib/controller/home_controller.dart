@@ -34,8 +34,10 @@ class BookSlotController extends GetxController {
     "08:00 AM - 09:00 AM",
     "09:00 AM - 10:00 AM",
     "10:00 AM - 11:00 AM",
-    "11:00 AM - 12:00 AM",
-    "12:00 AM - 01:00 PM",
+    "11:00 AM - 12:00 PM",
+    "12:00 PM - 01:00 PM",
+    // "11:00 AM - 12:00 AM",
+    // "12:00 AM - 01:00 PM",
     "01:00 PM - 02:00 PM",
     "02:00 PM - 03:00 PM",
     "03:00 PM - 04:00 PM",
@@ -50,9 +52,9 @@ class BookSlotController extends GetxController {
   ];
   List bookedSlotTimeList = [];
 
-  String? currentDate;
+  DateTime? currentDate;
   DateTime? selectedDate;
-  int selectedDateIndex = 0;
+  int selectedDateIndex = 6;
   List<DateTime> next7Days = [];
 
   final _dbRef = FirebaseDatabase.instance.ref('Booking').child("User_Bookings");
@@ -60,12 +62,70 @@ class BookSlotController extends GetxController {
   final FirebaseAuth auth = FirebaseAuth.instance;
   String userName = '';
 
+
+  int countFutureSlots(DateTime date) {
+    print("Enter12345");
+    int futureSlotsCount = 0;
+    DateTime now = DateTime.now();
+    int year = date.year;
+    int month = date.month;
+    int day = date.day;
+
+    for (String slot in slotList) {
+      // String startTimeString = slot.split(" - ")[0];
+      List timeHoursList = convertSlotToTimeHoursFrom(slotTime: slot,year: year,month: month,day: day);
+      List<String> timeHoursFrom = timeHoursList[0];
+      List<String> timeHoursTo = timeHoursList[1];
+      DateTime slotFromTime = DateTime(
+        year,
+        month,
+        day,
+        int.parse(timeHoursFrom[0]),
+        int.parse(timeHoursFrom[1]),
+      );
+
+      print("slotFromTime : $slotFromTime");
+
+      if (slotFromTime.isAfter(now)) {
+        futureSlotsCount++;
+      }
+    }
+
+    // DataSnapshot snapshot = await _dbRef.orderByChild('date').equalTo(date.toString().substring(0, 10)).get();
+    // if(snapshot.value != null) {
+    //   Map bookingsData = snapshot.value as Map;
+    //   print("bookingsData : $bookingsData");
+    //
+    // }
+
+    return (futureSlotsCount - 2) * 2;
+  }
+
   confirmBookingSlot(
       {required String courtId, required String date, required String slot}) {
     print(selectedSlotTime);
     List<String> times = selectedSlotTime!.split(" - ");
     String fromTime = times[0];
     String toTime = times[1];
+
+    // print("fromTime : $fromTime");
+    String fromTimeIn24 = convertTo24HourFormat(fromTime);
+    // print("fromTimeIn24 : $fromTimeIn24");
+    // print("date : ${selectedDate}");
+    List<String> dateComponents = selectedDate!.toString().substring(0, 10).split("-");
+    int year = int.parse(dateComponents[0]);
+    int month = int.parse(dateComponents[1]);
+    int day = int.parse(dateComponents[2]);
+
+    List<String> timeHours = fromTimeIn24.split(':');
+    DateTime timeStamp = DateTime(
+      year,
+      month,
+      day,
+      int.parse(timeHours[0]),
+      int.parse(timeHours[1]),
+    );
+    print("timeStamp : $timeStamp");
 
     // print(fromTime);
     // print(toTime);
@@ -82,9 +142,11 @@ class BookSlotController extends GetxController {
       selectedDate!.toString().substring(0, 10),
       "from": fromTime,
       "to": toTime,
+      "timeStamp" : timeStamp.toString(),
       "courtId": selectedCourtId,
       "createdAt": currentTime,
     });
+
     Get.back();
     Get.to(() => ConfirmBookingScreen(courtId: courtId, date: date, slot: slot, bookingId: bookingId,userName: userName,));
     Utils().snackBar(message: "Your Booking Is Confirmed");
@@ -288,10 +350,6 @@ class BookSlotController extends GetxController {
   //   });
   // }
 
-
-
-
-
   void confirmationBottomSheet(
       {required BuildContext context, required String courtId, required String date, required String slot}) {
     showModalBottomSheet(
@@ -305,21 +363,21 @@ class BookSlotController extends GetxController {
       builder: (BuildContext context) {
         return Container(
           width: double.infinity,
-          height: MediaQuery.of(context).size.height * 0.38,
+          height: MediaQuery.of(context).size.height * 0.365,
           decoration: BoxDecoration(
               color: ConstColor.btnBackGroundColor,
               borderRadius: BorderRadius.vertical(
                 top: Radius.circular(15),
               )),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Padding(
                     padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.height * 0.015),
+                        bottom: MediaQuery.of(context).size.height * 0.02),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -330,9 +388,13 @@ class BookSlotController extends GetxController {
                             },
                             icon: Icon(
                               Icons.close,
-                              size: 25,
+                              size: 28,
                               color: ConstColor.greyTextColor,
-                            )),
+                            )
+                        ),
+                        SizedBox(
+                          width: 13,
+                        ),
                         Text("Booking Confirmation",
                             style: ConstFontStyle().mainTextStyle1!.copyWith(
                               fontFamily: ConstFont.popinsMedium,
@@ -340,79 +402,91 @@ class BookSlotController extends GetxController {
                       ],
                     ),
                   ),
-                  CommonConfirmationCard(courtNumber: courtId,date: date,time: slot,),
                   Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.height * 0.02),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.75,
-                      child: Text("Please confirm your tennis court booking for an 1 hour slot.",
-                          textAlign: TextAlign.start,
-                          style: ConstFontStyle().buttonTextStyle),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.height * 0.02),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0,vertical: 4),
+                    child: Column(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: Card(
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
-                            child: Container(
-                              height: MediaQuery.of(context).size.height  * 0.044,
-                              width: MediaQuery.of(context).size.width * 0.27,
-                              decoration: BoxDecoration(
-                                  color: ConstColor.btnBackGroundColor,
-                                  borderRadius: BorderRadius.circular(25),
-                                  border: Border.all(
-                                      color: Color(0xffD6D1D3))),
-                              child: Center(
-                                child: Text(
-                                  "Cancel",
-                                  style: ConstFontStyle().mainTextStyle!.copyWith(color: Color(0xffD6D1D3)),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                          child: CommonConfirmationCard(courtNumber: courtId,date: date,time: slot,),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).size.height * 0.017,top: MediaQuery.of(context).size.height * 0.012),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            // color: Colors.amber,
+                            padding: EdgeInsets.only(right: 20),
+                            child: Text("Please confirm your tennis court booking for an 1 hour slot.",
+                                  textAlign: TextAlign.start,
+                                  style: ConstFontStyle().buttonTextStyle),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () async {
-                            // Get.to(()=> ConfirmBookingScreen());
-                            confirmBookingSlot(courtId: courtId, date: date, slot: slot);
-                          },
-                          child: Card(
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
-                            child: Container(
-                              height:
-                              MediaQuery.of(context).size.height * 0.044,
-                              width: MediaQuery.of(context).size.width * 0.27,
-                              decoration: BoxDecoration(
-                                  color: ConstColor.primaryColor,
-                                  borderRadius: BorderRadius.circular(25)),
-                              child: Center(
-                                child: Text('Confirm',
-                                    style: ConstFontStyle()
-                                        .mainTextStyle!
-                                        .copyWith(
-                                        color:
-                                        ConstColor.btnBackGroundColor)),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              bottom: MediaQuery.of(context).size.height * 0.02),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Get.back();
+                                },
+                                child: Card(
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25)),
+                                  child: Container(
+                                    height: MediaQuery.of(context).size.height  * 0.044,
+                                    width: MediaQuery.of(context).size.width * 0.27,
+                                    decoration: BoxDecoration(
+                                        color: ConstColor.btnBackGroundColor,
+                                        borderRadius: BorderRadius.circular(25),
+                                        border: Border.all(
+                                            color: Color(0xffD6D1D3))),
+                                    child: Center(
+                                      child: Text(
+                                        "Cancel",
+                                        style: ConstFontStyle().mainTextStyle!.copyWith(color: Color(0xffD6D1D3)),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
+                              GestureDetector(
+                                onTap: () async {
+                                  // Get.to(()=> ConfirmBookingScreen());
+                                  confirmBookingSlot(courtId: courtId, date: date, slot: slot);
+                                },
+                                child: Card(
+                                  elevation: 4,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25)),
+                                  child: Container(
+                                    height:
+                                    MediaQuery.of(context).size.height * 0.044,
+                                    width: MediaQuery.of(context).size.width * 0.27,
+                                    decoration: BoxDecoration(
+                                        color: ConstColor.primaryColor,
+                                        borderRadius: BorderRadius.circular(25)),
+                                    child: Center(
+                                      child: Text('Confirm',
+                                          style: ConstFontStyle()
+                                              .mainTextStyle!
+                                              .copyWith(
+                                              color:
+                                              ConstColor.btnBackGroundColor)),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         )
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

@@ -77,13 +77,11 @@ String adjustTime(String originalTime) {
 }
 
 bool isBetweenInTimeRange({required List<DateTime> timeSlot, required DateTime checkTime}) {
-
   DateTime startTimeRange1 = timeSlot[0];
   DateTime endTimeRange1 = timeSlot[1];
 
   DateTime rangeStart = checkTime;
   // DateTime rangeStart = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 9, 30);
-
   bool isInRange = isBetween(rangeStart, startTimeRange1, endTimeRange1);
 
   return isInRange;
@@ -128,12 +126,12 @@ String convertTo12HourFormat(int hour) {
   if (hour == 24) {
     return '12 PM';
   } else {
-    String amPm = hour <= 12 ? 'AM' : 'PM';
+    String amPm = hour < 12 ? 'AM' : 'PM';
     int hour12 = hour % 12;
     if (hour12 == 0) {
       hour12 = 12; // Set 0 to 12 for 12-hour clock representation
     }
-    return '${hour12.toString().padLeft(2, '0')} $amPm';
+    return '${hour12.toString()} $amPm';
   }
 }
 
@@ -147,13 +145,12 @@ String convertTo24HourFormat(String time12Hour) {
   int minute = dateTime.minute;
 
   // Convert 12:00 PM to 24:00 format
-  if (time12Hour.endsWith('PM') && hour == 12) {
+  if (time12Hour.endsWith('AM') && hour == 12) {
     hour = 0;
   }
 
   // Convert the time to 24-hour format
   String time24Hour = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-
   return time24Hour;
 }
 
@@ -167,6 +164,39 @@ String convertToShowingDateFormat(String timestamp) {
 
   return formattedDate;
 }
+
+
+String convertToShowingTimeRange(String timeRange) {
+  List<String> parts = timeRange.split(' - ');
+  String startTime = parts[0];
+  String endTime = parts[1];
+
+  // Parse and format start time
+  String formattedStartTime = formatTimeForShow(time: startTime,isFromTime: true);
+
+  // Parse and format end time
+  String formattedEndTime = formatTimeForShow(time: endTime,isFromTime: false);
+
+  return '$formattedStartTime - $formattedEndTime';
+}
+
+String formatTimeForShow({required String time, required bool isFromTime}) {
+  final parts = time.split(':');
+  int hour = int.parse(parts[0]);
+  String minute = parts[1].split(' ')[0];
+  String amPm = parts[1].split(' ')[1];
+
+  // Convert hour to 12-hour format
+  String formattedHour = (hour % 12 == 0) ? '12' : (hour % 12).toString();
+
+  if(isFromTime) {
+    return '$formattedHour:$minute';
+  } else {
+    return '$formattedHour:$minute $amPm';
+  }
+}
+
+
 
 // String convertTo24HourFormat(String time) {
 //   String time12Hour = '12:00 PM';

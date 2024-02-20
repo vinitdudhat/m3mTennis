@@ -43,8 +43,8 @@ class _OtpScreenState extends State<OtpScreen> {
     var deviceWidth = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async {
-        // return true;
-        return false;
+        return true;
+        // return false;
       },
       child: Scaffold(
         backgroundColor: ConstColor.backGroundColor,

@@ -86,10 +86,6 @@ class _MyAppState extends State<MyApp> {
     FirebaseMessaging.instance.requestPermission();
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification? notification = message.notification;
-      // AndroidNotification? android = message.notification?.android;
-      // if (android != null) {
-      // String? image = message.notification?.android?.imageUrl;
-      // print('ImageUrl $image');
       flutterLocalNotificationsPlugin.show(
           notification.hashCode,
           notification!.title,
@@ -103,7 +99,6 @@ class _MyAppState extends State<MyApp> {
                 playSound: true,
                 icon: '@mipmap/ic_launcher'),
           ));
-      // }
     });
     super.initState();
   }
@@ -117,7 +112,6 @@ class _MyAppState extends State<MyApp> {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // home: HomeScreen(),
       home: SplashScreen(),
     );
   }

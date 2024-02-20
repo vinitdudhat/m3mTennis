@@ -766,12 +766,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               MediaQuery.of(context).size.height * 0.044,
                               width: MediaQuery.of(context).size.width * 0.27,
                               decoration: BoxDecoration(
-                                // color: Color(0xffD6D1D3),
-                                  border: Border.all(color: Color(0xffD6D1D3)),
+                                color: ConstColor.btnBackGroundColor,
+                                  border: Border.all(color: Colors.white30),
                                   borderRadius: BorderRadius.circular(25)),
                               child: Center(
                                 child: Text('Cancel',
-                                    style: ConstFontStyle().mainTextStyle),
+                                    style: ConstFontStyle().mainTextStyle.copyWith(
+                                      color: ConstColor.greyTextColor
+                                    )),
                               ),
                             ),
                           ),

@@ -190,6 +190,7 @@ class _InviteFieldState extends State<InviteField> {
       keyboardType: widget.keyboardType,
       controller: widget.controller,
       decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 11,horizontal: 12),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4),
             borderSide: BorderSide(color: Colors.transparent)
@@ -213,7 +214,7 @@ class _InviteFieldState extends State<InviteField> {
         labelStyle: ConstFontStyle().buttonTextStyle,
         errorMaxLines: 2,
         hintText: widget.hintText,
-        hintStyle: ConstFontStyle().buttonTextStyle,
+        hintStyle: ConstFontStyle().buttonTextStyle!.copyWith(fontWeight: FontWeight.w400,color: ConstColor.greyTextColor!.withOpacity(0.5)),
         errorText: widget.errorText,
         prefixIcon: widget.prefix,
         suffix: widget.suffix,

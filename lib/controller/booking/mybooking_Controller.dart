@@ -28,7 +28,7 @@ class MyBookingController extends GetxController{
       textMap['member1'] = member1.text;
     }
     // Add text from TextField 2 to map if not empty
-    if (member3.text.isNotEmpty) {
+    if (member2.text.isNotEmpty) {
       textMap['member2'] = member2.text;
     }
     // Add text from TextField 3 to map if not empty

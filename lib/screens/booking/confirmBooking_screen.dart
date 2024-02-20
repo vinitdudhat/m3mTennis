@@ -51,7 +51,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(
-            horizontal: deviceWidth * 0.02, vertical: deviceHeight * 0.01),
+            horizontal: deviceWidth * 0.03, vertical: deviceHeight * 0.01),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -99,8 +99,9 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                           color: ConstColor.backGroundColor,
                         ),
                       ),
+                      SizedBox(width: 10,),
                       Text(
-                        "   You can invite up to 3 members",
+                        "You can invite up to 3 members",
                         style: ConstFontStyle().mainTextStyle.copyWith(
                             color: ConstColor.greyTextColor,
                             fontWeight: FontWeight.w300),
@@ -110,18 +111,20 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: deviceHeight * 0.02),
-                child: Card(
-                  color: ConstColor.cardBackGroundColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: DottedBorder(
-                    borderType: BorderType.RRect,
-                    radius: Radius.circular(4),
-                    dashPattern: [10, 10],
-                    color: ConstColor.borderColor,
-                    strokeWidth: 2,
+                padding: EdgeInsets.only(top: deviceHeight * 0.02,right: deviceWidth * 0.01,
+                    left: deviceWidth * 0.01),
+                child: DottedBorder(
+                  borderType: BorderType.RRect,
+                  radius: Radius.circular(4),
+                  dashPattern: [6, 6],
+                  color: Colors.white30,
+                  strokeWidth: 1.5,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: ConstColor.cardBackGroundColor,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 1,horizontal: 1),
                     child: Padding(
                       padding: EdgeInsets.all(12.0),
                       child: Row(
@@ -138,10 +141,10 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                             ),
                           ),
                           Text(
-                            " (Host)",
+                            "(Host)",
                             style: ConstFontStyle()
                                 .buttonTextStyle
-                                .copyWith(fontWeight: FontWeight.w200),
+                                .copyWith(fontWeight: FontWeight.w300,color: ConstColor.greyTextColor!.withOpacity(0.7)),
                           )
                         ],
                       ),
@@ -154,19 +157,26 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                     top: deviceHeight * 0.015,
                     right: deviceWidth * 0.01,
                     left: deviceWidth * 0.01),
-                child: InviteField(
-                  obSecure: false,
-                  hintText: "Member1",
-                  controller: myBookingController.member1,
-                  suffix: InkWell(
-                    onTap: () {
-                      myBookingController.member1.clear();
-                    },
-                    child: Text(
-                      "Remove",
-                      style: ConstFontStyle().mainTextStyle.copyWith(
-                          color: ConstColor.primaryColor,
-                          fontWeight: FontWeight.w400),
+                child: DottedBorder(
+                  borderType: BorderType.RRect,
+                  radius: Radius.circular(4),
+                  dashPattern: [6, 6],
+                  strokeWidth: 1.5,
+                  color: Colors.white30,
+                  child: InviteField(
+                    obSecure: false,
+                    hintText: "Member1",
+                    controller: myBookingController.member1,
+                    suffix: InkWell(
+                      onTap: () {
+                        myBookingController.member1.clear();
+                      },
+                      child: Text(
+                        "Remove",
+                        style: ConstFontStyle().mainTextStyle.copyWith(
+                            color: ConstColor.primaryColor,
+                            fontWeight: FontWeight.w400),
+                      ),
                     ),
                   ),
                 ),
@@ -176,27 +186,34 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                     top: deviceHeight * 0.015,
                     right: deviceWidth * 0.01,
                     left: deviceWidth * 0.01),
-                child: InviteField(
-                  obSecure: false,
-                  // readOnly: myBookingController.member1.text == '' ? true : false,
-                  // onTap: () {
-                  //   if(myBookingController.member1.text == '') {
-                  //
-                  //   } else {
-                  //
-                  //   }
-                  // },
-                  hintText: "Member2",
-                  controller: myBookingController.member2,
-                  suffix: InkWell(
-                    onTap: () {
-                      myBookingController.member2.clear();
-                    },
-                    child: Text(
-                      "Remove",
-                      style: ConstFontStyle().mainTextStyle.copyWith(
-                          color: ConstColor.primaryColor,
-                          fontWeight: FontWeight.w400),
+                child: DottedBorder(
+                  borderType: BorderType.RRect,
+                  radius: Radius.circular(4),
+                  dashPattern: [6, 6],
+                  strokeWidth: 1.5,
+                  color: Colors.white30,
+                  child: InviteField(
+                    obSecure: false,
+                    // readOnly: myBookingController.member1.text == '' ? true : false,
+                    // onTap: () {
+                    //   if(myBookingController.member1.text == '') {
+                    //
+                    //   } else {
+                    //
+                    //   }
+                    // },
+                    hintText: "Member2",
+                    controller: myBookingController.member2,
+                    suffix: InkWell(
+                      onTap: () {
+                        myBookingController.member2.clear();
+                      },
+                      child: Text(
+                        "Remove",
+                        style: ConstFontStyle().mainTextStyle.copyWith(
+                            color: ConstColor.primaryColor,
+                            fontWeight: FontWeight.w400),
+                      ),
                     ),
                   ),
                 ),
@@ -206,29 +223,37 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                     top: deviceHeight * 0.015,
                     right: deviceWidth * 0.01,
                     left: deviceWidth * 0.01),
-                child: InviteField(
-                  obSecure: false,
-                  hintText: "Member3",
-                  controller: myBookingController.member3,
-                  suffix: InkWell(
-                    onTap: () {
-                      myBookingController.member3.clear();
-                    },
-                    child: Text(
-                      "Remove",
-                      style: ConstFontStyle().mainTextStyle.copyWith(
-                          color: ConstColor.primaryColor,
-                          fontWeight: FontWeight.w400),
+                child: DottedBorder(
+                  borderType: BorderType.RRect,
+                  radius: Radius.circular(4),
+                  dashPattern: [6, 6],
+                  strokeWidth: 1.5,
+                  color: Colors.white30,
+                  child: InviteField(
+                    obSecure: false,
+                    hintText: "Member3",
+                    controller: myBookingController.member3,
+                    suffix: InkWell(
+                      onTap: () {
+                        myBookingController.member3.clear();
+                      },
+                      child: Text(
+                        "Remove",
+                        style: ConstFontStyle().mainTextStyle.copyWith(
+                            color: ConstColor.primaryColor,
+                            fontWeight: FontWeight.w400),
+                      ),
                     ),
                   ),
                 ),
               ),
+
+
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.04),
-                child: RoundButton(
-                  title: 'Add',
+                child: GestureDetector(
                   onTap: () {
-                    if (myBookingController.member1.text.isNotEmpty) {
+                    if (myBookingController.member1.text.isNotEmpty || myBookingController.member2.text.isNotEmpty || myBookingController.member3.text.isNotEmpty ) {
                       myBookingController.addMemberInBooking(
                           bookingId: widget.bookingId);
                     } else {
@@ -236,8 +261,42 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                           message: "Please enter at least 1 member name.");
                     }
                   },
+                  child: Container(
+                    height: deviceHeight * 0.05,
+                    width: deviceWidth * 0.5,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(
+                            color: ConstColor.primaryColor)
+                    ),
+                    child: Center(
+                      child: Text(
+                          "Add Member",
+                          style: ConstFontStyle()
+                              .mainTextStyle
+                              .copyWith(
+                              color:  ConstColor.primaryColor)
+                      ),
+                    ),
+                  ),
                 ),
               ),
+              // Padding(
+              //   padding: EdgeInsets.only(top: deviceHeight * 0.04),
+              //   child: RoundButton(
+              //     title: 'Add to Calender',
+              //     onTap: () {
+              //       if (myBookingController.member1.text.isNotEmpty || myBookingController.member2.text.isNotEmpty || myBookingController.member3.text.isNotEmpty ) {
+              //         myBookingController.addMemberInBooking(
+              //             bookingId: widget.bookingId);
+              //       } else {
+              //         Utils().snackBar(
+              //             message: "Please enter at least 1 member name.");
+              //       }
+              //     },
+              //   ),
+              // ),
               Padding(
                 padding: EdgeInsets.only(top: deviceHeight * 0.03),
                 child: GestureDetector(

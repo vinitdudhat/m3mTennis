@@ -160,6 +160,10 @@ class _MyBookingScreenState extends State<MyBookingScreen> {
                         });
                       }
 
+                      // print("completedBooking : $completedBooking");
+                      completedBooking.sort((a, b) => DateTime.parse(b['timeStamp']).compareTo(DateTime.parse(a['timeStamp'])));
+                      // print("completedBooking : $completedBooking");
+
                       return Container(
                         height: deviceHeight * 0.61,
                         width: deviceWidth,
@@ -170,9 +174,9 @@ class _MyBookingScreenState extends State<MyBookingScreen> {
                             children: [
                               myBookingController.isActive.value == 1 ?
                               completedBooking.length == 0 ? Container(
-                                  height: deviceHeight * 0.55,
+                                  height: deviceHeight * 0.6,
                                   width: deviceWidth,
-                                  color: Colors.red,
+                                  // color: Colors.red,
                                   padding: EdgeInsets.only(top: 10),
                                   child: Center(
                                     child: GestureDetector(
@@ -225,7 +229,7 @@ class _MyBookingScreenState extends State<MyBookingScreen> {
                           
                               myBookingController.isActive.value == 2 ?
                               upcomingBooking.length == 0 ? Container(
-                                  height: deviceHeight * 0.55,
+                                  height: deviceHeight * 0.6,
                                   width: deviceWidth,
                                   // color: Colors.red,
                                   padding: EdgeInsets.only(top: 10),
@@ -427,7 +431,47 @@ class _MyBookingScreenState extends State<MyBookingScreen> {
                             color: ConstColor.btnBackGroundColor,
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(
-                                color:Color(0xffD6D1D3)
+                                color:Colors.white24
+                            )
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "App Developed by",
+                              style: ConstFontStyle().mainTextStyle!.copyWith(color: Color(0xffD6D1D3)),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: 2,
+                            ),
+                            Text(
+                              "ATTENTION",
+                              style: ConstFontStyle().titleText1!.copyWith(fontWeight: FontWeight.w700),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: deviceHeight * 0.041,
+                            ),
+                            Text(
+                              "www.Attention.sh",
+                              style: ConstFontStyle()
+                                  .mainTextStyle
+                                  .copyWith(color: ConstColor.primaryColor),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height  * 0.165,
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                        decoration: BoxDecoration(
+                            color: ConstColor.btnBackGroundColor,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                                color:Colors.white24
                             )
                         ),
                         child: Column(
@@ -464,46 +508,7 @@ class _MyBookingScreenState extends State<MyBookingScreen> {
                           ],
                         ),
                       ),
-                      Container(
-                        height: MediaQuery.of(context).size.height  * 0.165,
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
-                        decoration: BoxDecoration(
-                            color: ConstColor.btnBackGroundColor,
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(
-                                color:Color(0xffD6D1D3)
-                            )
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "App Developed by",
-                              style: ConstFontStyle().mainTextStyle!.copyWith(color: Color(0xffD6D1D3)),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 2,
-                            ),
-                            Text(
-                              "ATTENTION",
-                              style: ConstFontStyle().titleText1!.copyWith(fontWeight: FontWeight.w700),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: deviceHeight * 0.041,
-                            ),
-                            Text(
-                              "www.Attention.sh",
-                              style: ConstFontStyle()
-                                  .mainTextStyle
-                                  .copyWith(color: ConstColor.primaryColor),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      ),
+
                     ],
                   ),
                 ),
