@@ -359,7 +359,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       onTap: () {
                         if (formKey.currentState!.validate()) {
                           updateProfileDetails(username.text, flat.text,
-                              mobile.text, email.text);
+                              // mobile.text, email.text
+                          );
                         }
                       }),
                 ),
@@ -374,8 +375,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   updateProfileDetails(
     String name,
     String flatno,
-    String mobile,
-    String email,
+    // String mobile,
+    // String email,
   ) {
     var userId = auth.currentUser?.uid;
     final _dbref =
@@ -384,8 +385,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     _dbref.update({
       'UserName': name,
       'FlatNo': flatno,
-      'MobileNo': mobile,
-      'Email': email,
+      // 'MobileNo': mobile,
+      // 'Email': email,
     }).then((value) {
       Get.back();
       Utils().snackBar(message: "Profile details updated successfully");

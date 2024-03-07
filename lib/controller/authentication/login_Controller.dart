@@ -9,12 +9,16 @@ import 'package:m3m_tennis/repository/common_function.dart';
 import 'package:m3m_tennis/repository/const_pref_key.dart';
 import 'package:m3m_tennis/screens/authentication/otp_Screen.dart';
 import 'package:m3m_tennis/screens/authentication/sucess_Screen.dart';
+import 'package:m3m_tennis/screens/profile/profile_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginController extends GetxController {
   TextEditingController mobileNumberController = TextEditingController();
   TextEditingController mobileNumberController1 = TextEditingController();
   TextEditingController otpController = TextEditingController();
+  TextEditingController countryCode = TextEditingController();
+  final countryCodeController = TextEditingController().obs;
+  final phoneController = TextEditingController().obs;
   RxBool isLoading = false.obs;
   RxBool isLoading1 = false.obs;
   RxString userName = ''.obs;
@@ -29,12 +33,11 @@ class LoginController extends GetxController {
   final _dbRef = FirebaseDatabase.instance.ref('Users');
 
 
-  sendOtp(String mobileNumber) async {
+  sendOtp(String countryCode,String mobileNumber) async {
     isLoading.value = true;
-
     try {
       await FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: '+91' + mobileNumber,
+        phoneNumber: countryCode + mobileNumber,
         verificationCompleted: (PhoneAuthCredential credential) {},
         verificationFailed: (FirebaseAuthException e) {
           isLoading.value = false;
@@ -80,7 +83,7 @@ class LoginController extends GetxController {
       UserCredential userCredential =
           await auth.signInWithCredential(credential);
       // await auth.signInWithCredential(credential);
-
+      var userId = auth.currentUser?.uid;
       print("userCredential : $userCredential");
       String? uid = userCredential.user?.uid;
       id = userCredential.user!.uid;
@@ -101,10 +104,12 @@ class LoginController extends GetxController {
     if(snapshot.value != null) {
       Map usersMap = snapshot.value as Map;
       bool isAlreadyAccount = false;
-
+      String? number = mobileNumberController1.text.toString();
       usersMap.forEach((key, value) {
-        String? number = mobileNumberController1.text.toString();
-        if (number == value['MobileNo']) {
+        print(value['userId']);
+        print("fir");
+        print(value['MobileNo'].toString());
+        if (value['MobileNo'] != null && number == value['MobileNo']) {
           isAlreadyAccount = true;
         }
       });
@@ -121,14 +126,25 @@ class LoginController extends GetxController {
           "Email": "",
           "ProfilePic": null,
           'userId': uid,
+          'isReferralVerify' : false,
         });
         isLoading1.value = false;
+        print("iff+++++update");
       }
+      var userId = auth.currentUser?.uid;
+      final _dbref = FirebaseDatabase.instance
+          .ref()
+          .child('Users')
+          .child(userId.toString());
+      _dbref.update({
+        'isReferralVerify': false,
+      });
       mobileNumberController1.clear();
       otpController.clear();
       prefs.setString(SharedPreferenKey.userId, uid!);
-      prefs.setBool(SharedPreferenKey.isLogin, true);
-      Get.offAll(() => SuccessScreen());
+      // prefs.setBool(SharedPreferenKey.isLogin, true);
+      // Get.offAll(() => SuccessScreen());
+      Get.offAll(()=> ProfileScreen());
     } else {
       _dbRef.child(uid!).set({
         "CountryCode": 'IN',
@@ -139,18 +155,22 @@ class LoginController extends GetxController {
         "Email": "",
         "ProfilePic": null,
         'userId': uid,
+        'isReferralVerify' : false,
+
       });
+      print("else++++newww");
       isLoading1.value = false;
       mobileNumberController1.clear();
       otpController.clear();
 
       prefs.setString(SharedPreferenKey.userId, uid!);
-      prefs.setBool(SharedPreferenKey.isLogin, true);
-      Get.offAll(() => SuccessScreen());
+      // prefs.setBool(SharedPreferenKey.isLogin, true);
+      // Get.offAll(() => SuccessScreen());
+      Get.offAll(()=> ProfileScreen());
     }
   }
 
-  signInWithGoogle() async {
+  /*signInWithGoogle() async {
     try {
       await GoogleSignIn().signOut();
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
@@ -211,6 +231,7 @@ class LoginController extends GetxController {
           "Email": email,
           "ProfilePic": profile,
           'userId': uid,
+          'isReferralVerify' : false,
         });
         // });
         isLoading.value = false;
@@ -232,6 +253,7 @@ class LoginController extends GetxController {
         "Email": email,
         "ProfilePic": profile,
         'userId': uid,
+        'isReferralVerify' : false,
       });
       // });
       isLoading.value = false;
@@ -241,5 +263,5 @@ class LoginController extends GetxController {
       Get.offAll(() => SuccessScreen());
     }
 
-  }
+  }*/
 }

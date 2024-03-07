@@ -382,24 +382,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   .isAfter(slotFromTime2);
                                         }
 
-                                        // List timeHoursList1 = convertSlotToTimeHoursFrom(slotTime: halfHourSlotTime,year: year,month: month,day: day);
-                                        // List<String> timeHoursFrom1 = timeHoursList1[0];
-                                        // List<String> timeHoursTo1 = timeHoursList1[1];
-                                        // DateTime slotFromTime1 = DateTime(
-                                        //   year,
-                                        //   month,
-                                        //   day,
-                                        //   int.parse(timeHoursFrom1[0]),
-                                        //   int.parse(timeHoursFrom1[1]),
-                                        // );
-                                        // DateTime slotToTime1 = DateTime(
-                                        //   year,
-                                        //   month,
-                                        //   day,
-                                        //   int.parse(timeHoursTo1[0]),
-                                        //   int.parse(timeHoursTo1[1]),
-                                        // );
-
                                         isCompletedOneHourSlot =
                                             currentTime.isAfter(slotFromTime);
                                         print(
@@ -417,213 +399,362 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                         String practiseSlotTime = '';
 
+
                                         if (courtId == 'EC') {
-                                          if (practiseData['EC']['slotList']
+
+                                          for (int i = 1; i <= practiseData['EC'].length; i++) {
+                                            Map slotList = practiseData['EC']['slotList${i.toString()}'];
+                                            print("slotList index $i $slotList");
+                                            print("dayNameList ${slotList['dayName']}");
+
+                                            List<String> daysList = slotList['dayName'].toString().split(',').map((day) => day.trim()).toList();
+                                            print("daysList $daysList");
+
+                                            String dayName =
+                                            DateFormat('EEEE').format(bookSlotController.selectedDate!).substring(0, 3);
+
+                                            print("dayName000 $dayName");
+
+                                            bool isDayInList = daysList.contains(dayName.toLowerCase());
+                                            print("isDayInList $isDayInList");
+
+                                            if(isDayInList) {
+                                              if (slotList
                                                   .length !=
-                                              0) {
-                                            for (int i = 1;
-                                                i <=
-                                                    practiseData['EC']
-                                                            ['slotList']
-                                                        .length;
+                                                  0) {
+                                                print("ala");
+
+                                                for (int i = 1;
+                                                i <= slotList.length -1;
                                                 i++) {
-                                              // print("i+++" + i.toString());
-                                              var slot = practiseData['EC']
-                                                      ['slotList']
-                                                  ["slot${i.toString()}"];
-                                              // print("sloti+++" + slot.toString());
-                                              String practiseSlot =
-                                                  slot['from'] +
-                                                      " - " +
-                                                      slot['to'];
-                                              // print("practiseSlot000 : $practiseSlot");
-                                              // print("slotTime0000 : $slotTime");
-                                              // print("slotTime : $slotTime");
+                                                  print("slotList i00+++" + i.toString());
+                                                  // print("slotList data" + slotList.toString());
+                                                  // print("slotList data" + slotList['slot1'].toString());
 
-                                              bool match =
-                                                  slotTime == practiseSlot;
-                                              // print("match000 : $match");
 
-                                              if (match) {
-                                                isPractiseSlot = true;
-                                                isPractiseSlotOneHour = true;
-                                                practiseSlotTime = practiseSlot;
-                                                bookSlotController
-                                                    .bookedSlotTimeList
-                                                    .add({
-                                                  courtId: practiseSlot
-                                                });
-                                                // bookSlotController.bookedSlotTimeList.add(practiseSlot);
-                                              } else {
-                                                String fromIn24Hours =
+                                                  var slot = slotList["slot${i.toString()}"];
+                                                  print("sloti+++" + slot.toString());
+                                                  String practiseSlot =
+                                                      slot['from'] +
+                                                          " - " +
+                                                          slot['to'];
+                                                  print("practiseSlot000 : $practiseSlot");
+                                                  print("slotTime0000 : $slotTime");
+                                                  // print("slotTime : $slotTime");
+
+                                                  bool match =
+                                                      slotTime == practiseSlot;
+                                                  print("match000 : $match");
+
+                                                  if (match) {
+                                                    isPractiseSlot = true;
+                                                    isPractiseSlotOneHour = true;
+                                                    practiseSlotTime = practiseSlot;
+                                                    bookSlotController
+                                                        .bookedSlotTimeList
+                                                        .add({
+                                                      courtId: practiseSlot
+                                                    });
+                                                    // bookSlotController.bookedSlotTimeList.add(practiseSlot);
+                                                  } else {
+                                                    String fromIn24Hours =
                                                     convertTo24HourFormat(
                                                         slot['from']);
-                                                String toIn24Hours =
+                                                    String toIn24Hours =
                                                     convertTo24HourFormat(
                                                         slot['to']);
-                                                // print("fromIn24Hours : $fromIn24Hours");
+                                                    // print("fromIn24Hours : $fromIn24Hours");
 
-                                                List<String> checkFromTime =
+                                                    List<String> checkFromTime =
                                                     fromIn24Hours.split(':');
-                                                List<String> checkFromTime2 =
+                                                    List<String> checkFromTime2 =
                                                     toIn24Hours.split(':');
 
-                                                DateTime fromTimeInDT =
+                                                    DateTime fromTimeInDT =
                                                     DateTime(
-                                                  year,
-                                                  month,
-                                                  day,
-                                                  int.parse(checkFromTime[0]),
-                                                  int.parse(checkFromTime[1]),
-                                                );
-                                                DateTime toTimeInDT = DateTime(
-                                                  year,
-                                                  month,
-                                                  day,
-                                                  int.parse(checkFromTime2[0]),
-                                                  int.parse(checkFromTime2[1]),
-                                                );
-                                                // print("fromTimeInDT $fromTimeInDT");
+                                                      year,
+                                                      month,
+                                                      day,
+                                                      int.parse(checkFromTime[0]),
+                                                      int.parse(checkFromTime[1]),
+                                                    );
+                                                    DateTime toTimeInDT = DateTime(
+                                                      year,
+                                                      month,
+                                                      day,
+                                                      int.parse(checkFromTime2[0]),
+                                                      int.parse(checkFromTime2[1]),
+                                                    );
+                                                    // print("fromTimeInDT $fromTimeInDT");
 
-                                                bool isFromTimeBetweenInSlot =
+                                                    bool isFromTimeBetweenInSlot =
                                                     isBetweenInTimeRange(
                                                         timeSlot: [
-                                                      slotFromTime,
-                                                      slotToTime
-                                                    ],
+                                                          slotFromTime,
+                                                          slotToTime
+                                                        ],
                                                         checkTime:
-                                                            fromTimeInDT);
-                                                bool istoTimeBetweenInSlot =
+                                                        fromTimeInDT);
+                                                    bool istoTimeBetweenInSlot =
                                                     isBetweenInTimeRange(
                                                         timeSlot: [
-                                                      slotFromTime,
-                                                      slotToTime
-                                                    ],
+                                                          slotFromTime,
+                                                          slotToTime
+                                                        ],
                                                         checkTime: toTimeInDT);
-                                                print(
-                                                    "isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
-                                                // print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
+                                                    print(
+                                                        "isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
+                                                    // print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
 
-                                                if (isFromTimeBetweenInSlot) {
-                                                  isPractiseSlot = true;
-                                                  isPractiseSlotHalfHour = true;
-                                                  isPractiseSlotFirstHalf =
+                                                    if (isFromTimeBetweenInSlot) {
+                                                      isPractiseSlot = true;
+                                                      isPractiseSlotHalfHour = true;
+                                                      isPractiseSlotFirstHalf =
                                                       true;
-                                                  practiseSlotTime =
-                                                      practiseSlot;
-                                                } else if (istoTimeBetweenInSlot) {
-                                                  isPractiseSlot = true;
-                                                  isPractiseSlotHalfHour = true;
-                                                  isPractiseSlotSecondHalf =
+                                                      practiseSlotTime =
+                                                          practiseSlot;
+                                                    } else if (istoTimeBetweenInSlot) {
+                                                      isPractiseSlot = true;
+                                                      isPractiseSlotHalfHour = true;
+                                                      isPractiseSlotSecondHalf =
                                                       true;
+                                                    }
+                                                  }
                                                 }
                                               }
                                             }
+
                                           }
+
                                         } else {
+                                          for (int i = 1; i <= practiseData['WC'].length; i++) {
+                                            Map slotList = practiseData['WC']['slotList${i.toString()}'];
+                                            print("slotList index $i $slotList");
+                                            print("dayNameList ${slotList['dayName']}");
+
+                                            List<String> daysList = slotList['dayName'].toString().split(',').map((day) => day.trim()).toList();
+                                            print("daysList $daysList");
+
+                                            String dayName =
+                                            DateFormat('EEEE').format(bookSlotController.selectedDate!).substring(0, 3);
+
+                                            print("dayName000 $dayName");
+
+                                            bool isDayInList = daysList.contains(dayName.toLowerCase());
+                                            print("isDayInList $isDayInList");
+
+                                            if(isDayInList) {
+                                              if (slotList
+                                                  .length !=
+                                                  0) {
+                                                print("ala");
+
+                                                for (int i = 1;
+                                                i <= slotList.length -1;
+                                                i++) {
+                                                  print("slotList i00+++" + i.toString());
+                                                  // print("slotList data" + slotList.toString());
+                                                  // print("slotList data" + slotList['slot1'].toString());
+
+
+                                                  var slot = slotList["slot${i.toString()}"];
+                                                  print("sloti+++" + slot.toString());
+                                                  String practiseSlot =
+                                                      slot['from'] +
+                                                          " - " +
+                                                          slot['to'];
+                                                  print("practiseSlot000 : $practiseSlot");
+                                                  print("slotTime0000 : $slotTime");
+                                                  // print("slotTime : $slotTime");
+
+                                                  bool match =
+                                                      slotTime == practiseSlot;
+                                                  print("match000 : $match");
+
+                                                  if (match) {
+                                                    isPractiseSlot = true;
+                                                    isPractiseSlotOneHour = true;
+                                                    practiseSlotTime = practiseSlot;
+                                                    bookSlotController
+                                                        .bookedSlotTimeList
+                                                        .add({
+                                                      courtId: practiseSlot
+                                                    });
+                                                    // bookSlotController.bookedSlotTimeList.add(practiseSlot);
+                                                  } else {
+                                                    String fromIn24Hours =
+                                                    convertTo24HourFormat(
+                                                        slot['from']);
+                                                    String toIn24Hours =
+                                                    convertTo24HourFormat(
+                                                        slot['to']);
+                                                    // print("fromIn24Hours : $fromIn24Hours");
+
+                                                    List<String> checkFromTime =
+                                                    fromIn24Hours.split(':');
+                                                    List<String> checkFromTime2 =
+                                                    toIn24Hours.split(':');
+
+                                                    DateTime fromTimeInDT =
+                                                    DateTime(
+                                                      year,
+                                                      month,
+                                                      day,
+                                                      int.parse(checkFromTime[0]),
+                                                      int.parse(checkFromTime[1]),
+                                                    );
+                                                    DateTime toTimeInDT = DateTime(
+                                                      year,
+                                                      month,
+                                                      day,
+                                                      int.parse(checkFromTime2[0]),
+                                                      int.parse(checkFromTime2[1]),
+                                                    );
+                                                    // print("fromTimeInDT $fromTimeInDT");
+
+                                                    bool isFromTimeBetweenInSlot =
+                                                    isBetweenInTimeRange(
+                                                        timeSlot: [
+                                                          slotFromTime,
+                                                          slotToTime
+                                                        ],
+                                                        checkTime:
+                                                        fromTimeInDT);
+                                                    bool istoTimeBetweenInSlot =
+                                                    isBetweenInTimeRange(
+                                                        timeSlot: [
+                                                          slotFromTime,
+                                                          slotToTime
+                                                        ],
+                                                        checkTime: toTimeInDT);
+                                                    print(
+                                                        "isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
+                                                    // print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
+
+                                                    if (isFromTimeBetweenInSlot) {
+                                                      isPractiseSlot = true;
+                                                      isPractiseSlotHalfHour = true;
+                                                      isPractiseSlotFirstHalf =
+                                                      true;
+                                                      practiseSlotTime =
+                                                          practiseSlot;
+                                                    } else if (istoTimeBetweenInSlot) {
+                                                      isPractiseSlot = true;
+                                                      isPractiseSlotHalfHour = true;
+                                                      isPractiseSlotSecondHalf =
+                                                      true;
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+
+                                          }
+
+
                                           // print("length WC : ${practiseData['WC']['slotList'].length}");
 
-                                          if (practiseData['WC']['slotList']
-                                                  .length !=
-                                              0) {
-                                            for (int i = 1;
-                                                i <=
-                                                    practiseData['WC']
-                                                            ['slotList']
-                                                        .length;
-                                                i++) {
-                                              // print("i+++" + i.toString());
-                                              var slot = practiseData['WC']
-                                                      ['slotList']
-                                                  ["slot${i.toString()}"];
-                                              // print("sloti+++" + slot.toString());
-
-                                              String practiseSlot =
-                                                  slot['from'] +
-                                                      " - " +
-                                                      slot['to'];
-                                              // print("practiseSlot000 : $practiseSlot");
-                                              // print("slotTime0000 : $slotTime");
-                                              // print("slotTime : $slotTime");
-
-                                              bool match =
-                                                  slotTime == practiseSlot;
-                                              // print("match000 : $match");
-
-                                              if (match) {
-                                                isPractiseSlot = true;
-                                                isPractiseSlotOneHour = true;
-                                                practiseSlotTime = practiseSlot;
-                                                bookSlotController
-                                                    .bookedSlotTimeList
-                                                    .add({
-                                                  courtId: practiseSlot
-                                                });
-                                              } else {
-                                                String fromIn24Hours =
-                                                    convertTo24HourFormat(
-                                                        slot['from']);
-                                                String toIn24Hours =
-                                                    convertTo24HourFormat(
-                                                        slot['to']);
-                                                // print("fromIn24Hours : $fromIn24Hours");
-
-                                                List<String> checkFromTime =
-                                                    fromIn24Hours.split(':');
-                                                List<String> checkFromTime2 =
-                                                    toIn24Hours.split(':');
-
-                                                DateTime fromTimeInDT =
-                                                    DateTime(
-                                                  year,
-                                                  month,
-                                                  day,
-                                                  int.parse(checkFromTime[0]),
-                                                  int.parse(checkFromTime[1]),
-                                                );
-                                                DateTime toTimeInDT = DateTime(
-                                                  year,
-                                                  month,
-                                                  day,
-                                                  int.parse(checkFromTime2[0]),
-                                                  int.parse(checkFromTime2[1]),
-                                                );
-                                                // print("fromTimeInDT $fromTimeInDT");
-
-                                                bool isFromTimeBetweenInSlot =
-                                                    isBetweenInTimeRange(
-                                                        timeSlot: [
-                                                      slotFromTime,
-                                                      slotToTime
-                                                    ],
-                                                        checkTime:
-                                                            fromTimeInDT);
-                                                bool istoTimeBetweenInSlot =
-                                                    isBetweenInTimeRange(
-                                                        timeSlot: [
-                                                      slotFromTime,
-                                                      slotToTime
-                                                    ],
-                                                        checkTime: toTimeInDT);
-                                                // print("isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
-                                                // print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
-
-                                                if (isFromTimeBetweenInSlot) {
-                                                  isPractiseSlot = true;
-                                                  isPractiseSlotHalfHour = true;
-                                                  isPractiseSlotFirstHalf =
-                                                      true;
-                                                  practiseSlotTime =
-                                                      practiseSlot;
-                                                } else if (istoTimeBetweenInSlot) {
-                                                  isPractiseSlot = true;
-                                                  isPractiseSlotHalfHour = true;
-                                                  isPractiseSlotSecondHalf =
-                                                      true;
-                                                }
-                                              }
-                                            }
-                                          }
+                                          // if (practiseData['WC']['slotList']
+                                          //         .length !=
+                                          //     0) {
+                                          //   for (int i = 1;
+                                          //       i <=
+                                          //           practiseData['WC']
+                                          //                   ['slotList']
+                                          //               .length;
+                                          //       i++) {
+                                          //     // print("i+++" + i.toString());
+                                          //     var slot = practiseData['WC']
+                                          //             ['slotList']
+                                          //         ["slot${i.toString()}"];
+                                          //     // print("sloti+++" + slot.toString());
+                                          //
+                                          //     String practiseSlot =
+                                          //         slot['from'] +
+                                          //             " - " +
+                                          //             slot['to'];
+                                          //     // print("practiseSlot000 : $practiseSlot");
+                                          //     // print("slotTime0000 : $slotTime");
+                                          //     // print("slotTime : $slotTime");
+                                          //
+                                          //     bool match =
+                                          //         slotTime == practiseSlot;
+                                          //     // print("match000 : $match");
+                                          //
+                                          //     if (match) {
+                                          //       isPractiseSlot = true;
+                                          //       isPractiseSlotOneHour = true;
+                                          //       practiseSlotTime = practiseSlot;
+                                          //       bookSlotController
+                                          //           .bookedSlotTimeList
+                                          //           .add({
+                                          //         courtId: practiseSlot
+                                          //       });
+                                          //     } else {
+                                          //       String fromIn24Hours =
+                                          //           convertTo24HourFormat(
+                                          //               slot['from']);
+                                          //       String toIn24Hours =
+                                          //           convertTo24HourFormat(
+                                          //               slot['to']);
+                                          //       // print("fromIn24Hours : $fromIn24Hours");
+                                          //
+                                          //       List<String> checkFromTime =
+                                          //           fromIn24Hours.split(':');
+                                          //       List<String> checkFromTime2 =
+                                          //           toIn24Hours.split(':');
+                                          //
+                                          //       DateTime fromTimeInDT =
+                                          //           DateTime(
+                                          //         year,
+                                          //         month,
+                                          //         day,
+                                          //         int.parse(checkFromTime[0]),
+                                          //         int.parse(checkFromTime[1]),
+                                          //       );
+                                          //       DateTime toTimeInDT = DateTime(
+                                          //         year,
+                                          //         month,
+                                          //         day,
+                                          //         int.parse(checkFromTime2[0]),
+                                          //         int.parse(checkFromTime2[1]),
+                                          //       );
+                                          //       // print("fromTimeInDT $fromTimeInDT");
+                                          //
+                                          //       bool isFromTimeBetweenInSlot =
+                                          //           isBetweenInTimeRange(
+                                          //               timeSlot: [
+                                          //             slotFromTime,
+                                          //             slotToTime
+                                          //           ],
+                                          //               checkTime:
+                                          //                   fromTimeInDT);
+                                          //       bool istoTimeBetweenInSlot =
+                                          //           isBetweenInTimeRange(
+                                          //               timeSlot: [
+                                          //             slotFromTime,
+                                          //             slotToTime
+                                          //           ],
+                                          //               checkTime: toTimeInDT);
+                                          //       // print("isFromTimeBetweenInSlot : $index ${isFromTimeBetweenInSlot}");
+                                          //       // print("istoTimeBetweenInSlot:  $index ${istoTimeBetweenInSlot}");
+                                          //
+                                          //       if (isFromTimeBetweenInSlot) {
+                                          //         isPractiseSlot = true;
+                                          //         isPractiseSlotHalfHour = true;
+                                          //         isPractiseSlotFirstHalf =
+                                          //             true;
+                                          //         practiseSlotTime =
+                                          //             practiseSlot;
+                                          //       } else if (istoTimeBetweenInSlot) {
+                                          //         isPractiseSlot = true;
+                                          //         isPractiseSlotHalfHour = true;
+                                          //         isPractiseSlotSecondHalf =
+                                          //             true;
+                                          //       }
+                                          //     }
+                                          //   }
+                                          // }
                                         }
 
                                         print(
@@ -899,15 +1030,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             child:
                                                                 GestureDetector(
                                                               onTap: () {
-                                                                // print(slotTime);
-                                                                //
-                                                                // print(courtId);
-                                                                // bookSlotController.selectedSlotIndex.value = index;
-                                                                // bookSlotController.selectedSlotTime = slotTime ;
-                                                                // bookSlotController.selectedCourtId = courtId;
-                                                                // bookSlotController.selectedisCompletedOneHourSlot = isCompletedOneHourSlot;
-                                                                // setState(() {
-                                                                // });
+
                                                               },
                                                               child: Container(
                                                                 color: Colors
@@ -1046,6 +1169,36 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             child:
                                                                 GestureDetector(
                                                               onTap: () {
+                                                                // String
+                                                                // targetedSlot =
+                                                                // bookSlotController.slotList[timeIndex +
+                                                                //     1];
+                                                                // bool
+                                                                // isAbelToSelect =
+                                                                // bookSlotController.checkUserAbelToSelectSlot(targetedValue: {
+                                                                //   courtId:
+                                                                //   targetedSlot
+                                                                // });
+                                                                //
+                                                                // if (isAbelToSelect) {
+                                                                //   // print(courtId);
+                                                                //   bookSlotController
+                                                                //       .selectedSlotIndex
+                                                                //       .value = index;
+                                                                //   bookSlotController.selectedSlotTime =
+                                                                //       halfHourSlotTime;
+                                                                //   bookSlotController.selectedCourtId =
+                                                                //       courtId;
+                                                                //   bookSlotController.selectedIsCompleted =
+                                                                //       isCompletedHalfHourSlot;
+                                                                //   setState(
+                                                                //           () {});
+                                                                // } else {
+                                                                //   Utils()
+                                                                //       .snackBar(message: "Slot is not available, please select other slot.");
+                                                                // }
+
+                                                                /* */
                                                                 // print(slotTime);
                                                                 //
                                                                 // print(courtId);

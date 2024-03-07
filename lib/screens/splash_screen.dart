@@ -26,10 +26,11 @@ class _SplashScreenState extends State<SplashScreen> {
   whereToGo() async {
     final prefs = await SharedPreferences.getInstance();
     bool? isLoggedIn = prefs.getBool(SharedPreferenKey.isLogin);
-
     if(isLoggedIn != null && isLoggedIn) {
         Get.offAll(() => HomeScreen());
+        print("isLoggedIn"+isLoggedIn.toString());
     } else {
+      print("isLoggedIn"+isLoggedIn.toString());
       Get.offAll(() => LoginScreen());
     }
   }

@@ -165,7 +165,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     children: [
                       InkWell(
                         onTap : (){
-                          loginController.sendOtp(loginController.mobileNumberController1.text);
+                          loginController.sendOtp(loginController.countryCodeController.value.text,loginController.mobileNumberController1.text);
                           print("Re-send code");
                         },
                         child: Text(
